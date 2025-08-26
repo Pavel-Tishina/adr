@@ -6,11 +6,15 @@ import com.paveltsikota.webcore.service.operation.FileOperationResult
 import com.paveltsikota.webcore.service.operation.enums.FileOpResultState
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.OsType
+import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST
+import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_SAME_PATH
+import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_WRONG_STATUS
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_ORIGINAL_FILE_NOT_EXIST
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_RESTORED_FILE_ALREADY_EXIST
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_SAME_PATH
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_WRONG_STATUS
 import com.paveltsikota.webcore.utils.errors.FileOperationWarnings.WARN_FILE_RENAMED
+import liquibase.util.FileUtil
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -49,7 +53,7 @@ class FileUtilsTest {
         Files.deleteIfExists(tmpFileRestore)
 
 
-        FileUtils.createFile(content, tmpFileOriginal)
+        FileUtils.createFile(content, tmpFileOriginal, true)
         val hashOriginal = xxHash64.calculate(tmpFileOriginal)
 
         val restoreEntity = FilesEntity(
@@ -150,11 +154,11 @@ class FileUtilsTest {
         val expectResultOriginalNotExist = FileOperationResult(
             errors = arrayListOf(RESTORE_ERROR_ORIGINAL_FILE_NOT_EXIST), obj = restoreEntityOriginalNotExist, result = FileOpResultState.FILE_NOT_RESTORED)
 
-        FileUtils.createFile(content, tmpFileOriginal)
+        FileUtils.createFile(content, tmpFileOriginal, true)
         val resultSameError = FileUtils.restoreFile(tmpFileOriginal, restoreEntitySame)
         val resultStatusError = FileUtils.restoreFile(tmpFileOriginal, restoreEntityStatusError)
 
-        FileUtils.createFile(content, tmpFileRestoreNotSame)
+        FileUtils.createFile(content, tmpFileRestoreNotSame, true)
         val resultRestoreExist = FileUtils.restoreFile(tmpFileOriginal, restoreEntityRestoreExist)
 
         Files.deleteIfExists(tmpFileOriginal)
@@ -182,7 +186,7 @@ class FileUtilsTest {
         assertTrue(FileUtils.getNewFileName(name4).matches(NEW_FILE_NAME_PATTERN))
     }
 
-    @OptIn(ExperimentalPathApi::class)
+
     @Test
     fun `success - file copy to hash dir operation`() {
         val tmpDir = FileUtils.getTempDir()
@@ -215,7 +219,7 @@ class FileUtilsTest {
             hashId = 0
         )
 
-        FileUtils.createFile(content, sourceFile)
+        FileUtils.createFile(content, sourceFile, true)
 
         val expectedResult = FileOperationResult(
             success = true, obj = sourceEntity.copy(state = FileState.MOVED), result = FileOpResultState.FILE_MOVED)
@@ -241,6 +245,57 @@ class FileUtilsTest {
             Files.deleteIfExists(movedFileWithNewName.parent)
             Files.deleteIfExists(movedFileWithNewName.parent.parent)
         }
+    }
+
+    @Test
+    fun `failed - file copy to hash dir operation(diff cases)`() {
+        val tmpDir = FileUtils.getTempDir()
+        val rootHashDir = Path(tmpDir.toString(), "xxhash")
+        val sourceFile = Path(tmpDir.toString(), "tmp.file")
+        val hash = xxHash64.calculate(ByteArrayInputStream(content.toByteArray()))
+        val destFileSame = Path(rootHashDir.toString(), hash, "tmp.file")
+
+        Files.deleteIfExists(sourceFile)
+        Files.deleteIfExists(destFileSame)
+        FileUtils.deleteDirOrFile(rootHashDir)
+
+        val wrongStatusEntity = FilesEntityUtils.getFilesEntryByPath(path = sourceFile)
+        val samePathEntity = wrongStatusEntity.copy(
+            path = FileUtils.toUnixPath(destFileSame), hash = hash, state = FileState.MARK_MOVE)
+
+        val expectedSourceNotExistResult = FileOperationResult(
+            success = false,
+            errors = arrayListOf(MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST),
+            obj = wrongStatusEntity.copy(state = FileState.MARK_MOVE),
+            result = FileOpResultState.FILE_NOT_MOVED
+        )
+        val sourceNotExistResult = FileUtils.copyFileToHashDir(file = wrongStatusEntity.copy(state = FileState.MARK_MOVE), rootHashDir)
+
+        FileUtils.createFile(content, sourceFile, true)
+        FileUtils.createFile(content, destFileSame, true)
+        val expectedSamePathResult = FileOperationResult(
+            success = false,
+            errors = arrayListOf(MOVE_TO_HASH_DIR_ERROR_SAME_PATH),
+            obj = samePathEntity,
+            result = FileOpResultState.FILE_NOT_MOVED
+        )
+        val samePathResult = FileUtils.copyFileToHashDir(file = samePathEntity, rootHashDir)
+
+        val expectedWrongStateResult = FileOperationResult(
+            success = false,
+            errors = arrayListOf(MOVE_TO_HASH_DIR_ERROR_WRONG_STATUS),
+            obj = wrongStatusEntity.copy(state = FileState.DELETED),
+            result = FileOpResultState.FILE_NOT_MOVED
+        )
+        val wrongStateResult = FileUtils.copyFileToHashDir(file = wrongStatusEntity.copy(state = FileState.DELETED), rootHashDir)
+
+        assertTrue(sameFileOperationResult(expectedSourceNotExistResult, sourceNotExistResult))
+        assertTrue(sameFileOperationResult(expectedWrongStateResult, wrongStateResult))
+        assertTrue(sameFileOperationResult(expectedSamePathResult, samePathResult))
+
+        Files.deleteIfExists(sourceFile)
+        Files.deleteIfExists(destFileSame)
+        FileUtils.deleteDirOrFile(rootHashDir)
     }
 
     private fun sameFileOperationResult(r1: FileOperationResult, r2: FileOperationResult): Boolean {

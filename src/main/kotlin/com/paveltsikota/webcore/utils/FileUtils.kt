@@ -21,15 +21,12 @@ import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_W
 import com.paveltsikota.webcore.utils.errors.FileOperationWarnings.WARN_FILE_RENAMED
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.ByteBuffer
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.FileTime
-import java.security.MessageDigest
-import java.util.UUID
+import java.util.*
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
-import kotlin.io.path.isRegularFile
 import kotlin.io.path.writeText
 
 object FileUtils {
@@ -53,6 +50,7 @@ object FileUtils {
 //        return hasher.digest()
 //    }
 
+    // TODO: return FileOperationResult
     fun copyFile(source: Path, dest: Path): File? {
         val destFile = dest.toFile()
         val os = FileOutputStream(destFile)
@@ -92,9 +90,9 @@ object FileUtils {
         }
     }
 
-
-    fun createFile(content: String, path: Path): Boolean {
+    fun createFile(content: String, path: Path, mkDirs: Boolean = false): Boolean {
         return try {
+            if (mkDirs) { File(path.parent.toString()).mkdirs() }
             Files.createFile(path).writeText(content)
             true
         } catch (e: Exception) {
@@ -114,7 +112,7 @@ object FileUtils {
             if (!Files.exists(sourceFile)) { errors.add(MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST) }
             if (hashDir == sourceDir) { errors.add(MOVE_TO_HASH_DIR_ERROR_SAME_PATH) }
 
-            FileOperationResult(success = false, errors = arrayListOf(MOVE_TO_HASH_DIR_ERROR_WRONG_STATUS), obj = file, result = FileOpResultState.FILE_NOT_MOVED)
+            FileOperationResult(success = false, errors = errors, obj = file, result = FileOpResultState.FILE_NOT_MOVED)
         } else {
             File(hashDir.toString()).mkdirs()
             val destFileName = getNewFileName(file.fileName).takeIf {Files.exists(Path.of(hashDir.toString(), file.fileName)) }?: file.fileName
@@ -148,6 +146,7 @@ object FileUtils {
     }
 
     // USE IT CAREFULLY
+    // TODO: strings to const
     @OptIn(ExperimentalPathApi::class)
     fun deleteDirOrFile(path: Path): OperationResult {
         val fileOrDir = File(path.toString())
@@ -159,7 +158,7 @@ object FileUtils {
             var success = false
 
             if (hasNestedObjects) {
-                warnings.add("This objects shall delete too")
+                warnings.add("Next object(s) shall delete too:")
                 if (nestedObjects != null) {
                     warnings.addAll(nestedObjects.map { it.name }.toList())
                 }
