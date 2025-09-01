@@ -4,8 +4,6 @@ import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import java.nio.file.Path
-import kotlin.io.path.fileSize
-import kotlin.io.path.getLastModifiedTime
 
 object FilesEntityUtils {
 
