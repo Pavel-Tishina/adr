@@ -8,5 +8,6 @@ interface HashCalculator {
 
     fun calculate(path: Path): String
     fun calculate(stream: InputStream): String
+    fun calculate(str: String): String
     fun getType(): HashType
 }

@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:app.db
+    driver-class-name: org.sqlite.JDBC
+    username:
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: none   # выключаем авто-инициализацию Hibernate
+    properties:
+      hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

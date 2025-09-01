@@ -13,7 +13,7 @@ data class SourcesEntity(
     val profile: Long,
 
     @Column(nullable = false)
-    var order: Int,
+    var dirorder: Int,
 
     @Column(nullable = false)
     var path: String,

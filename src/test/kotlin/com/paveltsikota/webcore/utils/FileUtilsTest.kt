@@ -14,26 +14,22 @@ import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_R
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_SAME_PATH
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.RESTORE_ERROR_WRONG_STATUS
 import com.paveltsikota.webcore.utils.errors.FileOperationWarnings.WARN_FILE_RENAMED
-import liquibase.util.FileUtil
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.attribute.FileTime
 import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
-import kotlin.io.path.deleteRecursively
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FileUtilsTest {
     val content = "There is some data!"
-    val xxHash64 = XXHash64()
+    val xxHash64 = XXHash64
 
     val NEW_FILE_NAME_PATTERN = Regex("""(.*?)([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\..*""")
 

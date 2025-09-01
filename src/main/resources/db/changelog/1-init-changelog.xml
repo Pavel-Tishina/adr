@@ -1,78 +1,59 @@
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
-    <!-- FILES -->
-    <changeSet id="files-sqlite" author="me" dbms="sqlite">
-        <createTable tableName="files">
-            <column name="id" type="INTEGER">
-                <constraints primaryKey="true" nullable="false" primaryKeyAutoIncrement="true"/>
+    <!-- GroupsEntity -->
+    <changeSet id="1" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="groups"/>
+            </not>
+        </preConditions>
+        <createTable tableName="groups">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
-
-            <column name="profile" type="INTEGER">
+            <column name="profile" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="size" type="INTEGER">
+            <column name="size" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
-            <column name="created" type="INTEGER">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="modified" type="INTEGER">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="path" type="TEXT">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="hashPath" type="TEXT"/>
-            <column name="fileName" type="TEXT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="newFileName" type="TEXT"/>
-            <column name="isUnique" type="INTEGER"/>
-            <column name="groupId" type="INTEGER"/>
-            <column name="hashId" type="INTEGER"/>
-            <column name="hash" type="TEXT"/>
-            <column name="hashType" type="TEXT"/>
-            <column name="state" type="TEXT"/>
-            <column name="hold" type="INTEGER">
+            <column name="file_ids" type="TEXT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="files-postgres" author="me" dbms="postgresql">
+    <!-- FilesEntity -->
+    <changeSet id="2" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="files"/>
+            </not>
+        </preConditions>
         <createTable tableName="files">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-
             <column name="profile" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
             <column name="size" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
             <column name="created" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
             <column name="modified" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-
             <column name="path" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-
             <column name="hashPath" type="TEXT"/>
             <column name="fileName" type="TEXT">
                 <constraints nullable="false"/>
@@ -82,21 +63,23 @@
             <column name="groupId" type="BIGINT"/>
             <column name="hashId" type="BIGINT"/>
             <column name="hash" type="TEXT"/>
-            <column name="hashType" type="VARCHAR(50)"/>
-            <column name="state" type="VARCHAR(50)"/>
-            <column name="hold" type="BOOLEAN">
+            <column name="hashType" type="TEXT"/>
+            <column name="state" type="TEXT" defaultValue="ON_PLACE"/>
+            <column name="hold" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
-    <!-- GROUPS -->
-    <changeSet id="groups-sqlite" author="admin">
+    <!-- HashesEntity -->
+    <changeSet id="3" author="admin">
         <preConditions onFail="MARK_RAN">
-            <dbms type="sqlite"/>
+            <not>
+                <tableExists tableName="hashes"/>
+            </not>
         </preConditions>
-        <createTable tableName="groups">
-            <column name="id" type="BIGINT" autoIncrement="true">
+        <createTable tableName="hashes">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="profile" type="BIGINT">
@@ -105,106 +88,62 @@
             <column name="size" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <!-- В SQLite используем TEXT для сериализации Set<Long> -->
-            <column name="file_ids" type="TEXT" />
-        </createTable>
-    </changeSet>
-
-    <changeSet id="groups-postgres" author="admin">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
-        </preConditions>
-        <createTable tableName="groups">
-            <column name="id" type="BIGSERIAL">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="profile" type="BIGINT">
+            <column name="hash" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="size" type="BIGINT">
+            <column name="hashType" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <!-- В PostgreSQL используем jsonb -->
-            <column name="file_ids" type="jsonb" />
+            <column name="main" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duplicates" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
-    <!-- HASHES -->
-    <changeSet id="hashes-sqlite" author="admin">
+    <!-- ProfileEntity -->
+    <changeSet id="4" author="admin">
         <preConditions onFail="MARK_RAN">
-            <dbms type="sqlite"/>
+            <not>
+                <tableExists tableName="profile"/>
+            </not>
         </preConditions>
-        <createTable tableName="hashes">
-            <column name="id" type="BIGINT" autoIncrement="true">
+        <createTable tableName="profile">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="profile" type="BIGINT" />
-            <column name="size" type="BIGINT" />
-            <column name="hash" type="TEXT" />
-            <column name="hash_type" type="TEXT" />
-            <column name="main" type="BIGINT" />
-            <!-- Set<Long> как TEXT -->
-            <column name="duplicates" type="TEXT" />
-        </createTable>
-    </changeSet>
-
-    <changeSet id="hashes-postgres" author="admin">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
-        </preConditions>
-        <createTable tableName="hashes">
-            <column name="id" type="BIGSERIAL">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="title" type="VARCHAR(64)">
+                <constraints nullable="false"/>
             </column>
-            <column name="profile" type="BIGINT" />
-            <column name="size" type="BIGINT" />
-            <column name="hash" type="TEXT" />
-            <column name="hash_type" type="TEXT" />
-            <column name="main" type="BIGINT" />
-            <!-- Set<Long> как jsonb -->
-            <column name="duplicates" type="jsonb" />
+            <column name="description" type="VARCHAR(256)"/>
+            <column name="cfg" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
-    <!-- SOURCES -->
-    <changeSet id="sources" author="admin">
+    <!-- SourcesEntity -->
+    <changeSet id="5" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="sources"/>
+            </not>
+        </preConditions>
         <createTable tableName="sources">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="profile" type="BIGINT" />
-            <column name="order_num" type="INT" />
-            <column name="path" type="TEXT" />
-        </createTable>
-    </changeSet>
-
-    <!-- PROFILE -->
-    <changeSet id="profile-sqlite" author="admin">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="sqlite"/>
-        </preConditions>
-        <createTable tableName="profile">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="profile" type="BIGINT">
+                <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(64)" />
-            <column name="description" type="VARCHAR(256)" />
-            <column name="cfg" type="TEXT" />
-        </createTable>
-    </changeSet>
-
-    <changeSet id="profile-postgres" author="admin">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
-        </preConditions>
-        <createTable tableName="profile">
-            <column name="id" type="BIGSERIAL">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="dirorder" type="INT">
+                <constraints nullable="false"/>
             </column>
-            <column name="title" type="VARCHAR(64)" />
-            <column name="description" type="VARCHAR(256)" />
-            <!-- PostgreSQL: jsonb -->
-            <column name="cfg" type="jsonb" />
+            <column name="path" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

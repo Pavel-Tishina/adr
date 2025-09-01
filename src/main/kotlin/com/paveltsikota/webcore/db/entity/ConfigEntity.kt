@@ -32,6 +32,6 @@ data class ConfigEntity(
     var progressShow: Boolean = true,
 
     @Column(nullable = false)
-    var calculateHashOnRun: Boolean = true,
+    var flyHashCalculate: Boolean = true,
 
 )
