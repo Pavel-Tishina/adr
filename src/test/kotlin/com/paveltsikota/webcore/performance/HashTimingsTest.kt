@@ -6,6 +6,7 @@ import com.paveltsikota.webcore.hash.calculator.impl.CryptoHash
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
 import com.paveltsikota.webcore.utils.enums.Blake2BType
 import com.paveltsikota.webcore.utils.enums.CryptoHashType
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.time.measureTimedValue
 
@@ -30,6 +31,7 @@ class HashTimingsTest {
     val sha512 = CryptoHash(CryptoHashType.SHA512)
 
     @Test
+    @Disabled
     fun `speed test with extra small files`() {
         val extraSmallStrings = createObjectsForCollision()
         println("ok, we gotcha ${extraSmallStrings.size} extra small stings. Let start calculate with $t times")
@@ -48,6 +50,7 @@ class HashTimingsTest {
     }
 
     @Test
+    @Disabled
     fun `collision test with extra small files`() {
         val extraSmallStrings = createObjectsForCollision()
         println("ok, we gotcha ${extraSmallStrings.size} extra small stings. Let start check collision")

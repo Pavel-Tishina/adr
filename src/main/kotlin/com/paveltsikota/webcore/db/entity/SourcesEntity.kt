@@ -10,12 +10,12 @@ data class SourcesEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long,
+    val profile: Long = 0,
 
     @Column(nullable = false)
-    var dirorder: Int,
+    var dirorder: Int = 0,
 
     @Column(nullable = false)
-    var path: String,
+    var path: String = "",
 
 )

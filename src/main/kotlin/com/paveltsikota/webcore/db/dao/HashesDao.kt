@@ -1,40 +1,33 @@
-package com.paveltsikota.webcore.db.service.impl.dao
+package com.paveltsikota.webcore.db.dao
 
 import com.paveltsikota.webcore.db.entity.HashesEntity
-import org.hibernate.SessionFactory
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class HashesDao(private val sessionFactory: SessionFactory) {
+class HashesDao(@PersistenceContext private val entityManager: EntityManager) {
 
     @Transactional
     fun save(hash: HashesEntity) {
-        sessionFactory.currentSession.use { session ->
-            session.persist(hash)
-        }
+        entityManager.persist(hash)
     }
 
     @Transactional
-    fun update(hash: HashesEntity) {
-        sessionFactory.currentSession.use { session ->
-            session.merge(hash) // если объект detached, merge обновит запись в БД
-        }
+    fun update(hash: HashesEntity): HashesEntity {
+        return entityManager.merge(hash) // если объект detached, merge обновит запись в БД
     }
 
     @Transactional(readOnly = true)
     fun findById(id: Long): HashesEntity? {
-        return sessionFactory.currentSession.use { session ->
-            session.find(HashesEntity::class.java, id)
-        }
+        return entityManager.find(HashesEntity::class.java, id)
     }
 
     @Transactional(readOnly = true)
     fun findByHashAndProfileId(hash: String, profileId: Long): HashesEntity? {
-        val session = sessionFactory.currentSession
-        val query = session.createQuery(
-            //"FROM ProfileEntity p WHERE p.title = :title",
-            "FROM hashes p WHERE p.profile = :profile AND p.hash = :hash",
+        val query = entityManager.createQuery(
+            "FROM HashesEntity p WHERE p.profile = :profile AND p.hash = :hash",
             HashesEntity::class.java
         )
         query.setParameter("hash", hash)
@@ -44,10 +37,8 @@ class HashesDao(private val sessionFactory: SessionFactory) {
 
     @Transactional(readOnly = true)
     fun findBySizeAndProfileId(size: Long, profileId: Long): List<HashesEntity>? {
-        val session = sessionFactory.currentSession
-        val query = session.createQuery(
-            //"FROM ProfileEntity p WHERE p.title = :title",
-            "FROM hashes p WHERE p.size = :size AND p.profile = :profile",
+        val query = entityManager.createQuery(
+            "FROM HashesEntity p WHERE p.size = :size AND p.profile = :profile",
             HashesEntity::class.java
         )
         query.setParameter("size", size)
@@ -56,12 +47,13 @@ class HashesDao(private val sessionFactory: SessionFactory) {
     }
 
     @Transactional
-    fun removeById(id: Long) {
-        sessionFactory.currentSession.use { session ->
-            val entity = session.find(HashesEntity::class.java, id)
-            if (entity != null) {
-                session.remove(entity)
-            }
+    fun removeById(id: Long): Boolean {
+        val entity = entityManager.find(HashesEntity::class.java, id)
+        return if (entity != null) {
+            entityManager.remove(entity)
+            true
+        } else {
+            false
         }
     }
 

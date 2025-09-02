@@ -11,13 +11,13 @@ data class ProfileEntity(
     val id: Long = 0,
 
     @Column(nullable = false, length = 64)
-    var title: String,
+    var title: String = "",
 
     @Column(nullable = true, length = 256)
-    var description: String,
+    var description: String = "",
 
     @Convert(converter = MapToJsonConverter::class)
     @Column(nullable = false, columnDefinition = "TEXT") // Liquibase заменит на jsonb в PostgreSQL
-    var cfg: String
+    var cfg: String = ""
 
 )

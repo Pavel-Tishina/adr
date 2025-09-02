@@ -147,4 +147,43 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="6" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="jobs"/>
+            </not>
+        </preConditions>
+        <createTable tableName="jobs">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="profile" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="priority" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start" type="TEXT"/> <!-- SQLite хранит TIMESTAMP как TEXT -->
+            <column name="finish" type="TEXT"/>
+
+            <column name="completed" type="INTEGER"/> <!-- 0/1 -->
+
+            <column name="disabled" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="type" type="TEXT"/>
+
+            <column name="last_object" type="TEXT"/>
+            <column name="last_object_id" type="INTEGER"/>
+
+            <column name="status" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

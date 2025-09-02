@@ -11,10 +11,10 @@ data class ConfigEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long,
+    val profile: Long = 0,
 
     @Column(nullable = false)
-    var hashDir: String,
+    var hashDir: String = "",
 
     @Column(nullable = false)
     var hashType: HashType = HashType.XXHASH64,

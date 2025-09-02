@@ -139,21 +139,48 @@
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<args>
 						<arg>-Xjsr305=strict</arg>
+<!--						<arg>-Xplugin=jpa</arg>-->
 					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
+<!--						<plugin>jpa</plugin>-->
+<!--						<plugin>no-arg</plugin>-->
 					</compilerPlugins>
+<!--					<pluginOptions>-->
+<!--						&lt;!&ndash; делаем классы open &ndash;&gt;-->
+<!--						<option>all-open:annotation=jakarta.persistence.Entity</option>-->
+<!--						<option>all-open:annotation=jakarta.persistence.MappedSuperclass</option>-->
+<!--						<option>all-open:annotation=jakarta.persistence.Embeddable</option>-->
+<!--						&lt;!&ndash; no-arg будет генерировать конструкторы для @Entity &ndash;&gt;-->
+<!--						<option>no-arg:annotation=jakarta.persistence.Entity</option>-->
+<!--						<option>no-arg:annotation=jakarta.persistence.Embeddable</option>-->
+<!--						<option>no-arg:annotation=jakarta.persistence.MappedSuperclass</option>-->
+<!--					</pluginOptions>-->
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-allopen</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-				</dependencies>
+<!--				<dependencies>-->
+<!--					<dependency>-->
+<!--						<groupId>org.jetbrains.kotlin</groupId>-->
+<!--						<artifactId>kotlin-maven-allopen</artifactId>-->
+<!--						<version>${kotlin.version}</version>-->
+<!--					</dependency>-->
+<!--					<dependency>-->
+<!--						<groupId>org.jetbrains.kotlin</groupId>-->
+<!--						<artifactId>kotlin-maven-noarg</artifactId>-->
+<!--						<version>${kotlin.version}</version>-->
+<!--					</dependency>-->
+<!--				</dependencies>-->
 			</plugin>
 			<plugin>
 				<groupId>org.liquibase</groupId>

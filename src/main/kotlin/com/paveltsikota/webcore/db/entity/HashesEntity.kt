@@ -11,21 +11,21 @@ data class HashesEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long,
+    val profile: Long = 0,
 
     @Column(nullable = false)
-    val size: Long,
+    val size: Long = 0,
 
     @Column(nullable = false)
-    val hash: String,
+    val hash: String = "",
 
     @Column(nullable = false)
-    val hashType: HashType,
+    val hashType: HashType = HashType.UNKNOWN,
 
     @Column(nullable = false)
-    var main: Long,
+    var main: Long = 0,
 
     @Column(nullable = false)
-    var duplicates: Set<Long>,
+    var duplicates: Set<Long> = hashSetOf(),
 
-)
+    )

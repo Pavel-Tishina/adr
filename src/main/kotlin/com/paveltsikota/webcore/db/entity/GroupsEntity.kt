@@ -10,12 +10,12 @@ data class GroupsEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long,
+    val profile: Long = 0,
 
     @Column(nullable = false)
-    val size: Long,
+    val size: Long = 0,
 
     @Column(nullable = false)
-    var fileIds: Set<Long>,
-    
-)
+    var fileIds: Set<Long> = hashSetOf(),
+
+    )

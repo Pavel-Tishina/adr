@@ -8,5 +8,6 @@ enum class FileState {
     MARK_RESTORE,
     MAIN,
     MOVED,
-    DELETED
+    DELETED,
+    NOT_FOUND
 }

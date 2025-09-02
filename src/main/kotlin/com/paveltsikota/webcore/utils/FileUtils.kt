@@ -24,6 +24,7 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.FileTime
+import java.time.Instant
 import java.util.*
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
@@ -195,6 +196,26 @@ object FileUtils {
 
     fun getNewFileName(path: Path): String {
         return getNewFileName(path.fileName.toString())
+    }
+
+    fun getFileModificationTime(sourceFile: Path): Long {
+        return if (sourceFile.toFile().exists()) {
+            Files.getLastModifiedTime(sourceFile).toInstant().toEpochMilli()
+        } else {
+            Long.MIN_VALUE
+        }
+    }
+
+    fun getFileCreationTime(sourceFile: Path): Long {
+        return if (sourceFile.toFile().exists()) {
+            fileCreationTimeParse(Files.getAttribute(sourceFile, CREATION_TIME_ATTR).toString())
+        } else {
+            Long.MIN_VALUE
+        }
+    }
+
+    fun fileCreationTimeParse(creationTime: String): Long {
+        return Instant.parse(creationTime).toEpochMilli()
     }
 
 }

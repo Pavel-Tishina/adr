@@ -11,48 +11,48 @@ data class FilesEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @Column(nullable = false)
-    val profile: Long,
+    @Column(name = "profile", nullable = false)
+    val profile: Long = 0,
 
-    @Column(nullable = false)
-    val size: Long,
+    @Column(name = "size", nullable = false)
+    val size: Long = 0,
 
-    @Column(nullable = false)
-    val created: Long,
+    @Column(name = "created", nullable = false)
+    val created: Long = 0,
 
-    @Column(nullable = false)
-    val modified: Long,
+    @Column(name = "modified", nullable = false)
+    val modified: Long = 0,
 
-    @Column(nullable = false)
-    val path: String,
+    @Column(name = "path", nullable = false)
+    val path: String = "",
 
-    @Column(nullable = true)
-    var hashPath: String,
+    @Column(name = "hashPath", nullable = true)
+    var hashPath: String? = null,
 
-    @Column(nullable = false)
-    val fileName: String,
+    @Column(name = "fileName", nullable = false)
+    val fileName: String = "",
 
-    @Column(nullable = true)
-    var newFileName: String,
+    @Column(name = "newFileName", nullable = true)
+    var newFileName: String? = null,
 
-    @Column(nullable = true)
-    var isUnique: Boolean,
+    @Column(name = "isUnique", nullable = true)
+    var isUnique: Boolean? = null,
 
-    @Column(nullable = true)
-    var groupId: Long,
+    @Column(name = "groupId", nullable = true)
+    var groupId: Long? = null,
 
-    @Column(nullable = true)
-    var hashId: Long,
+    @Column(name = "hashId", nullable = true)
+    var hashId: Long? = null,
 
-    @Column(nullable = true)
-    var hash: String,
+    @Column(name = "hash", nullable = true)
+    var hash: String? = null,
 
-    @Column(nullable = true)
-    var hashType: HashType,
+    @Column(name = "hashType", nullable = true)
+    var hashType: HashType? = null,
 
-    @Column(nullable = true)
-    var state: FileState = FileState.ON_PLACE,
+    @Column(name = "state", nullable = true)
+    var state: FileState? = null,
 
-    @Column(nullable = false)
+    @Column(name = "hold", nullable = false)
     var hold: Boolean = false
 )

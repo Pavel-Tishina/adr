@@ -230,16 +230,16 @@ class FileUtilsTest {
         with(resultOperationWithRename) {
             assertTrue(hasDetails())
             assertTrue(getWarnings().startsWith(WARN_FILE_RENAMED))
-            assertTrue(obj.newFileName.matches(NEW_FILE_NAME_PATTERN))
+            assertTrue(obj.newFileName?.matches(NEW_FILE_NAME_PATTERN)?:false)
         }
 
         Files.deleteIfExists(sourceFile)
         Files.deleteIfExists(destFile)
         with(resultOperationWithRename.obj) {
-            val movedFileWithNewName = Path(rootHashDir.toString(), hash, newFileName)
-            Files.deleteIfExists(movedFileWithNewName)
-            Files.deleteIfExists(movedFileWithNewName.parent)
-            Files.deleteIfExists(movedFileWithNewName.parent.parent)
+            val movedFileWithNewName = newFileName?.let { Path(rootHashDir.toString(), hash, it) }
+            Files.deleteIfExists(movedFileWithNewName?: Path(""))
+            movedFileWithNewName?.parent?.let { Files.deleteIfExists(it) }
+            movedFileWithNewName?.parent?.parent?.let { Files.deleteIfExists(it) }
         }
     }
 
@@ -294,6 +294,23 @@ class FileUtilsTest {
         FileUtils.deleteDirOrFile(rootHashDir)
     }
 
+    @Test
+    fun `parse creation time`() {
+        val tmpDir = FileUtils.getTempDir()
+        val sourceFile = Path(tmpDir.toString(), "tmp.file")
+
+        Files.deleteIfExists(sourceFile)
+
+        val now = Date()
+        FileUtils.createFile(content, sourceFile)
+
+        val fileCreationTime = FileUtils.getFileCreationTime(sourceFile)
+
+        assertTrue(datesAreSoClose(now.time, fileCreationTime))
+
+        Files.deleteIfExists(sourceFile)
+    }
+
     private fun sameFileOperationResult(r1: FileOperationResult, r2: FileOperationResult): Boolean {
         return r1.success == r2.success
                 && r1.result == r2.result
@@ -304,6 +321,10 @@ class FileUtilsTest {
 
     private fun formalEqFileEntity(e1: FilesEntity, e2: FilesEntity): Boolean {
         return e1.id == e2.id && e1.profile == e2.profile && e1.state == e2.state
+    }
+
+    private fun datesAreSoClose(d1: Long, d2: Long): Boolean {
+        return kotlin.math.abs(d1 - d2) < 3000000 // 3ms I guess it's pretty enough
     }
 
 

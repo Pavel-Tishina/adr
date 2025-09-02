@@ -1,0 +1,14 @@
+package com.paveltsikota.webcore.utils.enums
+
+enum class JobsType {
+    FILE_SCAN,
+    MAKE_GROUPS,
+    MAKE_HASHES,
+    MOVE_DUPLICATES,
+    BACK_DUPLICATES,
+    RESTORE_DUPLICATES,
+    DELETE_DUPLICATES,
+    SEARCH_IMAGE_DUPLICATES,
+    PREPARE_VIDEO,
+    SEARCH_VIDEO_DUPLICATES
+}

@@ -8,6 +8,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none   # выключаем авто-инициализацию Hibernate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         dialect: org.hibernate.community.dialect.SQLiteDialect

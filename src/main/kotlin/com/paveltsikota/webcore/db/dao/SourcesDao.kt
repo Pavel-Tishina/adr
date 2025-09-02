@@ -1,40 +1,34 @@
-package com.paveltsikota.webcore.db.service.impl.dao
+package com.paveltsikota.webcore.db.dao
 
 import com.paveltsikota.webcore.db.entity.SourcesEntity
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.hibernate.SessionFactory
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class SourcesDao(private val sessionFactory: SessionFactory) {
+class SourcesDao(@PersistenceContext private val entityManager: EntityManager) {
 
     @Transactional
     fun save(source: SourcesEntity) {
-        sessionFactory.currentSession.use { session ->
-            session.persist(source) // заменяет старый save()
-        }
+        entityManager.persist(source)
     }
 
     @Transactional
-    fun update(source: SourcesEntity) {
-        sessionFactory.currentSession.use { session ->
-            session.merge(source) // если объект detached, merge обновит запись в БД
-        }
+    fun update(source: SourcesEntity): SourcesEntity {
+        return entityManager.merge(source)
     }
 
     @Transactional
     fun findById(id: Long): SourcesEntity? {
-        return sessionFactory.currentSession.use { session ->
-            session.find(SourcesEntity::class.java, id) // заменяет get()
-        }
+        return entityManager.find(SourcesEntity::class.java, id)
     }
 
     @Transactional(readOnly = true)
     fun findByProfileId(profileId: Long): List<SourcesEntity> {
-        val session = sessionFactory.currentSession
-        val query = session.createQuery(
-            //"FROM ProfileEntity p WHERE p.title = :title",
-            "FROM sources p WHERE p.profile = :profile",
+        val query = entityManager.createQuery(
+            "FROM SourcesEntity p WHERE p.profile = :profile",
             SourcesEntity::class.java
         )
         query.setParameter("profile", profileId)
@@ -42,20 +36,20 @@ class SourcesDao(private val sessionFactory: SessionFactory) {
     }
 
     @Transactional
-    fun removeById(id: Long) {
-        sessionFactory.currentSession.use { session ->
-            val entity = session.find(SourcesEntity::class.java, id)
-            if (entity != null) {
-                session.remove(entity)
-            }
+    fun removeById(id: Long): Boolean {
+        val entity = entityManager.find(SourcesEntity::class.java, id)
+        return if (entity != null) {
+            entityManager.remove(entity)
+            true
+        } else {
+            false
         }
     }
 
     @Transactional
     fun removeByProfileId(profileId: Long) {
-        val session = sessionFactory.currentSession
-        val query = session.createQuery(
-            "DELETE FROM sources p WHERE p.profile = :profile",
+        val query = entityManager.createQuery(
+            "DELETE FROM SourcesEntity p WHERE p.profile = :profile",
             SourcesEntity::class.java
         )
         query.setParameter("profile", profileId)
