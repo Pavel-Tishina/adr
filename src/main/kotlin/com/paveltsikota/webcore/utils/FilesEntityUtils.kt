@@ -32,11 +32,11 @@ object FilesEntityUtils {
         )
     }
 
-    fun getFilesEntryByPathForDb(path: String, calc: HashCalculator): FilesEntity {
+    fun getFilesEntryByPathForDb(path: String, calc: HashCalculator?): FilesEntity {
         return getFilesEntryByPathForDb(Path.of(path), calc)
     }
 
-    fun getFilesEntryByPathForDb(path: Path, calc: HashCalculator): FilesEntity {
+    fun getFilesEntryByPathForDb(path: Path, calc: HashCalculator?): FilesEntity {
         val file = path.toFile()
         val exist = file.isFile
         println("file exist: $exist")
@@ -47,9 +47,9 @@ object FilesEntityUtils {
             size = file.length(),
             created = FileUtils.getFileCreationTime(path),
             modified = FileUtils.getFileModificationTime(path),
-            hashPath = if (exist) { "/${calc.getType()}" } else { null },
-            hash = if (exist) { calc.calculate(path) } else { null },
-            hashType = if (exist) { calc.getType() } else { null },
+            hashPath = if (exist && calc != null) { "/${calc.getType()}" } else { null },
+            hash = if (exist && calc != null) { calc.calculate(path) } else { null },
+            hashType = if (exist && calc != null) { calc.getType() } else { null },
             state = FileState.ON_PLACE.takeIf { exist }?: FileState.NOT_FOUND,
         )
     }
@@ -92,9 +92,9 @@ object FilesEntityUtils {
         )
     }
 
-    fun dtoToEntity(dto: FilesDto): FilesEntity {
-        return if (hasOnlyPath(dto)) {
-            getFilesEntryByPathForDb(Path.of(dto.path), XXHash64)
+    fun dtoToEntity(dto: FilesDto, isLocal: Boolean = false, calc: HashCalculator? = null): FilesEntity {
+        return if (isLocal && hasOnlyPath(dto)) {
+            getFilesEntryByPathForDb(Path.of(dto.path), calc)
         } else {
             FilesEntity(
                 id = dto.id ?: 0,

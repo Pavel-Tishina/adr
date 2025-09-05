@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.dao
 
-import com.paveltsikota.webcore.db.entity.GroupsEntity
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
