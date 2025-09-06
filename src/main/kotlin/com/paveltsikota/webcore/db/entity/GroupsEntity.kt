@@ -15,7 +15,7 @@ data class GroupsEntity(
     @Column(nullable = false)
     val size: Long = 0,
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     var fileIds: Set<Long> = hashSetOf(),
 
     )

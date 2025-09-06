@@ -29,14 +29,18 @@ interface FilesService {
     fun findByHash(hash: String, hashType: HashType, profileId: Long): EntityOperationResult
     fun findBySize(page: Int?, pageSize: Int?, size: Long, profileId: Long): EntityOperationResult
 
-    fun findNotGrouped(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>
-    fun findAllNotGrouped(profileId: Long, size: Long?): List<FilesEntity>
+    fun findNotGrouped(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>?
+    fun findAllNotGrouped(profileId: Long, size: Long?): List<FilesEntity>?
 
-    fun findNotHashed(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>
-    fun findAllNotHashed(profileId: Long, size: Long?): List<FilesEntity>
+    fun findNotHashed(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>?
+    fun findAllNotHashed(profileId: Long, size: Long?): List<FilesEntity>?
 
-    fun findNotCalculatedHash(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>
-    fun findAllNotCalculatedHash(profileId: Long, size: Long?): List<FilesEntity>
+    fun findNotCalculatedHash(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity>?
+    fun findAllNotCalculatedHash(profileId: Long, size: Long?): List<FilesEntity>?
+
+    fun getBySql(sql: String, params: Map<String, Any>, page: Int?, pageSize: Int?): List<FilesEntity>?
+
+    fun cleanUp(profileId: Long): EntityOperationResult
 
     fun isAlreadyExist(file: FilesEntity): Boolean
 }

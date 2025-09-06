@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.db.dao
 
 import com.paveltsikota.webcore.db.entity.GroupsEntity
+import com.paveltsikota.webcore.utils.ValuesUtils.validatePageParams
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -25,17 +26,6 @@ class GroupsDao(@PersistenceContext private val entityManager: EntityManager) {
     }
 
     @Transactional(readOnly = true)
-    fun findByIdAndProfileId(id: Long, profileId: Long): GroupsEntity? {
-        val query = entityManager.createQuery(
-            "FROM GroupsEntity p WHERE p.id = :id AND p.profile = :profile",
-            GroupsEntity::class.java
-        )
-        query.setParameter("id", id)
-        query.setParameter("profile", profileId)
-        return query.singleResultOrNull
-    }
-
-    @Transactional(readOnly = true)
     fun findBySizeAndProfileId(size: Long, profileId: Long): List<GroupsEntity>? {
         val query = entityManager.createQuery(
             "FROM GroupsEntity p WHERE p.size = :size AND p.profile = :profile",
@@ -55,6 +45,25 @@ class GroupsDao(@PersistenceContext private val entityManager: EntityManager) {
         } else {
             false
         }
+    }
+
+    @Transactional
+    internal fun getBySql(sql: String, params: Map<String, Any>, page: Int? = null, pageSize: Int? = null): List<GroupsEntity>? {
+        val pageValsOk = validatePageParams(page, pageSize)
+        val offset = if (pageValsOk) { (page!! - 1) * pageSize!! } else { null }
+
+        val query = entityManager.createQuery(sql, GroupsEntity::class.java)
+
+        if (params.isNotEmpty()) {
+            params.forEach{ query.setParameter(it.key, it.value) }
+        }
+
+        if (pageValsOk) {
+            query.setFirstResult(offset!!)
+            query.setMaxResults(pageSize!!)
+        }
+
+        return query.resultList
     }
 
 }

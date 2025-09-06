@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.db.dao
 
 import com.paveltsikota.webcore.db.entity.SourcesEntity
+import com.paveltsikota.webcore.utils.ValuesUtils.validatePageParams
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Repository
@@ -53,6 +54,23 @@ class SourcesDao(@PersistenceContext private val entityManager: EntityManager) {
         )
         query.setParameter("profile", profileId)
         query.executeUpdate()
+    }
+
+    @Transactional
+    internal fun getBySql(sql: String, params: Map<String, Any>, page: Int? = null, pageSize: Int? = null): List<SourcesEntity>? {
+        val pageValsOk = validatePageParams(page, pageSize)
+        val offset = if (pageValsOk) { (page!! - 1) * pageSize!! } else { null }
+
+        val query = entityManager.createQuery(sql, SourcesEntity::class.java)
+
+        params.forEach{ query.setParameter(it.key, it.value) }
+
+        if (pageValsOk) {
+            query.setFirstResult(offset!!)
+            query.setMaxResults(pageSize!!)
+        }
+
+        return query.resultList
     }
 
 }

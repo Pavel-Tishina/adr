@@ -68,7 +68,7 @@ object FilesEntityUtils {
                 && e1.hashType == e2.hashType
                 && e1.fileName == e2.fileName
                 && e1.newFileName == e2.newFileName
-                && FileUtils.toUnixPath(Path.of(e1.path)).equals(FileUtils.toUnixPath(Path.of(e2.path)))
+                && FileUtils.toUnixPath(Path.of(e1.path)) == FileUtils.toUnixPath(Path.of(e2.path))
     }
 
     fun entityToDto(e: FilesEntity): FilesDto {

@@ -1,6 +1,12 @@
 package com.paveltsikota.webcore.db.service.impl
 
 import com.paveltsikota.webcore.db.constants.DbConst
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_GROUPED
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_GROUPED_WITH_SIZE
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_HASHED
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_HASHED_WITH_SIZE
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_HASH_CALCULATED
+import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_NOT_HASH_CALCULATED_WITH_SIZE
 import com.paveltsikota.webcore.db.dao.FilesDao
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.service.FilesService
@@ -17,20 +23,11 @@ import java.nio.file.Path
 
 @Service
 class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
-    val SQL_GET_NOT_HASHED = "FROM FilesEntity p WHERE p.profile = :profile AND p.hashId IS NULL"
-    val SQL_GET_NOT_HASHED_WITH_SIZE = "FROM FilesEntity p WHERE p.profile = :profile AND p.size = :size AND p.hashId IS NULL"
-    val SQL_GET_NOT_GROUPED = "FROM FilesEntity p WHERE p.profile = :profile AND p.groupId IS NULL"
-    val SQL_GET_NOT_GROUPED_WITH_SIZE = "FROM FilesEntity p WHERE p.profile = :profile AND p.size = :size AND p.groupId IS NULL"
-    val SQL_GET_NOT_HASH_CALCULATED = "FROM FilesEntity p WHERE p.profile = :profile AND p.size = :size AND p.groupId IS NULL AND p.hashId IS NULL AND p.hash IS NULL and p.hashType IS NULL"
-    val SQL_GET_NOT_HASH_CALCULATED_WITH_SIZE = "FROM FilesEntity p WHERE p.profile = :profile p.size = :size AND AND p.groupId IS NULL AND p.hashId IS NULL AND p.hash IS NULL and p.hashType IS NULL"
 
     override fun getFile(id: Long): EntityOperationResult {
-        val entity = filesDao.findById(id)
-
-        return if (entity != null) {
-            EntityOperationResult(success = true, obj = entity, result = EntityOperationResultType.ENTITY_FOUND)
-        } else {
-            EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
+        return when (val entity = filesDao.findById(id)) {
+            null -> EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
+            else -> EntityOperationResult(success = true, obj = entity, result = EntityOperationResultType.ENTITY_FOUND)
         }
     }
 
@@ -108,7 +105,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
 
         results.forEach{
             if (!it.success && it.obj != null) {
-                errors.append("not add file '${(it.obj as FilesEntity)}'\n")
+                errors.append("not add file '${(it.obj as FilesEntity).path}'\n")
             } else if (it.success) {
                 addedObjects.add(it.obj as FilesEntity)
             }
@@ -228,64 +225,92 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
         }
     }
 
-    // TODO: optimize it!!!
     override fun findNotGrouped(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity> {
-        val sql = SQL_GET_NOT_GROUPED_WITH_SIZE.takeIf { size != null } ?: SQL_GET_NOT_GROUPED
-        val params = getProfileAndSizeMap(profileId, size)
-
-        return filesDao.getBySql(sql, params, page, pageSize)?: emptyList()
+        return executeGetBySql(
+            sql = SQL_GET_NOT_GROUPED.takeIf { size == null } ?: SQL_GET_NOT_GROUPED_WITH_SIZE,
+            profileId = profileId,
+            size = size,
+            page = page,
+            pageSize = pageSize
+        ) ?: emptyList()
     }
 
     override fun findAllNotGrouped(profileId: Long, size: Long?): List<FilesEntity> {
-        val result = ArrayList<FilesEntity>()
-        var partResult: List<FilesEntity>
-        var p = 0
-        do {
-            partResult = findNotGrouped(profileId, size, p++, DbConst.MAX_PAGE_SIZE)
-            result.addAll(partResult)
-        } while (partResult.isEmpty())
-
-        return result
+        return executeGetBySql(
+            sql = SQL_GET_NOT_GROUPED.takeIf { size == null } ?: SQL_GET_NOT_GROUPED_WITH_SIZE,
+            profileId = profileId,
+            size = size
+        ) ?: emptyList()
     }
 
-    // TODO: optimize it!!!
     override fun findNotHashed(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity> {
-        val sql = SQL_GET_NOT_HASHED_WITH_SIZE.takeIf { size != null } ?: SQL_GET_NOT_HASHED
-        val params = getProfileAndSizeMap(profileId, size)
-
-        return filesDao.getBySql(sql, params, page, pageSize)?: emptyList()
+        return executeGetBySql(
+            sql = SQL_GET_NOT_HASHED.takeIf { size == null } ?: SQL_GET_NOT_HASHED_WITH_SIZE,
+            profileId = profileId,
+            size = size,
+            page = page,
+            pageSize = pageSize
+        ) ?: emptyList()
     }
 
     override fun findAllNotHashed(profileId: Long, size: Long?): List<FilesEntity> {
-        val result = ArrayList<FilesEntity>()
-        var partResult: List<FilesEntity>
-        var p = 0
-        do {
-            partResult = findNotHashed(profileId, size, p++, DbConst.MAX_PAGE_SIZE)
-            result.addAll(partResult)
-        } while (partResult.isEmpty())
-
-        return result
+        return executeGetBySql(
+            sql = SQL_GET_NOT_HASHED.takeIf { size == null } ?: SQL_GET_NOT_HASHED_WITH_SIZE,
+            profileId = profileId,
+            size = size,
+        ) ?: emptyList()
     }
 
-    // TODO: optimize it!!!
     override fun findNotCalculatedHash(profileId: Long, size: Long?, page: Int, pageSize: Int): List<FilesEntity> {
-        val sql = SQL_GET_NOT_HASH_CALCULATED_WITH_SIZE.takeIf { size != null } ?: SQL_GET_NOT_HASH_CALCULATED
-        val params = getProfileAndSizeMap(profileId, size)
-
-        return filesDao.getBySql(sql, params, page, pageSize)?: emptyList()
+        return executeGetBySql(
+            sql = SQL_GET_NOT_HASH_CALCULATED.takeIf { size == null } ?: SQL_GET_NOT_HASH_CALCULATED_WITH_SIZE,
+            profileId = profileId,
+            size = size,
+            page = page,
+            pageSize = pageSize
+        ) ?: emptyList()
     }
 
     override fun findAllNotCalculatedHash(profileId: Long, size: Long?): List<FilesEntity> {
-        val result = ArrayList<FilesEntity>()
+        return executeGetBySql(
+            sql = SQL_GET_NOT_HASH_CALCULATED.takeIf { size == null } ?: SQL_GET_NOT_HASH_CALCULATED_WITH_SIZE,
+            profileId = profileId,
+            size = size,
+        ) ?: emptyList()
+    }
+
+    override fun getBySql(sql: String, params: Map<String, Any>, page: Int?, pageSize: Int?): List<FilesEntity>? {
+        return filesDao.getBySql(sql, params, page, pageSize)
+    }
+
+    override fun cleanUp(profileId: Long): EntityOperationResult {
+        var count = 0
+        var page = 0
         var partResult: List<FilesEntity>
-        var p = 0
+        val notDeleted = HashSet<Long>()
         do {
-            partResult = findNotCalculatedHash(profileId, size, p++, DbConst.MAX_PAGE_SIZE)
-            result.addAll(partResult)
+            partResult = filesDao.getFiles(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
+
+            count += partResult.size
+
+            if (partResult.isNotEmpty()) {
+                partResult.forEach { if (!filesDao.removeById(it.id)) { notDeleted.add(it.id)} }
+            }
         } while (partResult.isEmpty())
 
-        return result
+        return when {
+            count == 0 -> EntityOperationResult(
+                success = false, error = "There is no entities by profile '$profileId'",
+                result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
+
+            notDeleted.isNotEmpty() -> EntityOperationResult(
+                success = true, error = "Next entities not deleted ${notDeleted.joinToString(separator = ", ")}", obj = count,
+                result = EntityOperationResultType.ENTITIES_REMOVED_PARTLY)
+
+            else -> EntityOperationResult(
+                success = true, obj = count,
+                result = EntityOperationResultType.ENTITIES_REMOVED)
+        }
     }
 
     override fun isAlreadyExist(entity: FilesEntity): Boolean {
@@ -300,4 +325,29 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
 
         return map
     }
+
+    private fun executeGetBySql(sql: String, profileId: Long, size: Long? = null, page: Int? = null, pageSize: Int? = null): List<FilesEntity>? {
+        if (sql.isBlank()) {
+            return null
+        }
+
+        val params = getProfileAndSizeMap(profileId, size)
+        val ps = DbConst.MAX_PAGE_SIZE.takeIf { pageSize == null || pageSize < 1} ?: pageSize
+
+        return if (page == null || page < 1) {
+            val result = ArrayList<FilesEntity>()
+            var pageResult: List<FilesEntity>
+
+            var p = 0
+            do {
+                pageResult = getBySql(sql, params, p++, ps) ?: emptyList()
+                result.addAll(pageResult)
+            } while (pageResult.isEmpty())
+
+            result
+        } else {
+            getBySql(sql, params, page, ps)
+        }
+    }
+
 }
