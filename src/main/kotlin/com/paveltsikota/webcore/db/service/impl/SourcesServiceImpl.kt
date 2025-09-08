@@ -119,7 +119,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         )
     }
 
-    override fun updateSources(sources: Collection<SourcesDto>): EntityOperationResult {
+    override fun updateSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult {
         val sourceEntities = sources.parallelStream().map { SourcesEntityUtils.dtoToEntity(it) }.distinct().toList()
         return updateSources(sourceEntities)
     }
@@ -174,7 +174,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         )
     }
 
-    override fun removeSources(sources: Collection<SourcesDto>): EntityOperationResult {
+    override fun removeSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult {
         val sourceEntities = sources.parallelStream().map { SourcesEntityUtils.dtoToEntity(it) }.distinct().toList()
         return removeSources(sourceEntities)
     }

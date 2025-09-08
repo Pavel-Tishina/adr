@@ -50,7 +50,7 @@ class TestDbController(private val fileService: FilesService) {
         @RequestBody model: FilesDto
     ): FilesResponse {
         val opResult = if (addAsLocal) {
-            fileService.addLocalFile(Path(model.path), XXHash64, addOnce)
+            fileService.addLocalFile(Path(model.path?: ""), XXHash64, addOnce)
         } else {
             fileService.addRemoteFile(model, addOnce)
         }

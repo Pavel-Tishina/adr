@@ -13,12 +13,12 @@ interface SourcesService {
 
     fun updateSource(source: SourcesEntity): EntityOperationResult
     fun updateSources(sources: Collection<SourcesEntity>): EntityOperationResult
-    fun updateSources(sources: Collection<SourcesDto>): EntityOperationResult
+    fun updateSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult
 
     fun removeSource(id: Long): EntityOperationResult
     fun removeSource(source: SourcesEntity): EntityOperationResult
     fun removeSources(sources: Collection<SourcesEntity>): EntityOperationResult
-    fun removeSources(sources: Collection<SourcesDto>): EntityOperationResult
+    fun removeSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult
 
     fun cleanUp(profileId: Long): EntityOperationResult
 

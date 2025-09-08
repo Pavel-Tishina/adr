@@ -98,7 +98,7 @@ object FilesEntityUtils {
         } else {
             FilesEntity(
                 id = dto.id ?: 0,
-                profile = dto.profile,
+                profile = dto.profile ?: 0,
                 size = dto.size ?: Long.MIN_VALUE,
                 created = dto.created ?: Long.MIN_VALUE,
                 modified = dto.modified ?: Long.MIN_VALUE,
@@ -112,7 +112,7 @@ object FilesEntityUtils {
                 hash = dto.hash,
                 hashType = dto.hashType,
                 state = dto.state,
-                hold = dto.hold ?: false
+                hold = dto.hold == true
             )
         }
     }
@@ -130,7 +130,7 @@ object FilesEntityUtils {
                 && dto.hashPath.isNullOrBlank()
                 && dto.fileName.isNullOrBlank()
                 && dto.newFileName.isNullOrBlank()
-                && dto.path.isNotBlank() // NOT BLANK
+                && !dto.path.isNullOrBlank() // NOT BLANK
     }
 
     fun validateEntityForAdd(e: FilesEntity): Boolean {

@@ -55,7 +55,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
     }
 
     override fun getFiles(page: Int, pageSize: Int, profileId: Long?): EntityOperationResult {
-        val entities = filesDao.getFiles(page, pageSize, profileId)
+        val entities = filesDao.getAll(page, pageSize, profileId)
         return when {
             entities.isNullOrEmpty() -> EntityOperationResult(
                 success = false, error = "Entities not found", result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
@@ -113,7 +113,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
 
         val result = if (addedObjects.size == fileDto.size) {
             EntityOperationResultType.ENTITIES_ADDED
-        } else if (addedObjects.size > 0 && addedObjects.size < fileDto.size) {
+        } else if (addedObjects.isNotEmpty() && addedObjects.size < fileDto.size) {
             EntityOperationResultType.ENTITIES_ADDED_PARTLY
         } else {
             EntityOperationResultType.ENTITIES_NOT_ADDED
@@ -137,7 +137,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
     }
 
     override fun updateFile(fileFto: FilesDto, isLocal: Boolean?): EntityOperationResult {
-        return updateFile(FilesEntityUtils.dtoToEntity(fileFto, isLocal ?: false))
+        return updateFile(FilesEntityUtils.dtoToEntity(fileFto, isLocal == true))
     }
 
     override fun removeFile(file: FilesEntity): EntityOperationResult {
@@ -289,7 +289,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
         var partResult: List<FilesEntity>
         val notDeleted = HashSet<Long>()
         do {
-            partResult = filesDao.getFiles(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
+            partResult = filesDao.getAll(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
 
             count += partResult.size
 

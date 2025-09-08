@@ -6,11 +6,11 @@ import com.paveltsikota.webcore.utils.enums.HashType
 
 data class FilesDto(
     val id: Long?,
-    val profile: Long,
+    val profile: Long?,
     val size: Long?,
     val created: Long?,
     val modified: Long?,
-    val path: String,
+    val path: String?,
     @JsonProperty("hash_path")
     val hashPath: String?,
     @JsonProperty("file_name")
