@@ -12,8 +12,8 @@ import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.rest.api.SourcesDto
 import com.paveltsikota.webcore.utils.FileUtils
-import com.paveltsikota.webcore.utils.SourcesEntityUtils
-import com.paveltsikota.webcore.utils.SourcesEntityUtils.eq
+import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
+import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils.eq
 import org.springframework.stereotype.Service
 import java.nio.file.Path
 
@@ -105,7 +105,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
 
         val result = if (addedObjects.size == sourcesSet.size) {
             EntityOperationResultType.ENTITIES_ADDED
-        } else if (addedObjects.size > 0 && addedObjects.size < sourcesSet.size) {
+        } else if (addedObjects.isNotEmpty() && addedObjects.size < sourcesSet.size) {
             EntityOperationResultType.ENTITIES_ADDED_PARTLY
         } else {
             EntityOperationResultType.ENTITIES_NOT_ADDED
@@ -160,7 +160,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
 
         val resultOperation = if (removed.size == sourcesSet.size) {
             EntityOperationResultType.ENTITIES_REMOVED
-        } else if (removed.size > 0 && removed.size < sourcesSet.size) {
+        } else if (removed.isNotEmpty() && removed.size < sourcesSet.size) {
             EntityOperationResultType.ENTITIES_REMOVED_PARTLY
         } else {
             EntityOperationResultType.ENTITIES_NOT_REMOVED

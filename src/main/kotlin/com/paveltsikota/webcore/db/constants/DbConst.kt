@@ -17,4 +17,12 @@ object DbConst {
     val SQL_GET_SOURCES_BY_PROFILE = "FROM SourcesEntity p WHERE p.profile = :profile ORDER BY p.id"
     val SQL_GET_BY_PROFILE_AND_PATH = "FROM SourcesEntity p WHERE p.profile = :profile AND ORDER BY p.id"
 
+    val SQL_GET_HASHES = "FROM HashesEntity p ORDER BY p.id"
+    val SQL_GET_HASHES_BY_PROFILE = "FROM HashesEntity p WHERE p.profile = :profile ORDER BY p.id"
+    val SQL_GET_HASHES_BY_N = "FROM HashesEntity p WHERE json_array_length(p.duplicates) = :n ORDER BY p.id"
+    val SQL_GET_HASHES_BY_PROFILE_AND_N = "FROM HashesEntity p WHERE p.profile = :profile AND json_array_length(p.duplicates) = :n ORDER BY p.id"
+
+    val SQL_HASHES_ALREADY_EXIST = "FROM HashesEntity p WHERE p.profile = :profile AND p.size = :size AND p.hash = :hash AND p.hashType = : hashType LIMIT 1"
+    val SQL_GET_HASHES_BY_PROFILE_AND_SIZE = "FROM HashesEntity p WHERE p.profile = :profile AND p.size = :size"
+
 }

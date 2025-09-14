@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.db.dao
 
 import com.paveltsikota.webcore.db.entity.HashesEntity
+import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -8,12 +9,13 @@ import org.springframework.transaction.annotation.Transactional
 class HashesDao: CommonDao<HashesEntity>(HashesEntity::class.java) {
 
     @Transactional(readOnly = true)
-    fun findByHashAndProfileId(hash: String, profileId: Long): HashesEntity? {
+    fun findByHashAndProfileId(hash: String, hashType: HashType, profileId: Long): HashesEntity? {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.hash = :hash", entityClass)
+            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.hashType = hashType AND p.hash = :hash", entityClass)
 
         query.setParameter("hash", hash)
         query.setParameter("profile", profileId)
+        query.setParameter("hashType", hashType)
         return query.singleResultOrNull
     }
 

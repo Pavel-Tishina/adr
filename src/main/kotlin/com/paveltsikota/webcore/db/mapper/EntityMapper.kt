@@ -2,7 +2,7 @@ package com.paveltsikota.webcore.db.mapper
 
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.rest.api.FilesDto
-import com.paveltsikota.webcore.utils.FilesEntityUtils
+import com.paveltsikota.webcore.utils.entity.FilesEntityUtils
 
 object EntityMapper {
 

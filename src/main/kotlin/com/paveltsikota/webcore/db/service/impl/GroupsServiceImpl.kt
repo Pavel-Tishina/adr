@@ -8,7 +8,7 @@ import com.paveltsikota.webcore.db.entity.GroupsEntity
 import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.utils.GroupsEntityUtils.eq
+import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils.eq
 import org.springframework.stereotype.Service
 
 @Service

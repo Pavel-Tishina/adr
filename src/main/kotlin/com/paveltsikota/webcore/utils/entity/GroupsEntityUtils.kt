@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.utils
+package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.GroupsEntity
 import com.paveltsikota.webcore.rest.api.GroupsDto
@@ -17,9 +17,8 @@ object GroupsEntityUtils {
     }
 
     fun dtoToEntity(dto: GroupsDto): GroupsEntity {
-        return when (dto.id) {
-            null -> GroupsEntity(profile = dto.profile, size = dto.size, fileIds = dto.fileIds?: emptySet())
-            else -> GroupsEntity(id = dto.id, profile = dto.profile, size = dto.size, fileIds = dto.fileIds?: emptySet())
+        return with(dto) {
+            GroupsEntity(id = dto.id ?: 0, profile = dto.profile, size = dto.size, fileIds = dto.fileIds ?: emptySet())
         }
     }
 

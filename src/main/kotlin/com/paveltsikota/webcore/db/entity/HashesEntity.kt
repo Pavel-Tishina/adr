@@ -26,6 +26,6 @@ data class HashesEntity(
     var main: Long = 0,
 
     @Column(nullable = false)
-    var duplicates: Set<Long> = hashSetOf(),
+    var duplicates: MutableSet<Long> = hashSetOf(),
 
     )

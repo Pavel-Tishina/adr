@@ -1,7 +1,8 @@
-package com.paveltsikota.webcore.utils
+package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.rest.api.SourcesDto
+import com.paveltsikota.webcore.utils.FileUtils
 import kotlin.io.path.Path
 
 object SourcesEntityUtils {
@@ -18,9 +19,8 @@ object SourcesEntityUtils {
     }
 
     fun dtoToEntity(dto: SourcesDto): SourcesEntity {
-        return when (dto.id) {
-            null -> SourcesEntity(profile = dto.profile, dirorder = dto.dirorder, path = FileUtils.toUnixPath(Path(dto.path)))
-            else -> SourcesEntity(id = dto.id, profile = dto.profile, dirorder = dto.dirorder, path = FileUtils.toUnixPath(Path(dto.path)))
+        return with(dto) {
+            SourcesEntity(id = id?: 0, profile = profile, dirorder = dirorder, path = FileUtils.toUnixPath(Path(path)))
         }
     }
 

@@ -1,9 +1,9 @@
-package com.paveltsikota.webcore.utils
+package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
-import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
 import com.paveltsikota.webcore.rest.api.FilesDto
+import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import java.nio.file.Path
@@ -47,10 +47,22 @@ object FilesEntityUtils {
             size = file.length(),
             created = FileUtils.getFileCreationTime(path),
             modified = FileUtils.getFileModificationTime(path),
-            hashPath = if (exist && calc != null) { "/${calc.getType()}" } else { null },
-            hash = if (exist && calc != null) { calc.calculate(path) } else { null },
-            hashType = if (exist && calc != null) { calc.getType() } else { null },
-            state = FileState.ON_PLACE.takeIf { exist }?: FileState.NOT_FOUND,
+            hashPath = if (exist && calc != null) {
+                "/${calc.getType()}"
+            } else {
+                null
+            },
+            hash = if (exist && calc != null) {
+                calc.calculate(path)
+            } else {
+                null
+            },
+            hashType = if (exist && calc != null) {
+                calc.getType()
+            } else {
+                null
+            },
+            state = FileState.ON_PLACE.takeIf { exist } ?: FileState.NOT_FOUND,
         )
     }
 
