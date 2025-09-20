@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.db.entity
 
 import com.paveltsikota.webcore.db.convertor.MapToJsonConverter
+import com.paveltsikota.webcore.utils.entity.ConfigEntityUtils.getDefaultConfigMap
 import jakarta.persistence.*
 
 @Entity
@@ -18,6 +19,6 @@ data class ProfileEntity(
 
     @Convert(converter = MapToJsonConverter::class)
     @Column(nullable = false, columnDefinition = "TEXT") // Liquibase заменит на jsonb в PostgreSQL
-    var cfg: String = ""
+    var cfg: Map<String, Any> = getDefaultConfigMap()
 
 )

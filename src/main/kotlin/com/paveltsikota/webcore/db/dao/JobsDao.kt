@@ -8,23 +8,40 @@ import org.springframework.transaction.annotation.Transactional
 class JobsDao: CommonDao<JobsEntity>(JobsEntity::class.java) {
 
     @Transactional(readOnly = true)
-    fun findByIdAndProfileId(id: Long, profileId: Long): JobsEntity? {
+    fun findByIdAndProfileId(profileId: Long): JobsEntity? {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.id = :id AND p.profile = :profile", entityClass)
+            "FROM ${entityClass.name} p WHERE p.profile = :profile", entityClass)
 
-        query.setParameter("id", id)
         query.setParameter("profile", profileId)
         return query.singleResultOrNull
     }
 
     @Transactional(readOnly = true)
-    fun findByProfileId(size: Long, profileId: Long): List<JobsEntity>? {
+    fun findByProfileIdAndPriority(profileId: Long, priority: Int): JobsEntity? {
+        val query = entityManager.createQuery(
+            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.priority = :priority", entityClass)
+
+        query.setParameter("priority", priority)
+        query.setParameter("profile", profileId)
+        return query.singleResultOrNull
+    }
+
+    @Transactional(readOnly = true)
+    fun findByProfileId(profileId: Long): List<JobsEntity>? {
         val query = entityManager.createQuery(
             "FROM ${entityClass.name} p WHERE p.profile = :profile ORDER BY p.priority", entityClass)
 
-        query.setParameter("size", size)
         query.setParameter("profile", profileId)
         return query.resultList
+    }
+
+    @Transactional(readOnly = true)
+    fun findLastPriority(profileId: Long): Int {
+        val query = entityManager.createQuery(
+            "SELECT MAX(e.priority) FROM ${entityClass.name} p WHERE p.profile = :profile", Int::class.java)
+
+        query.setParameter("profile", profileId)
+        return query.singleResult?: 0
     }
 
 }

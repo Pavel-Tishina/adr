@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.api
+package com.paveltsikota.webcore.db.dto
 
 data class SourcesDto(
     val id: Long? = 0,

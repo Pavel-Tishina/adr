@@ -1,23 +1,21 @@
 package com.paveltsikota.webcore.rest.controller
 
-import com.paveltsikota.webcore.db.mapper.EntityMapper
 import com.paveltsikota.webcore.db.service.FilesService
-import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
-import com.paveltsikota.webcore.rest.api.DeleteFilesByIdsRequest
-import com.paveltsikota.webcore.rest.api.FilesDto
-import com.paveltsikota.webcore.rest.api.FilesResponse
-import com.paveltsikota.webcore.rest.api.GetFilesByIdsRequest
+import com.paveltsikota.webcore.rest.model.DeleteFilesByIdsRequest
+import com.paveltsikota.webcore.db.dto.FilesDto
+import com.paveltsikota.webcore.rest.model.FilesResponse
+import com.paveltsikota.webcore.rest.model.GetFilesByIdsRequest
+import com.paveltsikota.webcore.rest.utils.ResponseUtils.getFilesResponse
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
 
 @RestController
-@RequestMapping("/rest/v1/test")
-class TestDbController(private val fileService: FilesService) {
+@RequestMapping("/rest/v1/test/db/files")
+class TestDbFilesController(private val fileService: FilesService) {
 
-
-    @GetMapping("/files/get/{id}")
+    @GetMapping("/get/{id}")
     fun getFileById(@PathVariable id: String): FilesResponse {
         val idVal = id.toLong()
         val opResult = fileService.getFile(idVal)
@@ -25,14 +23,14 @@ class TestDbController(private val fileService: FilesService) {
         return getFilesResponse(opResult)
     }
 
-    @GetMapping("/files/get")
+    @GetMapping("/get")
     fun getFileByIds(@RequestBody ids: GetFilesByIdsRequest): FilesResponse {
         val opResult = fileService.getFiles(ids.ids)
 
         return getFilesResponse(opResult)
     }
 
-    @GetMapping("/files/get-all")
+    @GetMapping("/get-all")
     fun getFiles(
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "20") pageSize: Int,
@@ -43,7 +41,7 @@ class TestDbController(private val fileService: FilesService) {
         return getFilesResponse(opResult)
     }
 
-    @PostMapping("/files")
+    @PostMapping("/")
     fun addFile(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestHeader("Add-As-Local", defaultValue = "false") addAsLocal: Boolean,
@@ -58,7 +56,7 @@ class TestDbController(private val fileService: FilesService) {
         return getFilesResponse(opResult)
     }
 
-    @PutMapping("/files")
+    @PutMapping("/")
     fun updFile(
         @RequestHeader("Upd-As-Local", defaultValue = "false") updAsLocal: Boolean,
         @RequestBody model: FilesDto
@@ -68,29 +66,18 @@ class TestDbController(private val fileService: FilesService) {
         return getFilesResponse(opResult)
     }
 
-    @DeleteMapping("/files/remove")
+    @DeleteMapping("/remove")
     fun delFile(@RequestBody model: FilesDto): FilesResponse {
         val opResult = fileService.removeFile(model)
 
         return getFilesResponse(opResult)
     }
 
-    @DeleteMapping("/files/remove-by-ids")
+    @DeleteMapping("/remove-by-ids")
     fun delFile(@RequestBody model: DeleteFilesByIdsRequest): FilesResponse {
         val opResult = fileService.removeFiles(model.ids)
 
         return getFilesResponse(opResult)
     }
-
-    private fun getFilesResponse(opResult: EntityOperationResult): FilesResponse {
-        val resultObj = EntityMapper.filesEntityToDtoList(opResult.obj)
-        return FilesResponse(
-            success = opResult.success,
-            obj = resultObj.takeIf { resultObj.isNotEmpty() },
-            error = opResult.error ?: ""
-        )
-    }
-
-
 
 }

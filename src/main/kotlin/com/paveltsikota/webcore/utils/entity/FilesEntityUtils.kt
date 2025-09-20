@@ -2,7 +2,7 @@ package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
-import com.paveltsikota.webcore.rest.api.FilesDto
+import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType

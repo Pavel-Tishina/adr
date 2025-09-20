@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.SourcesEntity
-import com.paveltsikota.webcore.rest.api.SourcesDto
+import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.utils.FileUtils
 import kotlin.io.path.Path
 

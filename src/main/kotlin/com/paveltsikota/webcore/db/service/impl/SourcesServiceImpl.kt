@@ -5,12 +5,11 @@ import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_BY_PROFILE_AND_PATH
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES_BY_PROFILE
 import com.paveltsikota.webcore.db.dao.SourcesDao
-import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.rest.api.SourcesDto
+import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils.eq
@@ -64,7 +63,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
     override fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult {
         val source = SourcesEntity(path = FileUtils.toUnixPath(path), profile = profileId, dirorder = dirorder)
 
-        return when (addOnce?: true && isAlreadyExist(source)) {
+        return when (addOnce != false && isAlreadyExist(source)) {
             true -> EntityOperationResult(
                 success = false, error = "Entity already exist", result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
 
@@ -93,13 +92,13 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         val results = sourcesSet.map { updateSource(it) }
         val isAnySuccess = results.parallelStream().anyMatch { it.success }
         val errors = StringBuilder()
-        val addedObjects = ArrayList<FilesEntity>()
+        val addedObjects = ArrayList<SourcesEntity>()
 
         results.forEach{
             if (!it.success && it.obj != null) {
                 errors.append("not add source '${(it.obj as SourcesEntity).path}'\n")
             } else if (it.success) {
-                addedObjects.add(it.obj as FilesEntity)
+                addedObjects.add(it.obj as SourcesEntity)
             }
         }
 

@@ -18,12 +18,12 @@ class ProfileDao: CommonDao<ProfileEntity>(ProfileEntity::class.java) {
     }
 
     @Transactional(readOnly = true)
-    fun findByTitle(title: String): List<ProfileEntity> {
+    fun findByTitle(title: String): ProfileEntity? {
         val query = entityManager.createQuery(
             "FROM ${entityClass.name} p WHERE p.title = :title", entityClass)
 
         query.setParameter("title", title)
-        return query.resultList
+        return query.singleResultOrNull
     }
 
 }

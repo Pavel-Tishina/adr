@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.HashesEntity
-import com.paveltsikota.webcore.rest.api.HashesDto
+import com.paveltsikota.webcore.db.dto.HashesDto
 
 object HashesEntityUtils {
 

@@ -3,7 +3,7 @@ package com.paveltsikota.webcore.db.service
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
-import com.paveltsikota.webcore.rest.api.FilesDto
+import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.utils.enums.HashType
 import java.nio.file.Path
 

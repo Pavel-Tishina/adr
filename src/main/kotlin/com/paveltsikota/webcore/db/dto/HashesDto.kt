@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.api
+package com.paveltsikota.webcore.db.dto
 
 import com.paveltsikota.webcore.utils.enums.HashType
 

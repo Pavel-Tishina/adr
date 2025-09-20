@@ -30,8 +30,8 @@ data class JobsEntity (
     @Column(nullable = false)
     var disabled: Boolean = false,
 
-    @Column(nullable = true)
-    val type: JobsType? = null,
+    @Column(nullable = false)
+    val type: JobsType,
 
     @Column(nullable = true)
     var lastObject: String? = null,

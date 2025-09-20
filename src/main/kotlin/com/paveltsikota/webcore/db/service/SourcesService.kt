@@ -2,7 +2,7 @@ package com.paveltsikota.webcore.db.service
 
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
-import com.paveltsikota.webcore.rest.api.SourcesDto
+import com.paveltsikota.webcore.db.dto.SourcesDto
 import java.nio.file.Path
 
 interface SourcesService {

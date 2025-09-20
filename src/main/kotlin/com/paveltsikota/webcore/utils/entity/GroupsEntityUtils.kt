@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.GroupsEntity
-import com.paveltsikota.webcore.rest.api.GroupsDto
+import com.paveltsikota.webcore.db.dto.GroupsDto
 
 object GroupsEntityUtils {
 
