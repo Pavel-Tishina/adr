@@ -44,7 +44,7 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
         return getSourcesResponse(opResult)
     }
 
-    @PostMapping("/")
+    @PostMapping("/many")
     fun addSources(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: ManySourcesRequest
