@@ -16,9 +16,8 @@ import kotlin.io.path.Path
 class TestDbFilesController(private val fileService: FilesService) {
 
     @GetMapping("/get/{id}")
-    fun getFileById(@PathVariable id: String): FilesResponse {
-        val idVal = id.toLong()
-        val opResult = fileService.getFile(idVal)
+    fun getFileById(@PathVariable id: Long): FilesResponse {
+        val opResult = fileService.getFile(id)
 
         return getFilesResponse(opResult)
     }

@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.utils
 
+import com.paveltsikota.webcore.utils.enums.HashType
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
@@ -7,6 +8,15 @@ object ValuesUtils {
 
     fun validatePageParams(page: Int?, pageSize: Int?): Boolean {
         return page != null && pageSize != null && page > 0 && pageSize > 0
+    }
+
+    fun validateFindByHash(hash: String?, hashType: HashType?, profileId: Long?): Boolean {
+        return hash != null
+                && hash.isNotBlank()
+                && hashType != null
+                && hashType != HashType.UNKNOWN
+                && profileId != null
+                && profileId > 0
     }
 
     inline fun <reified T : Any> T.toMap(): Map<String, Any?> {

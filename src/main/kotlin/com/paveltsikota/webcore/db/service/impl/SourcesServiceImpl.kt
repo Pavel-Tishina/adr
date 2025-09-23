@@ -75,6 +75,37 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         }
     }
 
+    override fun addSourcesDto(
+        sources: Collection<SourcesDto>,
+        addOnce: Boolean?
+    ): EntityOperationResult {
+        val sourcesSet = sources.distinct()
+        val added = mutableSetOf<SourcesEntity>()
+        val errors = mutableSetOf<SourcesDto>()
+
+        sourcesSet.forEach { dto ->
+            val resultOp = with(dto) {
+                addSource(Path.of(path), profile, dirorder, addOnce)
+            }
+            if (resultOp.success) {
+                added.add(resultOp.obj as SourcesEntity)
+            } else {
+                errors.add(dto)
+            }
+        }
+
+        return when {
+            added.isEmpty() -> EntityOperationResult(
+                success = false, error = "Entities not added: ${errors.joinToString(",\n") { it.path }}", result = EntityOperationResultType.ENTITIES_NOT_ADDED)
+
+            errors.isNotEmpty() -> EntityOperationResult(
+                success = true, error = "Entities not added: ${errors.joinToString(",\n") { it.path }}", obj = added, result = EntityOperationResultType.ENTITIES_ADDED_PARTLY)
+
+            else -> EntityOperationResult(
+                success = true, obj = added, result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
+        }
+    }
+
     override fun updateSource(source: SourcesEntity): EntityOperationResult {
         val result = sourcesDao.update(source)
 

@@ -1,11 +1,13 @@
 package com.paveltsikota.webcore.db.service.impl
 
+import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.service.JobService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.db.dto.JobsDto
+import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.utils.entity.JobEntityUtils.eq
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -154,6 +156,34 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
 
     override fun remove(job: JobsEntity): EntityOperationResult {
         return remove(job.id)
+    }
+
+    override fun cleanUp(profileId: Long): EntityOperationResult {
+        var count = 0
+        var page = 0
+        val notDeleted = HashSet<Long>()
+        do {
+            val partResult = jobsDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?:emptyList()
+
+            if (partResult.isNotEmpty()) {
+                partResult.forEach { if (!jobsDao.removeById((it as HashesEntity).id)) notDeleted.add(it.id) }
+                count += partResult.size
+            }
+        } while (partResult.isEmpty())
+
+        return when {
+            count == 0 -> EntityOperationResult(
+                success = false, error = "There is no entities by profile '$profileId'",
+                result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
+
+            notDeleted.isNotEmpty() -> EntityOperationResult(
+                success = true, error = "Next entities not deleted ${notDeleted.joinToString(separator = ", ")}", obj = count,
+                result = EntityOperationResultType.ENTITIES_REMOVED_PARTLY)
+
+            else -> EntityOperationResult(
+                success = true, obj = count,
+                result = EntityOperationResultType.ENTITIES_REMOVED)
+        }
     }
 
     override fun isAlreadyExist(job: JobsEntity): Boolean {

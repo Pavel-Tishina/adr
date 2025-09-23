@@ -10,6 +10,7 @@ interface SourcesService {
     fun getSources(page: Int?, pageSize: Int?, profileId: Long?): EntityOperationResult
 
     fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult
+    fun addSourcesDto(sources: Collection<SourcesDto>, addOnce: Boolean?): EntityOperationResult
 
     fun updateSource(source: SourcesEntity): EntityOperationResult
     fun updateSources(sources: Collection<SourcesEntity>): EntityOperationResult

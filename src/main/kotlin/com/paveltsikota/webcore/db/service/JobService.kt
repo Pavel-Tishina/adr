@@ -32,8 +32,11 @@ interface JobService {
     fun addDto(jobDto: Collection<JobsDto>, addOnce: Boolean?): EntityOperationResult
 
     fun update(job: JobsEntity): EntityOperationResult
+
     fun remove(id: Long): EntityOperationResult
     fun remove(job: JobsEntity): EntityOperationResult
+
+    fun cleanUp(profileId: Long): EntityOperationResult
 
     fun isAlreadyExist(job: JobsEntity): Boolean
 }

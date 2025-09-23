@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.*
 class TestDbGroupsController(private val groupsService: GroupsService) {
 
     @GetMapping("/get/{id}")
-    fun getGroupById(@PathVariable id: String): GroupsResponse {
-        val idVal = id.toLong()
-        val opResult = groupsService.getGroup(idVal)
+    fun getGroupById(@PathVariable id: Long): GroupsResponse {
+        val opResult = groupsService.getGroup(id)
 
         return getGroupsResponse(opResult)
     }

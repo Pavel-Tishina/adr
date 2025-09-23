@@ -18,9 +18,9 @@ object ProfileEntityUtils {
     }
 
     // TODO: cfg mapper
-    fun dtoToEntity(dto: ProfileDto, profileId: Long = 0): ProfileEntity {
+    fun dtoToEntity(dto: ProfileDto): ProfileEntity {
         return with(dto) {
-            ProfileEntity(id = id, title = title, description = description, cfg = ConfigEntityUtils.dtoToMap(cfg, profileId))
+            ProfileEntity(id = id?:0, title = title, description = description?:"", cfg = ConfigEntityUtils.dtoToMap(cfg, id?:0))
         }
     }
 

@@ -13,7 +13,7 @@ interface HashesService {
     fun add(profileId: Long, size: Long, hash: String, hashType: HashType, main: Long, dupIds: Collection<Long>?, addOnce: Boolean?): EntityOperationResult
 
     fun update(entity: HashesEntity): EntityOperationResult
-    fun update(id: Long, main: Long, dupIds: Collection<Long>?): EntityOperationResult
+    fun update(id: Long, profileId: Long, main: Long, dupIds: Collection<Long>?): EntityOperationResult
 
     fun remove(id: Long): EntityOperationResult
     fun remove(entity: HashesEntity): EntityOperationResult

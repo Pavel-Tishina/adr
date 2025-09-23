@@ -23,6 +23,7 @@ enum class EntityOperationResultType(private val isSingle: Boolean? = null) {
     ENTITIES_FOUNDED_PARTLY     (false),
     ENTITIES_NOT_FOUNDED        (false),
     ENTITIES_ALREADY_EXISTED    (false),
+    OK,
     ERROR;
 
     fun isSingle(): Boolean? {

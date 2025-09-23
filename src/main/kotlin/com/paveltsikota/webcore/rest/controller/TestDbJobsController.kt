@@ -2,9 +2,22 @@ package com.paveltsikota.webcore.rest.controller
 
 import com.paveltsikota.webcore.db.service.JobService
 import com.paveltsikota.webcore.db.dto.GroupsDto
-import com.paveltsikota.webcore.rest.model.GroupsResponse
-import com.paveltsikota.webcore.rest.utils.ResponseUtils.getGroupsResponse
+import com.paveltsikota.webcore.db.dto.JobsDto
+import com.paveltsikota.webcore.db.entity.JobsEntity
+import com.paveltsikota.webcore.db.service.result.EntityOperationResult
+import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
+import com.paveltsikota.webcore.rest.model.GetFilesByIdsRequest
+import com.paveltsikota.webcore.rest.model.JobsResponse
+import com.paveltsikota.webcore.rest.model.PostAddManyJobsRequest
+import com.paveltsikota.webcore.rest.utils.ResponseUtils.getJobsResponse
+import com.paveltsikota.webcore.service.operation.OperationResult
 import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils
+import com.paveltsikota.webcore.utils.entity.JobEntityUtils
+import com.paveltsikota.webcore.utils.enums.JobStatus
+import com.paveltsikota.webcore.utils.enums.JobStatus.CREATED
+import com.paveltsikota.webcore.utils.enums.JobStatus.RUNNING
+import com.paveltsikota.webcore.utils.enums.JobStatus.PAUSED
+import com.paveltsikota.webcore.utils.enums.JobsType
 import org.springframework.web.bind.annotation.*
 
 
@@ -13,72 +26,87 @@ import org.springframework.web.bind.annotation.*
 class TestDbJobsController(private val jobService: JobService) {
 
     @GetMapping("/get/{id}")
-    fun getJobById(@PathVariable id: String): GroupsResponse {
-        val idVal = id.toLong()
-        val opResult = jobService.getById(idVal)
+    fun getJobById(@PathVariable id: Long): JobsResponse {
+        val opResult = jobService.getById(id)
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
     }
 
-    @GetMapping("/get-all")
-    fun getAllGroups(
-        @RequestParam(required = false, defaultValue = "1") page: Int?,
-        @RequestParam(required = false, defaultValue = "20") pageSize: Int?,
-        @RequestParam(required = false) profileId: Long?
-    ): GroupsResponse {
-        val opResult = groupsService.getAllGroups(profileId).takeIf { page == null && pageSize == null}
-            ?: groupsService.getGroups(page, pageSize, profileId)
+    @GetMapping("/get")
+    fun getJobs(
+        @RequestParam(required = false) profileId: Long?,
+        @RequestParam(required = false) priority: Int?,
+        @RequestParam(required = false) type: JobsType?,
+        @RequestParam(required = false) status: JobStatus?
+    ): JobsResponse {
+        val opResult = jobService.get(profileId, priority, type, status)
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
     }
 
-    @GetMapping("/get-by-size")
-    fun getBySize(
-        @RequestParam(required = true) size: Long,
-        @RequestParam(required = true) profileId: Long
-    ): GroupsResponse {
-        val opResult = groupsService.findBySize(size, profileId)
+    @GetMapping("/get-by-status")
+    fun getByStatus(
+        @RequestParam(required = false) profileId: Long?,
+        @RequestParam(required = false) status: JobStatus
+    ): JobsResponse {
+        val opResult = when (status) {
+            CREATED -> jobService.getAllNotStarted(profileId)
+            RUNNING -> jobService.getAllRun(profileId)
+            PAUSED -> jobService.getAllPaused(profileId)
+            else -> null
+        }
 
-        return getGroupsResponse(opResult)
+        val finalResult = EntityOperationResult(success = true, obj = opResult, result = EntityOperationResultType.OK)
+            .takeIf { opResult != null }
+            ?: EntityOperationResult(success = false, error = "Wrong status set", result = EntityOperationResultType.ERROR)
+
+        return getJobsResponse(finalResult)
     }
 
     @PostMapping("/")
-    fun addGroup(
+    fun addJob(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
-        @RequestBody model: GroupsDto
-    ): GroupsResponse {
-        val opResult = groupsService.addGroup(
-            size = model.size,
-            profileId = model.profile,
-            fileIds = model.fileIds?: emptySet(),
-            addOnce = addOnce
-        )
+        @RequestBody model: JobsDto
+    ): JobsResponse {
+        val opResult = with(model) {
+            jobService.add(profile, priority, start, finish, completed, disabled, type, lastObject, lastObjectId, status, addOnce)
+        }
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
+    }
+
+    @PostMapping("/many")
+    fun addManyJobs(
+        @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
+        @RequestBody model: PostAddManyJobsRequest
+    ): JobsResponse {
+        val opResult = jobService.addDto(model.jobs, addOnce)
+
+        return getJobsResponse(opResult)
     }
 
     @PutMapping("/")
-    fun updGroup(
-        @RequestHeader("Upd-As-Local", defaultValue = "false") updAsLocal: Boolean,
-        @RequestBody model: GroupsDto
-    ): GroupsResponse {
-        val opResult = groupsService.updateGroup(GroupsEntityUtils.dtoToEntity(model))
+    fun updJob(
+        @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
+        @RequestBody model: JobsDto
+    ): JobsResponse {
+        val opResult = jobService.update(JobEntityUtils.dtoToEntity(model))
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
     }
 
-    @DeleteMapping("/remove")
-    fun delGroup(@RequestBody model: GroupsDto): GroupsResponse {
-        val opResult = groupsService.removeGroup(model.id ?: 0)
+    @DeleteMapping("/")
+    fun delJob(@RequestBody model: GroupsDto): JobsResponse {
+        val opResult = jobService.remove(model.id ?: 0)
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): GroupsResponse {
-        val opResult = groupsService.cleanUp(profileId)
+    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): JobsResponse {
+        val opResult = jobService.cleanUp(profileId)
 
-        return getGroupsResponse(opResult)
+        return getJobsResponse(opResult)
     }
 
 

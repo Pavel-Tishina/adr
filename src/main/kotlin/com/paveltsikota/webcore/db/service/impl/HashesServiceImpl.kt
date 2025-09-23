@@ -101,10 +101,10 @@ class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
         }
     }
 
-    override fun update(id: Long, main: Long, dupIds: Collection<Long>?): EntityOperationResult {
+    override fun update(id: Long, profileId: Long, main: Long, dupIds: Collection<Long>?): EntityOperationResult {
         val entity = hashesDao.findById(id)
 
-        return if (entity == null) {
+        return if (entity == null || entity.profile != profileId) {
             EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
         } else {
             val updatedEntity = setUpdate(entity, main, dupIds?: emptySet())
