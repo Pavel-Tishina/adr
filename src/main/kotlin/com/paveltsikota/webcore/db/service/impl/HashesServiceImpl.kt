@@ -160,13 +160,13 @@ class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
         var page = 0
         val notDeleted = HashSet<Long>()
         do {
-            val partResult = getAll(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)
+            val partResult = getAll(page = ++page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)
 
             if (partResult.success && (partResult.obj as List<*>).isNotEmpty()) {
                 partResult.obj.forEach { if (!hashesDao.removeById((it as HashesEntity).id)) notDeleted.add(it.id) }
                 count += partResult.obj.size
             }
-        } while (!partResult.success)
+        } while (partResult.success)
 
         return when {
             count == 0 -> EntityOperationResult(
@@ -220,9 +220,9 @@ class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, p++, ps) ?: emptyList()
+                pageResult = getBySql(sql, params, ++p, ps) ?: emptyList()
                 result.addAll(pageResult)
-            } while (pageResult.isEmpty())
+            } while (pageResult.isNotEmpty())
 
             result
         } else {

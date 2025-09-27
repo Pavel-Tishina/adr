@@ -3,6 +3,7 @@ package com.paveltsikota.webcore.utils.entity
 import com.paveltsikota.webcore.db.entity.ConfigEntity
 import com.paveltsikota.webcore.db.dto.CfgDto
 import com.paveltsikota.webcore.utils.FileUtils
+import com.paveltsikota.webcore.utils.ValuesUtils.anyTo
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
@@ -31,7 +32,6 @@ object ConfigEntityUtils {
     fun entityToDto(e: ConfigEntity = ConfigEntity()): CfgDto {
         return with(e) {
             CfgDto(
-                id = id,
                 hashDir = hashDir,
                 hashType = hashType,
                 bufferSize = bufferSize,
@@ -46,12 +46,11 @@ object ConfigEntityUtils {
     fun mapToDto(map: Map<String, Any> = getDefaultConfigMap()): CfgDto {
         return with(map) {
             CfgDto(
-                id = get("id") as Long,
                 hashDir = get("hashDir") as String,
-                hashType = get("hashType") as HashType,
-                bufferSize = get("bufferSize") as Long,
-                progressN = get("progressN") as Int,
-                progressSize = get("progressSize") as Long,
+                hashType = HashType.valueOf(get("hashType").toString()),
+                bufferSize = anyTo(get("bufferSize"), Long::class.java)?: DEFAULT_CFG_BUFFER_SIZE,
+                progressN = anyTo(get("progressN"), Int::class.java)?: DEFAULT_CFG_PROGRESS_N,
+                progressSize = anyTo(get("progressSize"), Long::class.java)?: DEFAULT_CFG_PROGRESS_SIZE,
                 progressShow = get("progressShow") as Boolean,
                 flyHashCalculate = get("flyHashCalculate") as Boolean,
             )
@@ -60,7 +59,7 @@ object ConfigEntityUtils {
 
     fun dtoToEntity(dto: CfgDto, profileId: Long = 0): ConfigEntity {
         return with(dto) {
-            ConfigEntity(id = id,
+            ConfigEntity(
                 profile = profileId,
                 hashDir = FileUtils.toUnixPath(Path(hashDir)),
                 hashType = hashType,
@@ -73,10 +72,9 @@ object ConfigEntityUtils {
         }
     }
 
-    fun dtoToMap(dto: CfgDto, profileId: Long = 0): Map<String, Any> {
+    fun dtoToMap(dto: CfgDto): Map<String, Any> {
         return with(dto) {
-            mapOf("id" to id,
-                "profile" to profileId,
+            mapOf(
                 "hashDir" to FileUtils.toUnixPath(Path(hashDir)),
                 "hashType" to hashType,
                 "bufferSize" to bufferSize,
@@ -90,8 +88,6 @@ object ConfigEntityUtils {
 
     fun getDefaultConfigMap(): Map<String, Any> {
         return mapOf(
-            Pair("id", 0),
-            Pair("profile", 0),
             Pair("hashDir", DEFAULT_CFG_HASH_DIR),
             Pair("hashType", DEFAULT_CFG_HASH_TYPE),
             Pair("bufferSize", DEFAULT_CFG_BUFFER_SIZE),
@@ -101,5 +97,6 @@ object ConfigEntityUtils {
             Pair("flyHashCalculate", DEFAULT_CFG_FLY_HASH_CALCULATE)
         )
     }
+
 
 }

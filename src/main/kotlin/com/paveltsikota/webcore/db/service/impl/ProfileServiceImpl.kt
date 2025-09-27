@@ -37,11 +37,18 @@ class ProfileServiceImpl(private val profileDao: ProfileDao): ProfileService {
     }
 
     override fun update(profile: ProfileEntity): EntityOperationResult {
-        val obj = profileDao.update(profile)
-        return if (eq(profile, obj)) {
-            EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
-        } else {
-            EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+        return when (profileExist(profile)) {
+            false -> EntityOperationResult(
+                success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
+
+            else -> {
+                val obj = profileDao.update(profile)
+                if (eq(profile, obj)) {
+                    EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
+                } else {
+                    EntityOperationResult(success = false, error = "Entity not updated", result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+                }
+            }
         }
     }
 
@@ -58,6 +65,10 @@ class ProfileServiceImpl(private val profileDao: ProfileDao): ProfileService {
 
     override fun isAlreadyExist(sources: ProfileEntity): Boolean {
         return profileDao.findByTitle(sources.title) != null
+    }
+
+    private fun profileExist(p: ProfileEntity): Boolean {
+        return p.id > 0 && profileDao.findByTitle(p.title)?.id == p.id
     }
 
 }

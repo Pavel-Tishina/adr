@@ -22,7 +22,7 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
     }
 
     @GetMapping("/")
-    fun getJobs(
+    fun getSources(
         @RequestParam(required = false) profileId: Long?,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) pageSize: Int?
@@ -85,7 +85,7 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): SourcesResponse {
+    fun cleanUpSources(@RequestParam(required = true) profileId: Long): SourcesResponse {
         val opResult = sourcesService.cleanUp(profileId)
 
         return getSourcesResponse(opResult)

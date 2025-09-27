@@ -12,15 +12,13 @@ object ProfileEntityUtils {
                 && e1.cfg == e2.cfg
     }
 
-    // TODO: cfg mapper
     fun entityToDto(e: ProfileEntity): ProfileDto {
         return ProfileDto(id = e.id, title = e.title, description = e.description, cfg = ConfigEntityUtils.mapToDto(e.cfg))
     }
 
-    // TODO: cfg mapper
     fun dtoToEntity(dto: ProfileDto): ProfileEntity {
         return with(dto) {
-            ProfileEntity(id = id?:0, title = title, description = description?:"", cfg = ConfigEntityUtils.dtoToMap(cfg, id?:0))
+            ProfileEntity(id = id?:0, title = title, description = description?:"", cfg = ConfigEntityUtils.dtoToMap(cfg))
         }
     }
 

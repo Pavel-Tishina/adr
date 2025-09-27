@@ -23,37 +23,37 @@ object EntityMapper {
 
     fun filesEntityToDtoList(e: Any?): List<FilesDto> = when (e) {
         is FilesEntity -> listOf(FilesEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<FilesEntity>().map(FilesEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<FilesEntity>().map(FilesEntityUtils::entityToDto)
         else -> emptyList()
     }
 
     fun groupsEntityToDtoList(e: Any?): List<GroupsDto> = when (e) {
         is GroupsEntity -> listOf(GroupsEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<GroupsEntity>().map(GroupsEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<GroupsEntity>().map(GroupsEntityUtils::entityToDto)
         else -> emptyList()
     }
 
     fun hashesEntityToDtoList(e: Any?): List<HashesDto> = when (e) {
         is HashesEntity -> listOf(HashesEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<HashesEntity>().map(HashesEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<HashesEntity>().map(HashesEntityUtils::entityToDto)
         else -> emptyList()
     }
 
     fun jobsEntityToDtoList(e: Any?): List<JobsDto> = when (e) {
         is JobsEntity -> listOf(JobEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<JobsEntity>().map(JobEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<JobsEntity>().map(JobEntityUtils::entityToDto)
         else -> emptyList()
     }
 
     fun profileEntityToDtoList(e: Any?): List<ProfileDto> = when (e) {
         is ProfileEntity -> listOf(ProfileEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<ProfileEntity>().map(ProfileEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<ProfileEntity>().map(ProfileEntityUtils::entityToDto)
         else -> emptyList()
     }
 
     fun sourceEntityToDtoList(e: Any?): List<SourcesDto> = when (e) {
         is SourcesEntity -> listOf(SourcesEntityUtils.entityToDto(e))
-        is List<*> -> e.filterIsInstance<SourcesEntity>().map(SourcesEntityUtils::entityToDto)
+        is Collection<*> -> e.filterIsInstance<SourcesEntity>().map(SourcesEntityUtils::entityToDto)
         else -> emptyList()
     }
 

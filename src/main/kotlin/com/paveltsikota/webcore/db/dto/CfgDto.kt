@@ -10,7 +10,6 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SI
 import com.paveltsikota.webcore.utils.enums.HashType
 
 data class CfgDto(
-    val id: Long = 0,
     val hashDir: String = DEFAULT_CFG_HASH_DIR,
     val hashType: HashType = DEFAULT_CFG_HASH_TYPE,
     val bufferSize: Long = DEFAULT_CFG_BUFFER_SIZE,

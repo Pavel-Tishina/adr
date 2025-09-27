@@ -39,9 +39,9 @@ class GroupsServiceImpl(private val groupsDao: GroupsDao): GroupsService {
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, p++, ps)?: emptyList()
+                pageResult = getBySql(sql, params, ++p, ps)?: emptyList()
                 result.addAll(pageResult)
-            } while (pageResult.isEmpty())
+            } while (pageResult.isNotEmpty())
         } else {
             result.addAll(getBySql(sql, params, page, ps)?: emptyList())
         }

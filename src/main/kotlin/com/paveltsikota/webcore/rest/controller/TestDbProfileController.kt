@@ -20,7 +20,6 @@ class TestDbProfileController(private val profileService: ProfileService) {
         return getProfileResponse(opResult)
     }
 
-    // Dirty... too dirty... but it's just for test repository!
     @GetMapping("/")
     fun getProfile(@RequestParam(required = true) title: String): ProfileResponse {
         val opResult = profileService.getByTitle(title)
@@ -34,7 +33,7 @@ class TestDbProfileController(private val profileService: ProfileService) {
         @RequestBody model: ProfileDto
     ): ProfileResponse {
         val opResult = with(model) {
-            profileService.add(title, description, ConfigEntityUtils.dtoToMap(cfg, id ?: 0), addOnce)
+            profileService.add(title, description, ConfigEntityUtils.dtoToMap(cfg), addOnce)
         }
 
         return getProfileResponse(opResult)

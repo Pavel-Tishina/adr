@@ -36,4 +36,44 @@ object ValuesUtils {
         return ctor.callBy(args)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T> anyTo(value: Any?, clazz: Class<T>): T? {
+        if (value == null) return null
+
+        return when (clazz) {
+            Long::class.java, java.lang.Long::class.java -> when (value) {
+                is Int -> value.toLong() as T
+                is Short -> value.toLong() as T
+                is Byte -> value.toLong() as T
+                is Long -> value as T
+                else -> null
+            }
+            Int::class.java, Integer::class.java -> when (value) {
+                is Long -> value.toInt() as T
+                is Short -> value.toInt() as T
+                is Byte -> value.toInt() as T
+                is Int -> value as T
+                else -> null
+            }
+            Double::class.java, java.lang.Double::class.java -> when (value) {
+                is Number -> value.toDouble() as T
+                else -> null
+            }
+            Float::class.java, java.lang.Float::class.java -> when (value) {
+                is Number -> value.toFloat() as T
+                else -> null
+            }
+            HashType::class.java -> when (value) {
+                is HashType -> value as T
+                is String -> HashType.valueOf(value) as T
+                else -> null
+            }
+            else -> if (clazz.isInstance(value)) {
+                value as T
+            } else {
+                null
+            }
+        }
+    }
+
 }

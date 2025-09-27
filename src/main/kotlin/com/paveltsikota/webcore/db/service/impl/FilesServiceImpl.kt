@@ -289,14 +289,14 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
         var partResult: List<FilesEntity>
         val notDeleted = HashSet<Long>()
         do {
-            partResult = filesDao.getAll(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
+            partResult = filesDao.getAll(page = ++page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
 
             count += partResult.size
 
             if (partResult.isNotEmpty()) {
                 partResult.forEach { if (!filesDao.removeById(it.id)) { notDeleted.add(it.id)} }
             }
-        } while (partResult.isEmpty())
+        } while (partResult.isNotEmpty())
 
         return when {
             count == 0 -> EntityOperationResult(
@@ -340,9 +340,9 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, p++, ps) ?: emptyList()
+                pageResult = getBySql(sql, params, ++p, ps) ?: emptyList()
                 result.addAll(pageResult)
-            } while (pageResult.isEmpty())
+            } while (pageResult.isNotEmpty())
 
             result
         } else {

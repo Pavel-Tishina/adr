@@ -8,21 +8,22 @@ import org.springframework.transaction.annotation.Transactional
 class SourcesDao: CommonDao<SourcesEntity>(SourcesEntity::class.java) {
 
     @Transactional(readOnly = true)
-    fun findByProfileId(profileId: Long): List<SourcesEntity> {
+    fun findByProfileAndId(id: Long, profileId: Long): SourcesEntity? {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.profile = :profile", entityClass)
+            "FROM ${entityClass.name} p WHERE p.id = :id AND p.profile = :profile", entityClass)
 
+        query.setParameter("id", id)
         query.setParameter("profile", profileId)
-        return query.resultList
+        return query.singleResultOrNull
     }
 
     @Transactional
-    fun removeByProfileId(profileId: Long) {
+    fun removeByProfileId(profileId: Long): Int {
         val query = entityManager.createQuery(
-            "DELETE FROM ${entityClass.name} p WHERE p.profile = :profile", entityClass)
+            "DELETE FROM ${entityClass.name} p WHERE p.profile = :profile")
 
         query.setParameter("profile", profileId)
-        query.executeUpdate()
+        return query.executeUpdate()
     }
 
 }

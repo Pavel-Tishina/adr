@@ -23,5 +23,5 @@ interface SourcesService {
 
     fun cleanUp(profileId: Long): EntityOperationResult
 
-    fun isAlreadyExist(sources: SourcesEntity): Boolean
+    fun isAlreadyExist(sources: SourcesEntity, isCreate: Boolean): Boolean
 }

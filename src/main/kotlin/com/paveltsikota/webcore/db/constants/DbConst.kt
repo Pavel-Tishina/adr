@@ -15,7 +15,7 @@ object DbConst {
 
     val SQL_GET_SOURCES = "FROM SourcesEntity p ORDER BY p.id"
     val SQL_GET_SOURCES_BY_PROFILE = "FROM SourcesEntity p WHERE p.profile = :profile ORDER BY p.id"
-    val SQL_GET_BY_PROFILE_AND_PATH = "FROM SourcesEntity p WHERE p.profile = :profile AND ORDER BY p.id"
+    val SQL_GET_BY_PROFILE_AND_PATH = "FROM SourcesEntity p WHERE p.profile = :profile AND p.path = :path ORDER BY p.id"
 
     val SQL_GET_HASHES = "FROM HashesEntity p ORDER BY p.id"
     val SQL_GET_HASHES_BY_PROFILE = "FROM HashesEntity p WHERE p.profile = :profile ORDER BY p.id"

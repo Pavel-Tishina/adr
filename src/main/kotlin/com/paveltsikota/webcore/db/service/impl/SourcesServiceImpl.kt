@@ -5,11 +5,11 @@ import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_BY_PROFILE_AND_PATH
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES_BY_PROFILE
 import com.paveltsikota.webcore.db.dao.SourcesDao
+import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils.eq
@@ -44,9 +44,9 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, p++, ps)?: emptyList()
+                pageResult = getBySql(sql, params, ++p, ps)?: emptyList()
                 result.addAll(pageResult)
-            } while (pageResult.isEmpty())
+            } while (pageResult.isNotEmpty())
         } else {
             result.addAll(getBySql(sql, params, page, ps)?: emptyList())
         }
@@ -63,14 +63,14 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
     override fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult {
         val source = SourcesEntity(path = FileUtils.toUnixPath(path), profile = profileId, dirorder = dirorder)
 
-        return when (addOnce != false && isAlreadyExist(source)) {
+        return when (addOnce != false && isAlreadyExist(source, true)) {
             true -> EntityOperationResult(
                 success = false, error = "Entity already exist", result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
 
             false -> {
                 sourcesDao.save(source)
                 EntityOperationResult(
-                    success = true, obj = source, result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
+                    success = true, obj = source, result = EntityOperationResultType.ENTITY_ADD)
             }
         }
     }
@@ -96,25 +96,35 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
 
         return when {
             added.isEmpty() -> EntityOperationResult(
-                success = false, error = "Entities not added: ${errors.joinToString(",\n") { it.path }}", result = EntityOperationResultType.ENTITIES_NOT_ADDED)
+                success = false, error = "Entities not added: ${errorPathesMsg(errors)}", result = EntityOperationResultType.ENTITIES_NOT_ADDED)
 
             errors.isNotEmpty() -> EntityOperationResult(
-                success = true, error = "Entities not added: ${errors.joinToString(",\n") { it.path }}", obj = added, result = EntityOperationResultType.ENTITIES_ADDED_PARTLY)
+                success = true, obj = added, error = "Entities not added: ${errorPathesMsg(errors)}", result = EntityOperationResultType.ENTITIES_ADDED_PARTLY)
 
             else -> EntityOperationResult(
-                success = true, obj = added, result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
+                success = true, obj = added, result = EntityOperationResultType.ENTITIES_ADDED)
         }
     }
 
+    // TODO: dirty }}}}}
     override fun updateSource(source: SourcesEntity): EntityOperationResult {
-        val result = sourcesDao.update(source)
-
-        return when (eq(result, source)) {
+        return when(isAlreadyExist(source, false)) {
             false -> EntityOperationResult(
-                success = false, error = "Entity not updated", obj = source, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+                success = false, error = "Entity not found", obj = source, result = EntityOperationResultType.ENTITY_NOT_FOUND)
 
-            true -> EntityOperationResult(
-                success = true, obj = result, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+            else -> {
+                val existed = sourcesDao.findById(source.id)
+                when {
+                    eq(existed!!, source) -> EntityOperationResult(
+                        success = false, error = "Entity not updated", obj = source, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+
+                    else -> {
+                        val result = sourcesDao.update(source)
+                        EntityOperationResult(
+                            success = true, obj = result, result = EntityOperationResultType.ENTITY_UPDATED)
+                    }
+                }
+            }
         }
     }
 
@@ -122,12 +132,12 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         val sourcesSet = sources.toSet()
         val results = sourcesSet.map { updateSource(it) }
         val isAnySuccess = results.parallelStream().anyMatch { it.success }
-        val errors = StringBuilder()
+        val errors = HashSet<SourcesEntity>()
         val addedObjects = ArrayList<SourcesEntity>()
 
         results.forEach{
             if (!it.success && it.obj != null) {
-                errors.append("not add source '${(it.obj as SourcesEntity).path}'\n")
+                errors.add(it.obj as SourcesEntity)
             } else if (it.success) {
                 addedObjects.add(it.obj as SourcesEntity)
             }
@@ -144,13 +154,14 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         return EntityOperationResult(
             success = isAnySuccess,
             obj = addedObjects,
-            error = errors.toString(),
+            error = "Not updated: ${errorPathesMsg(errors.map(SourcesEntityUtils::entityToDto))}"
+                .takeIf { errors.isNotEmpty() } ?: "",
             result = result
         )
     }
 
     override fun updateSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult {
-        val sourceEntities = sources.parallelStream().map { SourcesEntityUtils.dtoToEntity(it) }.distinct().toList()
+        val sourceEntities = sources.distinct().parallelStream().map(SourcesEntityUtils::dtoToEntity).toList()
         return updateSources(sourceEntities)
     }
 
@@ -210,17 +221,37 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
     }
 
     override fun cleanUp(profileId: Long): EntityOperationResult {
-        sourcesDao.removeByProfileId(profileId)
-        return EntityOperationResult(success = true, result = EntityOperationResultType.ENTITIES_REMOVED)
+        return when (sourcesDao.removeByProfileId(profileId)) {
+            0 -> EntityOperationResult(
+                success = false, error = "Not found entities by profile $profileId", result = EntityOperationResultType.ENTITIES_NOT_ADDED)
+
+            1 -> EntityOperationResult(
+                success = true, result = EntityOperationResultType.ENTITY_REMOVED)
+
+            else -> EntityOperationResult(
+                success = true, result = EntityOperationResultType.ENTITIES_REMOVED)
+        }
     }
 
-    override fun isAlreadyExist(sources: SourcesEntity): Boolean {
-        val params = mapOf(Pair("profile", sources.profile), Pair("path", sources.path))
-        return getBySql(sql = SQL_GET_BY_PROFILE_AND_PATH, params = params, page = null, pageSize = null) != null
+    override fun isAlreadyExist(sources: SourcesEntity, isCreate: Boolean): Boolean {
+        return if (isCreate) {
+            val params = mapOf("profile" to sources.profile, "path" to sources.path)
+            getBySql(sql = SQL_GET_BY_PROFILE_AND_PATH, params = params, page = null, pageSize = null)
+                ?.isNotEmpty() == true
+        } else with(sources) {
+            sourcesDao.findByProfileAndId(id, profile) != null
+        }
     }
 
-    private fun getBySql(sql: String, params: Map<String, Any>, page: Int?, pageSize: Int?): List<SourcesEntity>? {
+    internal fun getBySql(sql: String, params: Map<String, Any>, page: Int?, pageSize: Int?): List<SourcesEntity>? {
         return sourcesDao.getBySql(sql, params, page, pageSize)
+    }
+
+    private fun errorPathesMsg(errors: Collection<SourcesDto>): String {
+        return errors
+            .distinct()
+            .joinToString(", ")
+            { "'${it.path}'${ if (it.id != null) { " profile=${it.id}" } else {}}" }
     }
 
 }

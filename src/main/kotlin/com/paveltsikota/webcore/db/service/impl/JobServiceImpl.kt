@@ -169,7 +169,7 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
                 partResult.forEach { if (!jobsDao.removeById((it as HashesEntity).id)) notDeleted.add(it.id) }
                 count += partResult.size
             }
-        } while (partResult.isEmpty())
+        } while (partResult.isNotEmpty())
 
         return when {
             count == 0 -> EntityOperationResult(
