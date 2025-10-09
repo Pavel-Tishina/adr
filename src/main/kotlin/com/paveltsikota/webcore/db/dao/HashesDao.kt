@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class HashesDao: CommonDao<HashesEntity>(HashesEntity::class.java) {
+class HashesDao: AbstractDao<HashesEntity>(HashesEntity::class.java) {
 
     @Transactional(readOnly = true)
     fun findByHashAndProfileId(hash: String, hashType: HashType, profileId: Long): HashesEntity? {

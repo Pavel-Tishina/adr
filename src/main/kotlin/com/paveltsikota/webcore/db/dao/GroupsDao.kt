@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class GroupsDao: CommonDao<GroupsEntity>(GroupsEntity::class.java) {
+class GroupsDao: AbstractDao<GroupsEntity>(GroupsEntity::class.java) {
 
     @Transactional(readOnly = true)
     fun findBySizeAndProfileId(size: Long, profileId: Long): List<GroupsEntity>? {

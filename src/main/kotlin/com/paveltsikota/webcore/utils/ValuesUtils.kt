@@ -76,4 +76,7 @@ object ValuesUtils {
         }
     }
 
+    fun profileIdChk(profileId: Long?): Boolean = profileId != null && profileId > 0
+    fun priorityChk(priority: Int?): Boolean = priority != null && priority >= 0
+
 }

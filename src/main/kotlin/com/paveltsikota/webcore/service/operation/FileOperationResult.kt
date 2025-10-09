@@ -7,13 +7,11 @@ class FileOperationResult(
     success : Boolean = false,
     errors: ArrayList<String> = ArrayList(),
     warnings: ArrayList<String> = ArrayList(),
-    obj: FilesEntity,
-    result: FileOpResultState
+    override val obj: FilesEntity,
+    override val result: FileOpResultState
 ): OperationResult(
     success = success,
     errors = errors,
     warnings = warnings
 ) {
-    override val obj = obj
-    override val result = result
 }

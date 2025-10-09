@@ -2,6 +2,7 @@ package com.paveltsikota.webcore.utils.entity
 
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.dto.JobsDto
+import java.sql.Timestamp
 
 object JobEntityUtils {
 
@@ -25,8 +26,8 @@ object JobEntityUtils {
                 id,
                 profile,
                 priority,
-                start,
-                finish,
+                start = Timestamp(start ?: 0),
+                finish = Timestamp(finish ?: 0),
                 completed,
                 disabled,
                 type,
@@ -43,8 +44,8 @@ object JobEntityUtils {
                 id?: 0,
                 profile,
                 priority?: 0,
-                start,
-                finish,
+                start = start?.time ?: 0,
+                finish = finish?.time ?: 0,
                 completed,
                 disabled,
                 type,

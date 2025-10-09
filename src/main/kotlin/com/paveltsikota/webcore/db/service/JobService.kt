@@ -39,4 +39,5 @@ interface JobService {
     fun cleanUp(profileId: Long): EntityOperationResult
 
     fun isAlreadyExist(job: JobsEntity): Boolean
+    fun canUpdate(job: JobsEntity): Boolean
 }

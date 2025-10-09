@@ -8,12 +8,11 @@ class CommonOperationResult(
     success : Boolean = false,
     errors: ArrayList<String> = ArrayList(),
     warnings: ArrayList<String> = ArrayList(),
-    result: CommonOpResultState
+    override val result: CommonOpResultState
 ): OperationResult(
     success = success,
     errors = errors,
     warnings = warnings
 ) {
     override val obj = null
-    override val result = result
 }

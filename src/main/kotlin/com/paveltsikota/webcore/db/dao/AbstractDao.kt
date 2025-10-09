@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
-abstract class CommonDao<T: Any>(
+abstract class AbstractDao<T: Any>(
     internal val entityClass: Class<T>
 ) {
     @PersistenceContext

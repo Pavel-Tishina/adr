@@ -1,13 +1,10 @@
 package com.paveltsikota.webcore.service.operation
 
 abstract class OperationResult(
-    success : Boolean = false,
-    errors: ArrayList<String> = ArrayList(),
-    warnings: ArrayList<String> = ArrayList()
+    val success: Boolean = false,
+    private val errors: ArrayList<String> = ArrayList(),
+    private val warnings: ArrayList<String> = ArrayList()
 ) {
-    val success = success
-    private val errors = errors
-    private val warnings = warnings
     abstract val obj: Any?
     abstract val result: Any
 

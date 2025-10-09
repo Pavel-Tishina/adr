@@ -13,16 +13,16 @@ data class JobsEntity (
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long = 0,
+    val profile: Long = 1,
 
     @Column(nullable = false)
     val priority: Int = 0,
 
     @Column(nullable = true)
-    var start: Timestamp? = null,
+    var start: Long? = null,
 
     @Column(nullable = true)
-    var finish: Timestamp? = null,
+    var finish: Long? = null,
 
     @Column(nullable = true)
     var completed: Boolean? = null,
@@ -31,12 +31,12 @@ data class JobsEntity (
     var disabled: Boolean = false,
 
     @Column(nullable = false)
-    val type: JobsType,
+    val type: JobsType = JobsType.FILE_SCAN,
 
-    @Column(nullable = true)
+    @Column(name = "lastObject", nullable = true)
     var lastObject: String? = null,
 
-    @Column(nullable = true)
+    @Column(name = "lastObjectId", nullable = true)
     var lastObjectId: Long? = null,
 
     @Column(nullable = false)

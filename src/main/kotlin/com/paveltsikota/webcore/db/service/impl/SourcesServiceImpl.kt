@@ -11,6 +11,7 @@ import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.utils.FileUtils
+import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils.eq
 import org.springframework.stereotype.Service
@@ -63,11 +64,14 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
     override fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult {
         val source = SourcesEntity(path = FileUtils.toUnixPath(path), profile = profileId, dirorder = dirorder)
 
-        return when (addOnce != false && isAlreadyExist(source, true)) {
-            true -> EntityOperationResult(
+        return when {
+            !profileIdChk(profileId) -> EntityOperationResult(
+                success = false, error = "ProfileId value is wrong", result = EntityOperationResultType.ENTITY_NOT_ADD)
+
+            addOnce != false && isAlreadyExist(source, true) -> EntityOperationResult(
                 success = false, error = "Entity already exist", result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
 
-            false -> {
+            else -> {
                 sourcesDao.save(source)
                 EntityOperationResult(
                     success = true, obj = source, result = EntityOperationResultType.ENTITY_ADD)
@@ -165,6 +169,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         return updateSources(sourceEntities)
     }
 
+    // TODO: check profile too
     override fun removeSource(id: Long): EntityOperationResult {
         return when (sourcesDao.removeById(id)) {
             false -> EntityOperationResult(
@@ -233,6 +238,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         }
     }
 
+    // TODO: split to isAlreadyExist and canUpdate
     override fun isAlreadyExist(sources: SourcesEntity, isCreate: Boolean): Boolean {
         return if (isCreate) {
             val params = mapOf("profile" to sources.profile, "path" to sources.path)

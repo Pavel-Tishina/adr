@@ -1,9 +1,9 @@
 package com.paveltsikota.webcore.rest.controller
 
-import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.db.dto.GroupsDto
-import com.paveltsikota.webcore.rest.model.GroupsResponse
-import com.paveltsikota.webcore.rest.utils.ResponseUtils.getGroupsResponse
+import com.paveltsikota.webcore.db.service.GroupsService
+import com.paveltsikota.webcore.rest.model.TypedResponse
+import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils
 import org.springframework.web.bind.annotation.*
 
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*
 class TestDbGroupsController(private val groupsService: GroupsService) {
 
     @GetMapping("/get/{id}")
-    fun getGroupById(@PathVariable id: Long): GroupsResponse {
+    fun getGroupById(@PathVariable id: Long): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.getGroup(id)
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @GetMapping("/get-all")
@@ -24,28 +24,28 @@ class TestDbGroupsController(private val groupsService: GroupsService) {
         @RequestParam(required = false, defaultValue = "1") page: Int?,
         @RequestParam(required = false, defaultValue = "20") pageSize: Int?,
         @RequestParam(required = false) profileId: Long?
-    ): GroupsResponse {
+    ): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.getAllGroups(profileId).takeIf { page == null && pageSize == null}
             ?: groupsService.getGroups(page, pageSize, profileId)
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @GetMapping("/get-by-size")
     fun getBySize(
         @RequestParam(required = true) size: Long,
         @RequestParam(required = true) profileId: Long
-    ): GroupsResponse {
+    ): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.findBySize(size, profileId)
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @PostMapping("/")
     fun addGroup(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: GroupsDto
-    ): GroupsResponse {
+    ): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.addGroup(
             size = model.size,
             profileId = model.profile,
@@ -53,31 +53,31 @@ class TestDbGroupsController(private val groupsService: GroupsService) {
             addOnce = addOnce
         )
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @PutMapping("/")
     fun updGroup(
         @RequestHeader("Upd-As-Local", defaultValue = "false") updAsLocal: Boolean,
         @RequestBody model: GroupsDto
-    ): GroupsResponse {
+    ): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.updateGroup(GroupsEntityUtils.dtoToEntity(model))
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @DeleteMapping("/remove")
-    fun delGroup(@RequestBody model: GroupsDto): GroupsResponse {
+    fun delGroup(@RequestBody model: GroupsDto): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.removeGroup(model.id ?: 0)
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): GroupsResponse {
+    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): TypedResponse<List<GroupsDto>> {
         val opResult = groupsService.cleanUp(profileId)
 
-        return getGroupsResponse(opResult)
+        return getTypedResponse<List<GroupsDto>>(opResult)
     }
 
 

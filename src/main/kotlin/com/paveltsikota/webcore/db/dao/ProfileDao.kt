@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class ProfileDao: CommonDao<ProfileEntity>(ProfileEntity::class.java) {
+class ProfileDao: AbstractDao<ProfileEntity>(ProfileEntity::class.java) {
 
     @Transactional(readOnly = true)
     fun findByTitleAndProfile(title: String, profileId: Long): List<ProfileEntity> {

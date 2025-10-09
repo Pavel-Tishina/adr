@@ -2,12 +2,14 @@ package com.paveltsikota.webcore.db.service.impl
 
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
+import com.paveltsikota.webcore.db.dto.JobsDto
+import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.service.JobService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.db.dto.JobsDto
-import com.paveltsikota.webcore.db.entity.HashesEntity
+import com.paveltsikota.webcore.utils.ValuesUtils.priorityChk
+import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
 import com.paveltsikota.webcore.utils.entity.JobEntityUtils.eq
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -27,13 +29,14 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
         val params = getMapForGet(profile, priority, type, status)
         val and = "AND".takeIf { params.size > 1 }?: ""
 
-        val sql = "FROM JobsEntity p " +
-                "${if (params.isNotEmpty()) {"WHERE "} else {}}" +
-                "${if (profile != null) {"$and p.profile = :profile "} else {}}" +
-                "${if (priority != null) {"$and p.priority = :priority "} else {}}" +
-                "${if (type != null) {"$and p.type = :type "} else {}}" +
-                "${if (status != null) {"$and p.status = :status "} else {}}" +
-                "ORDER BY p.priority"
+        val sql = ("FROM JobsEntity p " +
+                (if (params.isNotEmpty()) {"WHERE "} else {""}) +
+                (if (profileIdChk(profile)) {"$and p.profile = :profile "} else {""}) +
+                (if (priorityChk(priority)) {"$and p.priority = :priority "} else {""}) +
+                (if (type != null) {"$and p.type = :type "} else {""}) +
+                (if (status != null) {"$and p.status = :status "} else {""}) +
+                "ORDER BY p.priority")
+            .replaceFirst("WHERE AND", "WHERE")
 
         val result = jobsDao.getBySql(sql, params)
 
@@ -50,30 +53,15 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
     }
 
     override fun getAllNotStarted(profile: Long?): List<JobsEntity> {
-        val jobs = get(profile = profile, status = JobStatus.CREATED, priority = null, type = null)
-
-        return when {
-            jobs.success -> jobs.obj as List<JobsEntity>
-            else -> emptyList()
-        }
+        return getAllByStatus(profile, JobStatus.CREATED)
     }
 
     override fun getAllPaused(profile: Long?): List<JobsEntity> {
-        val jobs = get(profile = profile, status = JobStatus.PAUSED, priority = null, type = null)
-
-        return when {
-            jobs.success -> jobs.obj as List<JobsEntity>
-            else -> emptyList()
-        }
+        return getAllByStatus(profile, JobStatus.PAUSED)
     }
 
     override fun getAllRun(profile: Long?): List<JobsEntity> {
-        val jobs = get(profile = profile, status = JobStatus.RUNNING, priority = null, type = null)
-
-        return when {
-            jobs.success -> jobs.obj as List<JobsEntity>
-            else -> emptyList()
-        }
+        return getAllByStatus(profile, JobStatus.RUNNING)
     }
 
     override fun add(
@@ -92,8 +80,8 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
         val newJob = JobsEntity(
             profile = profile,
             priority = priority.takeIf { priority != null }?: jobsDao.findLastPriority(profile),
-            start = start,
-            finish = finish,
+            start = start?.time,
+            finish = finish?.time,
             completed = completed,
             disabled = disabled == true,
             type = type,
@@ -102,7 +90,9 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
             status = status,
         )
 
-        return if (addOnce == true && isAlreadyExist(newJob)) {
+        return if (!profileIdChk(profile)) {
+            EntityOperationResult(success = false, error = "Wrong profile value", result = EntityOperationResultType.ENTITY_NOT_ADD)
+        } else if (addOnce == true && isAlreadyExist(newJob)) {
             EntityOperationResult(success = false, error = "Entity already exist", result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
         } else {
             jobsDao.save(newJob)
@@ -113,6 +103,7 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
     override fun addDto(jobDto: Collection<JobsDto>, addOnce: Boolean?): EntityOperationResult {
         val filteredJobDtos = jobDto.distinct()
         val errors = mutableSetOf<JobsDto>()
+        // val errorsProfile = mutableSetOf<JobsDto>() //  TODO
         val added = mutableSetOf<JobsEntity>()
 
         filteredJobDtos.forEach { dto ->
@@ -128,7 +119,7 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
 
         return when {
             errors.size == filteredJobDtos.size -> EntityOperationResult(
-                success = false, error = "All entities are already exist", result = EntityOperationResultType.ENTITIES_ALREADY_EXISTED)
+                success = false, error = "All entities are already exist or has wrong profile", result = EntityOperationResultType.ENTITIES_ALREADY_EXISTED)
 
             errors.isNotEmpty() -> EntityOperationResult(
                 success = true, error = "Not added entities: ${errors.joinToString("\n")}", obj = added, result = EntityOperationResultType.ENTITIES_ADDED_PARTLY)
@@ -139,14 +130,20 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
     }
 
     override fun update(job: JobsEntity): EntityOperationResult {
-        val obj = jobsDao.update(job)
-        return if (eq(job, obj)) {
-            EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
-        } else {
-            EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+        val obj = if (canUpdate(job)) { jobsDao.update(job) } else { null }
+        return when {
+            obj == null -> EntityOperationResult(
+                success = false, error = "Jobs entity not found", obj = job, result = EntityOperationResultType.ENTITY_NOT_FOUND)
+
+            !eq(job, obj) -> EntityOperationResult(
+                success = false, error = "Entity not updated", obj = job, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
+
+            else -> EntityOperationResult(
+                success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
         }
     }
 
+    // TODO remove by id and profileID
     override fun remove(id: Long): EntityOperationResult {
         return when (jobsDao.removeById(id)) {
             false -> EntityOperationResult(success = false, error = "Entity not removed", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
@@ -186,6 +183,13 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
         }
     }
 
+    override fun canUpdate(job: JobsEntity): Boolean {
+        return with (getById(job.id)) {
+            success && (obj as JobsEntity).profile == job.profile && obj.type == job.type
+                    && profileIdChk(job.profile) && priorityChk(job.priority)
+        }
+    }
+
     override fun isAlreadyExist(job: JobsEntity): Boolean {
         return get(job.profile, job.priority, job.type, job.status).success
     }
@@ -193,12 +197,21 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
     private fun getMapForGet(profile: Long?, priority: Int?, type: JobsType?, status: JobStatus?): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
 
-        if (priority != null && priority >= 0) map["priority"] = priority
-        if (profile != null && profile >= 0) map["profile"] = profile
+        if (priorityChk(priority)) map["priority"] = priority!!
+        if (profileIdChk(profile)) map["profile"] = profile!!
         if (status != null) map["status"] = status
         if (type != null) map["type"] = type
 
         return map
+    }
+
+    private fun getAllByStatus(profileId: Long?, status: JobStatus): List<JobsEntity> {
+        val jobs = get(profile = profileId, status = status, priority = null, type = null)
+
+        return when {
+            jobs.success -> jobs.obj as List<JobsEntity>
+            else -> emptyList()
+        }
     }
 
 }

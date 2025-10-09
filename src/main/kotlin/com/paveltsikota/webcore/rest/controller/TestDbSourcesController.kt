@@ -3,8 +3,8 @@ package com.paveltsikota.webcore.rest.controller
 import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.rest.model.ManySourcesRequest
-import com.paveltsikota.webcore.rest.model.SourcesResponse
-import com.paveltsikota.webcore.rest.utils.ResponseUtils.getSourcesResponse
+import com.paveltsikota.webcore.rest.model.TypedResponse
+import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
@@ -15,10 +15,10 @@ import kotlin.io.path.Path
 class TestDbSourcesController(private val sourcesService: SourcesService) {
 
     @GetMapping("/get/{id}")
-    fun getSourceById(@PathVariable id: Long): SourcesResponse {
+    fun getSourceById(@PathVariable id: Long): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.getSource(id)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @GetMapping("/")
@@ -26,69 +26,69 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
         @RequestParam(required = false) profileId: Long?,
         @RequestParam(required = false) page: Int?,
         @RequestParam(required = false) pageSize: Int?
-    ): SourcesResponse {
+    ): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.getSources(page, pageSize, profileId)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @PostMapping("/")
     fun addSource(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: SourcesDto
-    ): SourcesResponse {
+    ): TypedResponse<List<SourcesDto>> {
         val opResult = with(model) {
             sourcesService.addSource(Path(path), profile, dirorder, addOnce)
         }
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @PostMapping("/many")
     fun addSources(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: ManySourcesRequest
-    ): SourcesResponse {
+    ): TypedResponse<List<SourcesDto>> {
         val opResult = with(model) {
             sourcesService.addSourcesDto(model.sources, addOnce)
         }
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @PutMapping("/")
-    fun updSource(@RequestBody model: SourcesDto): SourcesResponse {
+    fun updSource(@RequestBody model: SourcesDto): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.updateSource(SourcesEntityUtils.dtoToEntity(model))
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @PutMapping("/many")
-    fun updSources(@RequestBody model: ManySourcesRequest): SourcesResponse {
+    fun updSources(@RequestBody model: ManySourcesRequest): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.updateSourcesDto(model.sources)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @DeleteMapping("/")
-    fun delSource(@RequestBody model: SourcesDto): SourcesResponse {
+    fun delSource(@RequestBody model: SourcesDto): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.removeSource(model.id ?: 0)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @DeleteMapping("/many")
-    fun delSources(@RequestBody model: ManySourcesRequest): SourcesResponse {
+    fun delSources(@RequestBody model: ManySourcesRequest): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.removeSourcesDto(model.sources)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpSources(@RequestParam(required = true) profileId: Long): SourcesResponse {
+    fun cleanUpSources(@RequestParam(required = true) profileId: Long): TypedResponse<List<SourcesDto>> {
         val opResult = sourcesService.cleanUp(profileId)
 
-        return getSourcesResponse(opResult)
+        return getTypedResponse<List<SourcesDto>>(opResult)
     }
 
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class SourcesDao: CommonDao<SourcesEntity>(SourcesEntity::class.java) {
+class SourcesDao: AbstractDao<SourcesEntity>(SourcesEntity::class.java) {
 
     @Transactional(readOnly = true)
     fun findByProfileAndId(id: Long, profileId: Long): SourcesEntity? {

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.nio.file.Path
 
 @Repository
-class FilesDao: CommonDao<FilesEntity>(FilesEntity::class.java) {
+class FilesDao: AbstractDao<FilesEntity>(FilesEntity::class.java) {
 
     @Transactional(readOnly = true)
     internal fun findBySize(page: Int? = null, pageSize: Int? = null, size: Long, profileId: Long): List<FilesEntity>? {

@@ -1,12 +1,12 @@
 package com.paveltsikota.webcore.rest.controller
 
+import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.db.service.FilesService
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
 import com.paveltsikota.webcore.rest.model.DeleteFilesByIdsRequest
-import com.paveltsikota.webcore.db.dto.FilesDto
-import com.paveltsikota.webcore.rest.model.FilesResponse
 import com.paveltsikota.webcore.rest.model.GetFilesByIdsRequest
-import com.paveltsikota.webcore.rest.utils.ResponseUtils.getFilesResponse
+import com.paveltsikota.webcore.rest.model.TypedResponse
+import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
@@ -16,17 +16,17 @@ import kotlin.io.path.Path
 class TestDbFilesController(private val fileService: FilesService) {
 
     @GetMapping("/get/{id}")
-    fun getFileById(@PathVariable id: Long): FilesResponse {
+    fun getFileById(@PathVariable id: Long): TypedResponse<List<FilesDto>> {
         val opResult = fileService.getFile(id)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @GetMapping("/get")
-    fun getFileByIds(@RequestBody ids: GetFilesByIdsRequest): FilesResponse {
+    fun getFileByIds(@RequestBody ids: GetFilesByIdsRequest): TypedResponse<List<FilesDto>> {
         val opResult = fileService.getFiles(ids.ids)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @GetMapping("/get-all")
@@ -34,10 +34,10 @@ class TestDbFilesController(private val fileService: FilesService) {
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "20") pageSize: Int,
         @RequestParam(required = false) profileId: Long?
-    ): FilesResponse {
+    ): TypedResponse<List<FilesDto>> {
         val opResult = fileService.getFiles(page, pageSize, profileId)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @PostMapping("/")
@@ -45,38 +45,38 @@ class TestDbFilesController(private val fileService: FilesService) {
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestHeader("Add-As-Local", defaultValue = "false") addAsLocal: Boolean,
         @RequestBody model: FilesDto
-    ): FilesResponse {
+    ): TypedResponse<List<FilesDto>> {
         val opResult = if (addAsLocal) {
             fileService.addLocalFile(Path(model.path?: ""), XXHash64, addOnce)
         } else {
             fileService.addRemoteFile(model, addOnce)
         }
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @PutMapping("/")
     fun updFile(
         @RequestHeader("Upd-As-Local", defaultValue = "false") updAsLocal: Boolean,
         @RequestBody model: FilesDto
-    ): FilesResponse {
+    ): TypedResponse<List<FilesDto>> {
         val opResult = fileService.updateFile(model, updAsLocal)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @DeleteMapping("/remove")
-    fun delFile(@RequestBody model: FilesDto): FilesResponse {
+    fun delFile(@RequestBody model: FilesDto): TypedResponse<List<FilesDto>> {
         val opResult = fileService.removeFile(model)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
     @DeleteMapping("/remove-by-ids")
-    fun delFile(@RequestBody model: DeleteFilesByIdsRequest): FilesResponse {
+    fun delFile(@RequestBody model: DeleteFilesByIdsRequest): TypedResponse<List<FilesDto>> {
         val opResult = fileService.removeFiles(model.ids)
 
-        return getFilesResponse(opResult)
+        return getTypedResponse<List<FilesDto>>(opResult)
     }
 
 }

@@ -9,13 +9,12 @@ class DirOperationResult(
     success : Boolean = false,
     errors: ArrayList<String> = ArrayList(),
     warnings: ArrayList<String> = ArrayList(),
-    obj: Path,
-    result: DirOpResultState,
+    override val obj: Path,
+    override val result: DirOpResultState,
 ): OperationResult(
     success = success,
     errors = errors,
     warnings = warnings
 ) {
-    override val obj = obj
-    override val result = result
+
 }
