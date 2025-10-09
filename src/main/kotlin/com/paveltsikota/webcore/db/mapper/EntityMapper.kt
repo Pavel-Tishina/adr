@@ -1,26 +1,8 @@
 package com.paveltsikota.webcore.db.mapper
 
-import com.paveltsikota.webcore.db.entity.FilesEntity
-import com.paveltsikota.webcore.db.entity.GroupsEntity
-import com.paveltsikota.webcore.db.entity.HashesEntity
-import com.paveltsikota.webcore.db.entity.JobsEntity
-import com.paveltsikota.webcore.db.entity.ProfileEntity
-import com.paveltsikota.webcore.db.entity.SourcesEntity
-import com.paveltsikota.webcore.db.dto.FilesDto
-import com.paveltsikota.webcore.db.dto.GroupsDto
-import com.paveltsikota.webcore.db.dto.HashesDto
-import com.paveltsikota.webcore.db.dto.JobsDto
-import com.paveltsikota.webcore.db.dto.ProfileDto
-import com.paveltsikota.webcore.db.dto.SourcesDto
-import com.paveltsikota.webcore.db.mapper.EntityMapper.isCollection
+import com.paveltsikota.webcore.db.dto.*
+import com.paveltsikota.webcore.db.entity.*
 import com.paveltsikota.webcore.rest.utils.ResponseMapperUtils
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils
-import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils
-import com.paveltsikota.webcore.utils.entity.HashesEntityUtils
-import com.paveltsikota.webcore.utils.entity.JobEntityUtils
-import com.paveltsikota.webcore.utils.entity.ProfileEntityUtils
-import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
-import org.springframework.data.util.CustomCollections.isCollection
 import kotlin.reflect.KClass
 import kotlin.reflect.typeOf
 
@@ -33,8 +15,8 @@ object EntityMapper {
 
     inline fun <reified T> filterAnyToDto(e: Any?): Any? = when (e) {
         is T -> ResponseMapperUtils.anyToDto(e)
-        is Collection<*> -> e.filterIsInstance<T>().map {ResponseMapperUtils.anyToDto(e) }
-        else -> emptyList<T>()
+        is Collection<*> -> e.filterIsInstance<T>().mapNotNull(ResponseMapperUtils::anyToDto)
+        else -> null
     }
 
     inline fun <reified T> mapSingleToDto(e: Any?): T? = when (T::class) {
@@ -51,8 +33,8 @@ object EntityMapper {
     // call it like anyToTypedDtoInternal<List<JobsDto>, JobsDto>(e)
     // !!! but better use anyToTypedDto<List<JobsDto>>(e)  !!!
     inline fun <reified T, reified E> anyToTypedDtoInternal(e: Any?, isCollection: Boolean = false): Any? = when (isCollection) {
-        true -> listOf(mapSingleToDto<E>(e))
-        else -> mapSingleToDto<T>(e)
+        true -> filterAnyToDto<T>(e)
+        else -> mapSingleToDto<E>(e)
     }
 
     // for get responses like TypedResponse<List<JobsDto>>
