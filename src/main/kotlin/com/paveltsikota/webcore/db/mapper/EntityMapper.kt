@@ -26,47 +26,10 @@ import kotlin.reflect.typeOf
 
 object EntityMapper {
 
-    fun filesEntityToDtoList(e: Any?): List<FilesDto> = when (e) {
-        is FilesEntity -> listOf(FilesEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<FilesEntity>().map(FilesEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
-    fun groupsEntityToDtoList(e: Any?): List<GroupsDto> = when (e) {
-        is GroupsEntity -> listOf(GroupsEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<GroupsEntity>().map(GroupsEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
-    fun hashesEntityToDtoList(e: Any?): List<HashesDto> = when (e) {
-        is HashesEntity -> listOf(HashesEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<HashesEntity>().map(HashesEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
-    fun jobsEntityToDtoList(e: Any?): List<JobsDto> = when (e) {
-        is JobsEntity -> listOf(JobEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<JobsEntity>().map(JobEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
-    fun profileEntityToDtoList(e: Any?): List<ProfileDto> = when (e) {
-        is ProfileEntity -> listOf(ProfileEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<ProfileEntity>().map(ProfileEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
-    fun sourceEntityToDtoList(e: Any?): List<SourcesDto> = when (e) {
-        is SourcesEntity -> listOf(SourcesEntityUtils.entityToDto(e))
-        is Collection<*> -> e.filterIsInstance<SourcesEntity>().map(SourcesEntityUtils::entityToDto)
-        else -> emptyList()
-    }
-
     fun anyToDtoList(e: Any?): List<*> = when (e) {
         is Collection<*> -> e.mapNotNull(ResponseMapperUtils::anyToDto)
         else -> listOfNotNull(ResponseMapperUtils.anyToDto(e))
     }
-
 
     inline fun <reified T> filterAnyToDto(e: Any?): Any? = when (e) {
         is T -> ResponseMapperUtils.anyToDto(e)
@@ -112,15 +75,6 @@ object EntityMapper {
             anyToTypedDtoInternal<T, T>(e)
         }
     }
-
-//    fun getCollectionIteratorClass(clazz: Class<*>): Any? {
-//        return clazz::class.supertypes
-//            .firstOrNull()
-//            ?.arguments
-//            ?.firstOrNull()
-//            ?.type
-//            ?.classifier as KClass<*>
-//    }
 
     inline fun <reified T> isCollection(): Boolean = Collection::class.java.isAssignableFrom(T::class.java)
 

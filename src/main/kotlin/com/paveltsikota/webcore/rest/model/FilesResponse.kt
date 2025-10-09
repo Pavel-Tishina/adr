@@ -1,9 +1,0 @@
-package com.paveltsikota.webcore.rest.model
-
-import com.paveltsikota.webcore.db.dto.FilesDto
-
-data class FilesResponse(
-    override val success: Boolean = false,
-    override val obj: List<FilesDto>? = null,
-    override val error: String = "",
-) : AbstractResponse()
