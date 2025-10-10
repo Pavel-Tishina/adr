@@ -1,14 +1,23 @@
-package com.paveltsikota.webcore.utils.entity
+package com.paveltsikota.webcore.db.adapter
 
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
 import com.paveltsikota.webcore.db.dto.FilesDto
+
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
+import org.springframework.stereotype.Component
 import java.nio.file.Path
 
-object FilesEntityUtils {
+import kotlin.io.path.Path
+
+
+@Component
+object FilesAdapter: AbstractEntityDtoAdapter<FilesEntity, FilesDto>(
+    entityClass = FilesEntity::class.java,
+    dtoClass = FilesDto::class.java
+) {
 
     // Not for DB
     fun getFilesEntryByPath(path: Path): FilesEntity {
@@ -33,7 +42,7 @@ object FilesEntityUtils {
     }
 
     fun getFilesEntryByPathForDb(path: String, calc: HashCalculator?): FilesEntity {
-        return getFilesEntryByPathForDb(Path.of(path), calc)
+        return getFilesEntryByPathForDb(Path(path), calc)
     }
 
     fun getFilesEntryByPathForDb(path: Path, calc: HashCalculator?): FilesEntity {
@@ -66,7 +75,7 @@ object FilesEntityUtils {
         )
     }
 
-    fun eq(e1: FilesEntity, e2: FilesEntity): Boolean {
+    override fun eqEntity(e1: FilesEntity, e2: FilesEntity): Boolean {
         return e1.id == e2.id
                 && e1.state == e2.state
                 && e1.hold == e2.hold
@@ -80,10 +89,14 @@ object FilesEntityUtils {
                 && e1.hashType == e2.hashType
                 && e1.fileName == e2.fileName
                 && e1.newFileName == e2.newFileName
-                && FileUtils.toUnixPath(Path.of(e1.path)) == FileUtils.toUnixPath(Path.of(e2.path))
+                && FileUtils.toUnixPath(Path(e1.path)) == FileUtils.toUnixPath(Path(e2.path))
     }
 
-    fun entityToDto(e: FilesEntity): FilesDto {
+    override fun eqDto(dto1: FilesDto, dto2: FilesDto): Boolean {
+        return dto1 == dto2
+    }
+
+    override fun entityToDto(e: FilesEntity): FilesDto {
         return FilesDto(
             id = e.id,
             profile = e.profile,
@@ -104,9 +117,13 @@ object FilesEntityUtils {
         )
     }
 
+    override fun dtoToEntity(dto: FilesDto): FilesEntity {
+        return dtoToEntity(dto, false, null)
+    }
+
     fun dtoToEntity(dto: FilesDto, isLocal: Boolean = false, calc: HashCalculator? = null): FilesEntity {
         return if (isLocal && hasOnlyPath(dto)) {
-            getFilesEntryByPathForDb(Path.of(dto.path), calc)
+            getFilesEntryByPathForDb(FileUtils.toUnixPath(Path(dto.path?: "")), calc)
         } else {
             FilesEntity(
                 id = dto.id ?: 0,
@@ -114,9 +131,9 @@ object FilesEntityUtils {
                 size = dto.size ?: Long.MIN_VALUE,
                 created = dto.created ?: Long.MIN_VALUE,
                 modified = dto.modified ?: Long.MIN_VALUE,
-                path = FileUtils.toUnixPath(Path.of(dto.path)),
+                path = FileUtils.toUnixPath(Path(dto.path?: "")),
                 hashPath = dto.hashPath,
-                fileName = dto.fileName ?: Path.of(dto.path).fileName.toString(),
+                fileName = dto.fileName ?: Path(dto.path?: "").fileName.toString(),
                 newFileName = dto.newFileName,
                 isUnique = dto.isUnique,
                 groupId = dto.groupId,

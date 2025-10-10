@@ -1,12 +1,17 @@
-package com.paveltsikota.webcore.utils.entity
+package com.paveltsikota.webcore.db.adapter
 
-import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.dto.JobsDto
+import com.paveltsikota.webcore.db.entity.JobsEntity
+import org.springframework.stereotype.Component
 import java.sql.Timestamp
 
-object JobEntityUtils {
+@Component
+object JobsAdapter: AbstractEntityDtoAdapter<JobsEntity, JobsDto>(
+    entityClass = JobsEntity::class.java,
+    dtoClass = JobsDto::class.java
+) {
 
-    fun eq(e1: JobsEntity, e2: JobsEntity): Boolean {
+    override fun eqEntity(e1: JobsEntity, e2: JobsEntity): Boolean {
         return e1.id == e2.id
                 && e1.profile == e2.profile
                 && e1.priority == e2.priority
@@ -20,7 +25,11 @@ object JobEntityUtils {
                 && e1.lastObject == e2.lastObject
     }
 
-    fun entityToDto(e: JobsEntity): JobsDto {
+    override fun eqDto(dto1: JobsDto, dto2: JobsDto): Boolean {
+        return dto1 == dto2
+    }
+
+    override fun entityToDto(e: JobsEntity): JobsDto {
         return with(e) {
             JobsDto(
                 id,
@@ -38,7 +47,7 @@ object JobEntityUtils {
         }
     }
 
-    fun dtoToEntity(dto: JobsDto): JobsEntity {
+    override fun dtoToEntity(dto: JobsDto): JobsEntity {
         return with(dto) {
             JobsEntity(
                 id?: 0,

@@ -1,9 +1,14 @@
-package com.paveltsikota.webcore.utils.entity
+package com.paveltsikota.webcore.db.adapter
 
-import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.dto.HashesDto
+import com.paveltsikota.webcore.db.entity.HashesEntity
+import org.springframework.stereotype.Component
 
-object HashesEntityUtils {
+@Component
+object HashesAdapter: AbstractEntityDtoAdapter<HashesEntity, HashesDto>(
+    entityClass = HashesEntity::class.java,
+    dtoClass = HashesDto::class.java
+) {
 
     fun eq(e1: HashesEntity, e2: HashesEntity): Boolean {
         return e1.id == e2.id
@@ -15,7 +20,21 @@ object HashesEntityUtils {
                 && e1.duplicates == e2.duplicates
     }
 
-    fun entityToDto(e: HashesEntity): HashesDto {
+    override fun eqEntity(e1: HashesEntity, e2: HashesEntity): Boolean {
+        return e1.id == e2.id
+                && e1.size == e2.size
+                && e1.profile == e2.profile
+                && e1.main == e2.main
+                && e1.hash == e2.hash
+                && e1.hashType == e2.hashType
+                && e1.duplicates == e2.duplicates
+    }
+
+    override fun eqDto(dto1: HashesDto, dto2: HashesDto): Boolean {
+        return dto1 == dto2
+    }
+
+    override fun entityToDto(e: HashesEntity): HashesDto {
         return with(e) {
             HashesDto(
                 id = id,
@@ -29,7 +48,7 @@ object HashesEntityUtils {
         }
     }
 
-    fun dtoToEntity(dto: HashesDto): HashesEntity {
+    override fun dtoToEntity(dto: HashesDto): HashesEntity {
         return with(dto) {
             HashesEntity(
                 id = id ?: 0,

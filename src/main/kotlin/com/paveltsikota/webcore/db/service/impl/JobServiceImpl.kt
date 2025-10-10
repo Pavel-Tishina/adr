@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service.impl
 
+import com.paveltsikota.webcore.db.adapter.JobsAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
 import com.paveltsikota.webcore.db.dto.JobsDto
@@ -10,14 +11,16 @@ import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.utils.ValuesUtils.priorityChk
 import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
-import com.paveltsikota.webcore.utils.entity.JobEntityUtils.eq
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 
 @Service
-class JobServiceImpl(private val jobsDao: JobsDao): JobService {
+class JobServiceImpl(
+    private val jobsDao: JobsDao,
+    private val adapter: JobsAdapter
+): JobService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = jobsDao.findById(id)) {
             null -> EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
@@ -135,7 +138,7 @@ class JobServiceImpl(private val jobsDao: JobsDao): JobService {
             obj == null -> EntityOperationResult(
                 success = false, error = "Jobs entity not found", obj = job, result = EntityOperationResultType.ENTITY_NOT_FOUND)
 
-            !eq(job, obj) -> EntityOperationResult(
+            !adapter.eqEntity(job, obj) -> EntityOperationResult(
                 success = false, error = "Entity not updated", obj = job, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 
             else -> EntityOperationResult(

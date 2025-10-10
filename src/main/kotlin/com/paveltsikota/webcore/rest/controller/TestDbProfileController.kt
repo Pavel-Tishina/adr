@@ -4,8 +4,8 @@ import com.paveltsikota.webcore.db.dto.ProfileDto
 import com.paveltsikota.webcore.db.service.ProfileService
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
-import com.paveltsikota.webcore.utils.entity.ConfigEntityUtils
-import com.paveltsikota.webcore.utils.entity.ProfileEntityUtils
+import com.paveltsikota.webcore.db.adapter.ConfigAdapter
+import com.paveltsikota.webcore.db.adapter.ProfileAdapter
 import org.springframework.web.bind.annotation.*
 
 
@@ -33,7 +33,7 @@ class TestDbProfileController(private val profileService: ProfileService) {
         @RequestBody model: ProfileDto
     ): TypedResponse<List< ProfileDto>> {
         val opResult = with(model) {
-            profileService.add(title, description, ConfigEntityUtils.dtoToMap(cfg), addOnce)
+            profileService.add(title, description, ConfigAdapter.dtoToMap(cfg), addOnce)
         }
 
         return getTypedResponse<List< ProfileDto>>(opResult)
@@ -41,7 +41,7 @@ class TestDbProfileController(private val profileService: ProfileService) {
 
     @PutMapping("/")
     fun updProfile(@RequestBody model: ProfileDto): TypedResponse<List<ProfileDto>> {
-        val opResult = profileService.update(ProfileEntityUtils.dtoToEntity(model))
+        val opResult = profileService.update(ProfileAdapter.dtoToEntity(model))
 
         return getTypedResponse<List< ProfileDto>>(opResult)
     }

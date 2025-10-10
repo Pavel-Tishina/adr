@@ -8,7 +8,7 @@ import com.paveltsikota.webcore.service.operation.OperationResult
 import com.paveltsikota.webcore.service.operation.enums.CommonOpResultState
 import com.paveltsikota.webcore.service.operation.enums.DirOpResultState
 import com.paveltsikota.webcore.service.operation.enums.FileOpResultState
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils.getFilesEntryByPath
+import com.paveltsikota.webcore.db.adapter.FilesAdapter.getFilesEntryByPath
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.ERROR_IO
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST

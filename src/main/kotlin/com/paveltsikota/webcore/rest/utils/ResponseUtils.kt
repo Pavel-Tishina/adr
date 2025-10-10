@@ -18,10 +18,9 @@ object ResponseUtils {
     }
 
     inline fun <reified T> getTypedResponse(opResult: EntityOperationResult): TypedResponse<T> {
-        val resultObj = if (!Objects.isNull(opResult.obj)) {
-            EntityMapper.anyToTypedDto<T>(opResult.obj)
-        } else {
-            null
+        val resultObj = when(!Objects.isNull(opResult.obj)) {
+            true -> EntityMapper.anyToTypedDto<T>(opResult.obj)
+            else -> null
         }
 
         return TypedResponse<T>(

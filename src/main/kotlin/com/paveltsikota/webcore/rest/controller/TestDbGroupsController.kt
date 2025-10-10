@@ -4,7 +4,7 @@ import com.paveltsikota.webcore.db.dto.GroupsDto
 import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
-import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils
+import com.paveltsikota.webcore.db.adapter.GroupsAdapter
 import org.springframework.web.bind.annotation.*
 
 
@@ -61,7 +61,7 @@ class TestDbGroupsController(private val groupsService: GroupsService) {
         @RequestHeader("Upd-As-Local", defaultValue = "false") updAsLocal: Boolean,
         @RequestBody model: GroupsDto
     ): TypedResponse<List<GroupsDto>> {
-        val opResult = groupsService.updateGroup(GroupsEntityUtils.dtoToEntity(model))
+        val opResult = groupsService.updateGroup(GroupsAdapter.dtoToEntity(model))
 
         return getTypedResponse<List<GroupsDto>>(opResult)
     }

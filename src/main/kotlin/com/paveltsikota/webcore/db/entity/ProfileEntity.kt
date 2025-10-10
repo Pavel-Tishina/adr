@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.db.entity
 
 import com.paveltsikota.webcore.db.convertor.MapToJsonConverter
-import com.paveltsikota.webcore.utils.entity.ConfigEntityUtils.getDefaultConfigMap
+import com.paveltsikota.webcore.db.adapter.ConfigAdapter.getDefaultConfigMap
 import jakarta.persistence.*
 
 @Entity

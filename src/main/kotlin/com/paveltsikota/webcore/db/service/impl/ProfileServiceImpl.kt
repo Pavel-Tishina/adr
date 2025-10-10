@@ -5,12 +5,15 @@ import com.paveltsikota.webcore.db.entity.ProfileEntity
 import com.paveltsikota.webcore.db.service.ProfileService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.utils.entity.ConfigEntityUtils.getDefaultConfigMap
-import com.paveltsikota.webcore.utils.entity.ProfileEntityUtils.eq
+import com.paveltsikota.webcore.db.adapter.ConfigAdapter.getDefaultConfigMap
+import com.paveltsikota.webcore.db.adapter.ProfileAdapter
 import org.springframework.stereotype.Service
 
 @Service
-class ProfileServiceImpl(private val profileDao: ProfileDao): ProfileService {
+class ProfileServiceImpl(
+    private val profileDao: ProfileDao,
+    private val adapter: ProfileAdapter
+): ProfileService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = profileDao.findById(id)) {
             null -> EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
@@ -43,7 +46,7 @@ class ProfileServiceImpl(private val profileDao: ProfileDao): ProfileService {
 
             else -> {
                 val obj = profileDao.update(profile)
-                if (eq(profile, obj)) {
+                if (adapter.eqEntity(profile, obj)) {
                     EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
                 } else {
                     EntityOperationResult(success = false, error = "Entity not updated", result = EntityOperationResultType.ENTITY_NOT_UPDATED)

@@ -41,7 +41,7 @@ object EntityMapper {
     inline fun <reified T> anyToTypedDto(e: Any?): Any? {
         val innerClass  = getCollectionIteratorClass<T>()
 
-        println("T::class = ${T::class}, innerClass = $innerClass")
+        println("T::class = ${T::class}, innerClass = $innerClass") // TODO: log4j
 
         return if (isCollection<T>()) {
            when (innerClass) {
@@ -56,6 +56,8 @@ object EntityMapper {
         } else {
             anyToTypedDtoInternal<T, T>(e)
         }
+
+
     }
 
     inline fun <reified T> isCollection(): Boolean = Collection::class.java.isAssignableFrom(T::class.java)

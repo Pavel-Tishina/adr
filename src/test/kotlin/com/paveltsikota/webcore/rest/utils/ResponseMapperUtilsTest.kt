@@ -5,10 +5,10 @@ import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.entity.SourcesEntity
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils
-import com.paveltsikota.webcore.utils.entity.HashesEntityUtils
-import com.paveltsikota.webcore.utils.entity.JobEntityUtils
-import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
+import com.paveltsikota.webcore.db.adapter.FilesAdapter
+import com.paveltsikota.webcore.db.adapter.HashesAdapter
+import com.paveltsikota.webcore.db.adapter.JobsAdapter
+import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import com.paveltsikota.webcore.utils.enums.HashType
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,8 +43,8 @@ class ResponseMapperUtilsTest {
 
         val expectedResult = listOf<Any>(
             mapOf<Any, Any>(
-                JobEntityUtils.entityToDto(JobsEntity()) to "ololo",
-                "trololo" to HashesEntityUtils.entityToDto(HashesEntity()),
+                JobsAdapter.entityToDto(JobsEntity()) to "ololo",
+                "trololo" to HashesAdapter.entityToDto(HashesEntity()),
                 HashType.XXHASH64 to mapOf<Any, Any>(
                     123 to listOf(false, true, false)
                 )
@@ -52,10 +52,10 @@ class ResponseMapperUtilsTest {
             setOf<Any>(
                 123,
                 false,
-                FilesEntityUtils.entityToDto(FilesEntity())
+                FilesAdapter.entityToDto(FilesEntity())
             ),
             "trololo",
-            SourcesEntityUtils.entityToDto(SourcesEntity()),
+            SourcesAdapter.entityToDto(SourcesEntity()),
             dto
         )
 

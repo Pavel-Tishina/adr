@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service.impl
 
+import com.paveltsikota.webcore.db.adapter.HashesAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_HASHES
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_HASHES_BY_N
@@ -12,13 +13,14 @@ import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.service.HashesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.utils.entity.HashesEntityUtils.eq
-import com.paveltsikota.webcore.utils.entity.HashesEntityUtils.setUpdate
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
 
 @Service
-class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
+class HashesServiceImpl(
+    private val hashesDao: HashesDao,
+    private val adapter: HashesAdapter
+): HashesService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = hashesDao.findById(id)) {
             null -> EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
@@ -94,7 +96,7 @@ class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
 
     override fun update(entity: HashesEntity): EntityOperationResult {
         val obj = hashesDao.update(entity)
-        return if (eq(entity, obj)) {
+        return if (adapter.eqEntity(entity, obj)) {
             EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
         } else {
             EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
@@ -107,7 +109,7 @@ class HashesServiceImpl(private val hashesDao: HashesDao): HashesService {
         return if (entity == null || entity.profile != profileId) {
             EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
         } else {
-            val updatedEntity = setUpdate(entity, main, dupIds?: emptySet())
+            val updatedEntity = adapter.setUpdate(entity, main, dupIds?: emptySet())
             update(updatedEntity)
         }
     }

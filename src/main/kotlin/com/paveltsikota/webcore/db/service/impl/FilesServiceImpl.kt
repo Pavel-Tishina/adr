@@ -14,15 +14,17 @@ import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
 import com.paveltsikota.webcore.db.dto.FilesDto
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils.eq
+import com.paveltsikota.webcore.db.adapter.FilesAdapter
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
 import java.nio.file.Path
 
 @Service
-class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
+class FilesServiceImpl(
+    private val filesDao: FilesDao,
+    private val adapter: FilesAdapter
+): FilesService {
 
     override fun getFile(id: Long): EntityOperationResult {
         return when (val entity = filesDao.findById(id)) {
@@ -66,7 +68,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
     }
 
     override fun addLocalFile(filePath: Path, calc: HashCalculator?, addOnce: Boolean?): EntityOperationResult {
-        val entity = FilesEntityUtils.getFilesEntryByPathForDb(filePath, calc)
+        val entity = adapter.getFilesEntryByPathForDb(filePath, calc)
 
         return when {
             entity.state == FileState.NOT_FOUND -> EntityOperationResult(
@@ -84,7 +86,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
     }
 
     override fun addRemoteFile(fileDto: FilesDto, addOnce: Boolean?): EntityOperationResult {
-        val entity = FilesEntityUtils.dtoToEntity(dto = fileDto, isLocal = false)
+        val entity = adapter.dtoToEntity(dto = fileDto, isLocal = false)
         return when {
             addOnce == true && isAlreadyExist(entity) -> EntityOperationResult(
                 success = false, obj = entity, error = "File already exist in db", result = EntityOperationResultType.ENTITY_ALREADY_EXIST)
@@ -129,7 +131,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
 
     override fun updateFile(file: FilesEntity): EntityOperationResult {
         val obj = filesDao.update(file)
-        return if (eq(file, obj)) {
+        return if (adapter.eqEntity(file, obj)) {
             EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
         } else {
             EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
@@ -137,7 +139,7 @@ class FilesServiceImpl(private val filesDao: FilesDao): FilesService {
     }
 
     override fun updateFile(fileFto: FilesDto, isLocal: Boolean?): EntityOperationResult {
-        return updateFile(FilesEntityUtils.dtoToEntity(fileFto, isLocal == true))
+        return updateFile(adapter.dtoToEntity(fileFto, isLocal == true))
     }
 
     override fun removeFile(file: FilesEntity): EntityOperationResult {

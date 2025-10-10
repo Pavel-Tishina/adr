@@ -4,7 +4,7 @@ import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
 import com.paveltsikota.webcore.service.operation.FileOperationResult
 import com.paveltsikota.webcore.service.operation.enums.FileOpResultState
-import com.paveltsikota.webcore.utils.entity.FilesEntityUtils
+import com.paveltsikota.webcore.db.adapter.FilesAdapter
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.OsType
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST
@@ -256,7 +256,7 @@ class FileUtilsTest {
         Files.deleteIfExists(destFileSame)
         FileUtils.deleteDirOrFile(rootHashDir)
 
-        val wrongStatusEntity = FilesEntityUtils.getFilesEntryByPath(path = sourceFile)
+        val wrongStatusEntity = FilesAdapter.getFilesEntryByPath(path = sourceFile)
         val samePathEntity = wrongStatusEntity.copy(
             path = FileUtils.toUnixPath(destFileSame), hash = hash, state = FileState.MARK_MOVE)
 

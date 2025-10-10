@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.utils.entity
 
+import com.paveltsikota.webcore.db.adapter.HashesAdapter
 import com.paveltsikota.webcore.db.entity.HashesEntity
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
@@ -24,7 +25,7 @@ class HashesEntityUtilsTest {
     fun `test set main`() {
         val original = HashesEntity(main = originalMain, duplicates = originalSet)
         val result = HashesEntity(main = afterSetMain, duplicates = afterSetMainSet)
-        assertTrue(HashesEntityUtils.eq(result, HashesEntityUtils.setMain(original, afterSetMain)))
+        assertTrue(HashesAdapter.eq(result, HashesAdapter.setMain(original, afterSetMain)))
     }
 
     @Test
@@ -33,14 +34,14 @@ class HashesEntityUtilsTest {
         val result1 = original.copy(duplicates = afterAddDupSet1)
         val result2 = original.copy(duplicates = afterAddDupSet2)
 
-        assertTrue(HashesEntityUtils.eq(original, HashesEntityUtils.addDuplicate(original, originalMain)))
-        assertTrue(HashesEntityUtils.eq(original, HashesEntityUtils.addDuplicates(original, setOf(originalMain))))
+        assertTrue(HashesAdapter.eq(original, HashesAdapter.addDuplicate(original, originalMain)))
+        assertTrue(HashesAdapter.eq(original, HashesAdapter.addDuplicates(original, setOf(originalMain))))
 
-        assertTrue(HashesEntityUtils.eq(result1, HashesEntityUtils.addDuplicate(original, 5L)))
+        assertTrue(HashesAdapter.eq(result1, HashesAdapter.addDuplicate(original, 5L)))
         assertTrue(
-            HashesEntityUtils.eq(
+            HashesAdapter.eq(
                 result2,
-                HashesEntityUtils.addDuplicates(original, setOf(originalMain, 5L, 6L, 7L))
+                HashesAdapter.addDuplicates(original, setOf(originalMain, 5L, 6L, 7L))
             )
         )
     }
@@ -52,11 +53,11 @@ class HashesEntityUtilsTest {
         val result2 = original.copy(main = afterDel1, duplicates = afterDelDupSet2)
         val result3 = original.copy(main = afterDel2, duplicates = afterDelDupSet3)
 
-        assertTrue(HashesEntityUtils.eq(result1, HashesEntityUtils.delDuplicate(original, 1L)))
-        assertTrue(HashesEntityUtils.eq(result2, HashesEntityUtils.delDuplicate(original, 4L)))
+        assertTrue(HashesAdapter.eq(result1, HashesAdapter.delDuplicate(original, 1L)))
+        assertTrue(HashesAdapter.eq(result2, HashesAdapter.delDuplicate(original, 4L)))
 
-        assertTrue(HashesEntityUtils.eq(result2, HashesEntityUtils.delDuplicates(original, setOf(1, 4))))
-        assertTrue(HashesEntityUtils.eq(result3, HashesEntityUtils.delDuplicates(original, setOf(1, 2, 4))))
+        assertTrue(HashesAdapter.eq(result2, HashesAdapter.delDuplicates(original, setOf(1, 4))))
+        assertTrue(HashesAdapter.eq(result3, HashesAdapter.delDuplicates(original, setOf(1, 2, 4))))
     }
 
 }

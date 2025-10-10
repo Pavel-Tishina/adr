@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service.impl
 
+import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_BY_PROFILE_AND_PATH
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES
@@ -12,13 +13,14 @@ import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
-import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
-import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils.eq
 import org.springframework.stereotype.Service
 import java.nio.file.Path
 
 @Service
-class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
+class SourcesServiceImpl(
+    private val sourcesDao: SourcesDao,
+    private val adapter: SourcesAdapter
+): SourcesService {
 
     override fun getSource(id: Long): EntityOperationResult {
         return when (val entity = sourcesDao.findById(id)) {
@@ -119,7 +121,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
             else -> {
                 val existed = sourcesDao.findById(source.id)
                 when {
-                    eq(existed!!, source) -> EntityOperationResult(
+                    adapter.eqEntity(existed!!, source) -> EntityOperationResult(
                         success = false, error = "Entity not updated", obj = source, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 
                     else -> {
@@ -158,14 +160,14 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
         return EntityOperationResult(
             success = isAnySuccess,
             obj = addedObjects,
-            error = "Not updated: ${errorPathesMsg(errors.map(SourcesEntityUtils::entityToDto))}"
+            error = "Not updated: ${errorPathesMsg(errors.map(SourcesAdapter::entityToDto))}"
                 .takeIf { errors.isNotEmpty() } ?: "",
             result = result
         )
     }
 
     override fun updateSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult {
-        val sourceEntities = sources.distinct().parallelStream().map(SourcesEntityUtils::dtoToEntity).toList()
+        val sourceEntities = sources.distinct().parallelStream().map(SourcesAdapter::dtoToEntity).toList()
         return updateSources(sourceEntities)
     }
 
@@ -221,7 +223,7 @@ class SourcesServiceImpl(private val sourcesDao: SourcesDao): SourcesService {
     }
 
     override fun removeSourcesDto(sources: Collection<SourcesDto>): EntityOperationResult {
-        val sourceEntities = sources.parallelStream().map { SourcesEntityUtils.dtoToEntity(it) }.distinct().toList()
+        val sourceEntities = sources.parallelStream().map { SourcesAdapter.dtoToEntity(it) }.distinct().toList()
         return removeSources(sourceEntities)
     }
 

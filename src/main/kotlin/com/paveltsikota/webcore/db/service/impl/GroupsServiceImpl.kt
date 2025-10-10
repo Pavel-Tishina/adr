@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service.impl
 
+import com.paveltsikota.webcore.db.adapter.GroupsAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_GROUPS
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_GROUPS_BY_PROFILE
@@ -8,11 +9,13 @@ import com.paveltsikota.webcore.db.entity.GroupsEntity
 import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.utils.entity.GroupsEntityUtils.eq
 import org.springframework.stereotype.Service
 
 @Service
-class GroupsServiceImpl(private val groupsDao: GroupsDao): GroupsService {
+class GroupsServiceImpl(
+    private val groupsDao: GroupsDao,
+    private val adapter: GroupsAdapter
+): GroupsService {
     override fun getGroup(id: Long): EntityOperationResult {
         return when (val entity = groupsDao.findById(id)) {
             null -> EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
@@ -77,7 +80,7 @@ class GroupsServiceImpl(private val groupsDao: GroupsDao): GroupsService {
     override fun updateGroup(group: GroupsEntity): EntityOperationResult {
         val result = groupsDao.update(group)
 
-        return when (eq(result, group)) {
+        return when (adapter.eqEntity(result, group)) {
             false -> EntityOperationResult(
                 success = false, error = "Entity not updated", obj = group, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 

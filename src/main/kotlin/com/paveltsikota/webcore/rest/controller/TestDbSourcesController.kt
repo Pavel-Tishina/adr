@@ -5,7 +5,7 @@ import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.rest.model.ManySourcesRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
-import com.paveltsikota.webcore.utils.entity.SourcesEntityUtils
+import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
@@ -58,7 +58,7 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
 
     @PutMapping("/")
     fun updSource(@RequestBody model: SourcesDto): TypedResponse<List<SourcesDto>> {
-        val opResult = sourcesService.updateSource(SourcesEntityUtils.dtoToEntity(model))
+        val opResult = sourcesService.updateSource(SourcesAdapter.dtoToEntity(model))
 
         return getTypedResponse<List<SourcesDto>>(opResult)
     }

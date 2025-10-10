@@ -1,7 +1,7 @@
-package com.paveltsikota.webcore.utils.entity
+package com.paveltsikota.webcore.db.adapter
 
-import com.paveltsikota.webcore.db.entity.ConfigEntity
 import com.paveltsikota.webcore.db.dto.CfgDto
+import com.paveltsikota.webcore.db.entity.ConfigEntity
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.ValuesUtils.anyTo
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
@@ -12,12 +12,16 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_N
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SHOW
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SIZE
 import com.paveltsikota.webcore.utils.enums.HashType
-import kotlin.String
+import org.springframework.stereotype.Component
 import kotlin.io.path.Path
 
-object ConfigEntityUtils {
+@Component
+object ConfigAdapter: AbstractEntityDtoAdapter<ConfigEntity, CfgDto>(
+    entityClass = ConfigEntity::class.java,
+    dtoClass = CfgDto::class.java
+) {
 
-    fun eq(e1: ConfigEntity, e2: ConfigEntity): Boolean {
+    override fun eqEntity(e1: ConfigEntity, e2: ConfigEntity): Boolean {
         return e1.id == e2.id
                 && e1.progressShow && e2.progressShow
                 && e1.flyHashCalculate && e2.flyHashCalculate
@@ -29,7 +33,11 @@ object ConfigEntityUtils {
                 && e1.hashType == e2.hashType
     }
 
-    fun entityToDto(e: ConfigEntity = ConfigEntity()): CfgDto {
+    override fun eqDto(dto1: CfgDto, dto2: CfgDto): Boolean {
+        return dto1 == dto2
+    }
+
+    override fun entityToDto(e: ConfigEntity): CfgDto {
         return with(e) {
             CfgDto(
                 hashDir = hashDir,
@@ -41,6 +49,10 @@ object ConfigEntityUtils {
                 flyHashCalculate = flyHashCalculate,
             )
         }
+    }
+
+    override fun dtoToEntity(dto: CfgDto): ConfigEntity {
+        TODO("Not yet implemented")
     }
 
     fun mapToDto(map: Map<String, Any> = getDefaultConfigMap()): CfgDto {

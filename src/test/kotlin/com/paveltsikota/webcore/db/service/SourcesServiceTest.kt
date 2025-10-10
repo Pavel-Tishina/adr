@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service
 
+import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_SOURCES
 import com.paveltsikota.webcore.db.dao.SourcesDao
 import com.paveltsikota.webcore.db.dto.SourcesDto
@@ -27,7 +28,7 @@ class SourcesServiceImplTest {
     @BeforeEach
     fun setup() {
         sourcesDao = mock()
-        service = SourcesServiceImpl(sourcesDao)
+        service = SourcesServiceImpl(sourcesDao, SourcesAdapter)
     }
 
 

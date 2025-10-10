@@ -8,7 +8,7 @@ import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultTyp
 import com.paveltsikota.webcore.rest.model.PostAddManyJobsRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
-import com.paveltsikota.webcore.utils.entity.JobEntityUtils
+import com.paveltsikota.webcore.db.adapter.JobsAdapter
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobStatus.*
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -84,7 +84,7 @@ class TestDbJobsController(private val jobService: JobService) {
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: JobsDto
     ): TypedResponse<List<JobsDto>> {
-        val opResult = jobService.update(JobEntityUtils.dtoToEntity(model))
+        val opResult = jobService.update(JobsAdapter.dtoToEntity(model))
 
         return getTypedResponse<List<JobsDto>>(opResult)
     }
