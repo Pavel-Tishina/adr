@@ -6,6 +6,7 @@ import com.paveltsikota.webcore.rest.model.ManySourcesRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import com.paveltsikota.webcore.db.adapter.SourcesAdapter
+import com.paveltsikota.webcore.db.dto.CleanUpDto
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
@@ -85,10 +86,10 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpSources(@RequestParam(required = true) profileId: Long): TypedResponse<List<SourcesDto>> {
+    fun cleanUpSources(@RequestParam(required = true) profileId: Long): TypedResponse<CleanUpDto> {
         val opResult = sourcesService.cleanUp(profileId)
 
-        return getTypedResponse<List<SourcesDto>>(opResult)
+        return getTypedResponse<CleanUpDto>(opResult)
     }
 
 }

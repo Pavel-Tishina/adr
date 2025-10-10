@@ -7,11 +7,17 @@ import kotlin.reflect.KClass
 class CommonEntityDtoAdapter(
     adapters: List<AbstractEntityDtoAdapter<*, *>>
 ) {
+//    private val entityToAdapter: Map<KClass<*>, AbstractEntityDtoAdapter<*, *>> =
+//        adapters.associateBy<AbstractEntityDtoAdapter<*, *>, KClass<*>> { it.entityClass as KClass<*> }
+//
+//    private val dtoToAdapter: Map<KClass<*>, AbstractEntityDtoAdapter<*, *>> =
+//        adapters.associateBy<AbstractEntityDtoAdapter<*, *>, KClass<*>> { it.dtoClass as KClass<*> }
+
     private val entityToAdapter: Map<KClass<*>, AbstractEntityDtoAdapter<*, *>> =
-        adapters.associateBy<AbstractEntityDtoAdapter<*, *>, KClass<*>> { it.entityClass as KClass<*> }
+        adapters.associateBy { it.entityClass }
 
     private val dtoToAdapter: Map<KClass<*>, AbstractEntityDtoAdapter<*, *>> =
-        adapters.associateBy<AbstractEntityDtoAdapter<*, *>, KClass<*>> { it.dtoClass as KClass<*> }
+        adapters.associateBy { it.dtoClass }
 
     @Suppress("UNCHECKED_CAST")
     fun <E : Any, D : Any> eqEntity(e1: E, e2: E): Boolean? {

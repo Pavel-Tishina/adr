@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.HashType
 import jakarta.persistence.*
 
@@ -11,7 +12,7 @@ data class HashesEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long = 0,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
     val size: Long = 0,

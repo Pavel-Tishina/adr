@@ -5,6 +5,7 @@ import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import com.paveltsikota.webcore.db.adapter.GroupsAdapter
+import com.paveltsikota.webcore.db.dto.CleanUpDto
 import org.springframework.web.bind.annotation.*
 
 
@@ -74,10 +75,10 @@ class TestDbGroupsController(private val groupsService: GroupsService) {
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpGroups(@RequestParam(required = true) profileId: Long): TypedResponse<List<GroupsDto>> {
+    fun cleanUpGroups(@RequestParam profileId: Long): TypedResponse<CleanUpDto> {
         val opResult = groupsService.cleanUp(profileId)
 
-        return getTypedResponse<List<GroupsDto>>(opResult)
+        return getTypedResponse<CleanUpDto>(opResult)
     }
 
 

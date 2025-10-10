@@ -4,7 +4,8 @@ import com.paveltsikota.webcore.utils.enums.HashType
 
 object Constants {
     // Config
-    val DEFAULT_CFG_PROFILE = 0L
+    val DEFAULT_PROFILE = 1L
+
     val DEFAULT_CFG_HASH_DIR = "/${HashType.XXHASH64}"
     val DEFAULT_CFG_HASH_TYPE = HashType.XXHASH64
     val DEFAULT_CFG_BUFFER_SIZE = 4_194_304L    // 4mb
@@ -13,4 +14,6 @@ object Constants {
     val DEFAULT_CFG_PROGRESS_SHOW = true
     val DEFAULT_CFG_FLY_HASH_CALCULATE = true
 
+    val DEFAULT_PROFILE_TITLE = "Default"
+    val DEFAULT_PROFILE_DESCRIPTION = "Default profile (created automatically)"
 }

@@ -256,7 +256,7 @@ class FileUtilsTest {
         Files.deleteIfExists(destFileSame)
         FileUtils.deleteDirOrFile(rootHashDir)
 
-        val wrongStatusEntity = FilesAdapter.getFilesEntryByPath(path = sourceFile)
+        val wrongStatusEntity = FilesAdapter.getFilesEntryForFilesOperationResult(path = sourceFile)
         val samePathEntity = wrongStatusEntity.copy(
             path = FileUtils.toUnixPath(destFileSame), hash = hash, state = FileState.MARK_MOVE)
 

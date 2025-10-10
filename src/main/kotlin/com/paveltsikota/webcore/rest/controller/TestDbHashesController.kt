@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.rest.controller
 
+import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.db.dto.HashesDto
 import com.paveltsikota.webcore.db.service.HashesService
 import com.paveltsikota.webcore.rest.model.PostGetManyHashesRequest
@@ -54,7 +55,7 @@ class TestDbHashesController(private val hashesService: HashesService) {
     @PostMapping("/")
     fun addHash(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
-        @RequestParam model: HashesDto
+        @RequestBody model: HashesDto
     ): TypedResponse<List<HashesDto>> {
         val opResult = with(model) {
             hashesService.add(profile, size, hash, hashType, main, duplicates, addOnce)
@@ -83,10 +84,10 @@ class TestDbHashesController(private val hashesService: HashesService) {
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpHashes(@RequestParam(required = true) profileId: Long): TypedResponse<List<HashesDto>> {
+    fun cleanUpHashes(@RequestParam(required = true) profileId: Long): TypedResponse<CleanUpDto> {
         val opResult = hashesService.cleanUp(profileId)
 
-        return getTypedResponse<List<HashesDto>>(opResult)
+        return getTypedResponse<CleanUpDto>(opResult)
     }
 
 

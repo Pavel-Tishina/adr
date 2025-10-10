@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import jakarta.persistence.*
 
 @Entity
@@ -10,7 +11,7 @@ data class SourcesEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long = 0,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
     var dirorder: Int = 0,
@@ -18,4 +19,4 @@ data class SourcesEntity(
     @Column(nullable = false)
     var path: String = "",
 
-)
+    )

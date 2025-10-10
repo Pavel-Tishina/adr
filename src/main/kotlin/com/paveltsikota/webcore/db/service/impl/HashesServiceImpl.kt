@@ -162,7 +162,8 @@ class HashesServiceImpl(
         var page = 0
         val notDeleted = HashSet<Long>()
         do {
-            val partResult = getAll(page = ++page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)
+            page = page + 1
+            val partResult = getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)
 
             if (partResult.success && (partResult.obj as List<*>).isNotEmpty()) {
                 partResult.obj.forEach { if (!hashesDao.removeById((it as HashesEntity).id)) notDeleted.add(it.id) }

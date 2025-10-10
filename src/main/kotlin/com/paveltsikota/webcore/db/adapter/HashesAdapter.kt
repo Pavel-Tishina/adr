@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 
 @Component
 object HashesAdapter: AbstractEntityDtoAdapter<HashesEntity, HashesDto>(
-    entityClass = HashesEntity::class.java,
-    dtoClass = HashesDto::class.java
+    entityClass = HashesEntity::class,
+    dtoClass = HashesDto::class
 ) {
 
     fun eq(e1: HashesEntity, e2: HashesEntity): Boolean {

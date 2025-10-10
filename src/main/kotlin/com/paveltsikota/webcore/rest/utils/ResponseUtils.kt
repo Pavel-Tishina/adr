@@ -17,7 +17,7 @@ object ResponseUtils {
         )
     }
 
-    inline fun <reified T> getTypedResponse(opResult: EntityOperationResult): TypedResponse<T> {
+    inline fun <reified T : Any> getTypedResponse(opResult: EntityOperationResult): TypedResponse<T> {
         val resultObj = when(!Objects.isNull(opResult.obj)) {
             true -> EntityMapper.anyToTypedDto<T>(opResult.obj)
             else -> null

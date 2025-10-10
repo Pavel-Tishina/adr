@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.rest.controller
 
+import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.db.service.FilesService
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
@@ -73,10 +74,10 @@ class TestDbFilesController(private val fileService: FilesService) {
     }
 
     @DeleteMapping("/remove-by-ids")
-    fun delFile(@RequestBody model: DeleteFilesByIdsRequest): TypedResponse<List<FilesDto>> {
+    fun delFile(@RequestBody model: DeleteFilesByIdsRequest): TypedResponse<CleanUpDto> {
         val opResult = fileService.removeFiles(model.ids)
 
-        return getTypedResponse<List<FilesDto>>(opResult)
+        return getTypedResponse<CleanUpDto>(opResult)
     }
 
 }

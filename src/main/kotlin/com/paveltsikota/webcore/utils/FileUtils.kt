@@ -8,7 +8,8 @@ import com.paveltsikota.webcore.service.operation.OperationResult
 import com.paveltsikota.webcore.service.operation.enums.CommonOpResultState
 import com.paveltsikota.webcore.service.operation.enums.DirOpResultState
 import com.paveltsikota.webcore.service.operation.enums.FileOpResultState
-import com.paveltsikota.webcore.db.adapter.FilesAdapter.getFilesEntryByPath
+import com.paveltsikota.webcore.db.adapter.FilesAdapter.getFilesEntryForFilesOperationResult
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.ERROR_IO
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.MOVE_TO_HASH_DIR_ERROR_FILE_NOT_EXIST
@@ -149,7 +150,7 @@ object FileUtils {
     // USE IT CAREFULLY
     // TODO: strings to const
     @OptIn(ExperimentalPathApi::class)
-    fun deleteDirOrFile(path: Path): OperationResult {
+    fun deleteDirOrFile(path: Path, profile: Long = DEFAULT_PROFILE): OperationResult {
         val fileOrDir = File(path.toString())
         return if (fileOrDir.isDirectory) {
             val nestedObjects = fileOrDir.listFiles()
@@ -183,7 +184,7 @@ object FileUtils {
             val success = Files.deleteIfExists(path)
             val result = FileOpResultState.FILE_DELETED.takeIf { success }?: FileOpResultState.FILE_NOT_DELETED
 
-            FileOperationResult(success = success, warnings = arrayListOf(), errors = arrayListOf(), obj = getFilesEntryByPath(path), result = result)
+            FileOperationResult(success = success, warnings = arrayListOf(), errors = arrayListOf(), obj = getFilesEntryForFilesOperationResult(path, profile), result = result)
         } else {
             CommonOperationResult(success = false, warnings = arrayListOf(), errors = arrayListOf("Delete object not found"), result = CommonOpResultState.FAILED)
         }

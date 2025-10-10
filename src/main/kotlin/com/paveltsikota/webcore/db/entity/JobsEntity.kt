@@ -1,9 +1,9 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
 import jakarta.persistence.*
-import java.sql.Timestamp
 
 @Entity
 @Table(name = "jobs")
@@ -13,7 +13,7 @@ data class JobsEntity (
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long = 1,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
     val priority: Int = 0,

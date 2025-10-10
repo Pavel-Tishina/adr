@@ -4,7 +4,7 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_TYPE
-import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROFILE
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_N
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SHOW
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SIZE
@@ -18,7 +18,7 @@ data class ConfigEntity(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: Long = DEFAULT_CFG_PROFILE,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
     var hashDir: String = DEFAULT_CFG_HASH_DIR,
@@ -41,4 +41,4 @@ data class ConfigEntity(
     @Column(nullable = false)
     var flyHashCalculate: Boolean = DEFAULT_CFG_FLY_HASH_CALCULATE,
 
-)
+    )

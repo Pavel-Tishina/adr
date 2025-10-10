@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 
 @Component
 object GroupsAdapter: AbstractEntityDtoAdapter<GroupsEntity, GroupsDto>(
-    entityClass = GroupsEntity::class.java,
-    dtoClass = GroupsDto::class.java
+    entityClass = GroupsEntity::class,
+    dtoClass = GroupsDto::class
 ) {
 
     override fun eqEntity(e1: GroupsEntity, e2: GroupsEntity): Boolean {

@@ -13,13 +13,13 @@ object EntityMapper {
         else -> listOfNotNull(ResponseMapperUtils.anyToDto(e))
     }
 
-    inline fun <reified T> filterAnyToDto(e: Any?): Any? = when (e) {
+    inline fun <reified T: Any> filterAnyToDto(e: Any?): Any? = when (e) {
         is T -> ResponseMapperUtils.anyToDto(e)
         is Collection<*> -> e.filterIsInstance<T>().mapNotNull(ResponseMapperUtils::anyToDto)
         else -> null
     }
 
-    inline fun <reified T> mapSingleToDto(e: Any?): T? = when (T::class) {
+    inline fun <reified T: Any> mapSingleToDto(e: Any?): T? = when (T::class) {
         JobsDto::class -> filterAnyToDto<JobsEntity>(e)
         FilesDto::class -> filterAnyToDto<FilesEntity>(e)
         GroupsDto::class -> filterAnyToDto<GroupsEntity>(e)
@@ -32,13 +32,17 @@ object EntityMapper {
     // for get responses like TypedResponse<List<JobsDto>>
     // call it like anyToTypedDtoInternal<List<JobsDto>, JobsDto>(e)
     // !!! but better use anyToTypedDto<List<JobsDto>>(e)  !!!
-    inline fun <reified T, reified E> anyToTypedDtoInternal(e: Any?, isCollection: Boolean = false): Any? = when (isCollection) {
-        true -> filterAnyToDto<T>(e)
+    inline fun <reified T: Any, reified E: Any> anyToTypedDtoInternal(e: Any?, isCollection: Boolean = false): Any? = when (isCollection) {
+        true -> if (checkObjWithIteratorCompatibility<E>(e)) {
+            listOf(mapSingleToDto<E>(e))
+        } else {
+            filterAnyToDto<T>(e)
+        }
         else -> mapSingleToDto<E>(e)
     }
 
     // for get responses like TypedResponse<List<JobsDto>>
-    inline fun <reified T> anyToTypedDto(e: Any?): Any? {
+    inline fun <reified T: Any> anyToTypedDto(e: Any?): Any? {
         val innerClass  = getCollectionIteratorClass<T>()
 
         println("T::class = ${T::class}, innerClass = $innerClass") // TODO: log4j
@@ -51,6 +55,7 @@ object EntityMapper {
                HashesDto::class -> anyToTypedDtoInternal<T, HashesDto>(e, true)
                ProfileDto::class -> anyToTypedDtoInternal<T, ProfileDto>(e, true)
                SourcesDto::class -> anyToTypedDtoInternal<T, SourcesDto>(e, true)
+               CleanUpDto::class -> anyToTypedDtoInternal<T, CleanUpDto>(e, true)
                else -> null
            }
         } else {
@@ -66,6 +71,21 @@ object EntityMapper {
         val kType = typeOf<T>()
         val arg = kType.arguments.firstOrNull()?.type ?: return null
         return (arg.classifier as? KClass<*>)
+    }
+
+    inline fun <reified T> checkObjWithIteratorCompatibility(e: Any?): Boolean {
+        val clazz = when (T::class) {
+            JobsDto::class -> JobsEntity::class
+            FilesDto::class -> FilesEntity::class
+            GroupsDto::class -> GroupsEntity::class
+            HashesDto::class -> HashesEntity::class
+            ProfileDto::class -> ProfileEntity::class
+            SourcesDto::class -> SourcesEntity::class
+            CleanUpDto::class -> Number::class
+            else -> T::class
+        }
+
+        return clazz.isInstance(e)
     }
 
 }

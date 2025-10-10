@@ -1,8 +1,10 @@
 package com.paveltsikota.webcore.db.adapter
 
-abstract class AbstractEntityDtoAdapter<E, D>(
-    internal val entityClass: Class<E>,
-    internal val dtoClass: Class<D>
+import kotlin.reflect.KClass
+
+abstract class AbstractEntityDtoAdapter<E : Any, D : Any>(
+    internal val entityClass: KClass<E>,
+    internal val dtoClass: KClass<D>
 ) {
     abstract fun eqEntity(e1: E, e2: E): Boolean
     abstract fun eqDto(dto1: D, dto2: D): Boolean

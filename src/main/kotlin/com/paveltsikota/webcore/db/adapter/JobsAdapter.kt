@@ -7,8 +7,8 @@ import java.sql.Timestamp
 
 @Component
 object JobsAdapter: AbstractEntityDtoAdapter<JobsEntity, JobsDto>(
-    entityClass = JobsEntity::class.java,
-    dtoClass = JobsDto::class.java
+    entityClass = JobsEntity::class,
+    dtoClass = JobsDto::class
 ) {
 
     override fun eqEntity(e1: JobsEntity, e2: JobsEntity): Boolean {

@@ -34,7 +34,8 @@ object ResponseMapperUtils {
 
     fun dtoMapper(e: Any?): Any? = when (e) {
         is CfgDto, is DuplicateDto, is DuplicateFileDto, is FilesDto,
-        is GroupsDto, is HashesDto, is JobsDto, is ProfileDto, is SourcesDto
+        is GroupsDto, is HashesDto, is JobsDto, is ProfileDto, is SourcesDto,
+        is CleanUpDto
             -> e
         else -> null
     }

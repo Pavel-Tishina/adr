@@ -4,6 +4,7 @@ import com.paveltsikota.webcore.utils.ValuesUtils.validatePageParams
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.transaction.annotation.Transactional
+import kotlin.math.abs
 
 @Transactional
 abstract class AbstractDao<T: Any>(
@@ -46,7 +47,7 @@ abstract class AbstractDao<T: Any>(
 
     @Transactional(readOnly = true)
     internal fun getAll(page: Int, pageSize: Int, profileId: Long? = null): List<T>? {
-        val offset = (page - 1) * pageSize
+        val offset = abs((page - 1) * pageSize)
         val sql = "SELECT f FROM ${entityClass.name} f ${if (profileId != null) { "WHERE f.profile = :profile" } else {}} ORDER BY f.id"
 
         val query = entityManager

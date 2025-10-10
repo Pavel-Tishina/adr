@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import jakarta.persistence.*
@@ -12,7 +13,7 @@ data class FilesEntity(
     val id: Long = 0,
 
     @Column(name = "profile", nullable = false)
-    val profile: Long = 0,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(name = "size", nullable = false)
     val size: Long = 0,

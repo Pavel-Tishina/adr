@@ -4,7 +4,6 @@ import com.paveltsikota.webcore.db.adapter.JobsAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
 import com.paveltsikota.webcore.db.dto.JobsDto
-import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.service.JobService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
@@ -163,10 +162,11 @@ class JobServiceImpl(
         var page = 0
         val notDeleted = HashSet<Long>()
         do {
+            page = page + 1
             val partResult = jobsDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?:emptyList()
 
             if (partResult.isNotEmpty()) {
-                partResult.forEach { if (!jobsDao.removeById((it as HashesEntity).id)) notDeleted.add(it.id) }
+                partResult.forEach { if (!jobsDao.removeById((it).id)) notDeleted.add(it.id) }
                 count += partResult.size
             }
         } while (partResult.isNotEmpty())
@@ -208,6 +208,7 @@ class JobServiceImpl(
         return map
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun getAllByStatus(profileId: Long?, status: JobStatus): List<JobsEntity> {
         val jobs = get(profile = profileId, status = status, priority = null, type = null)
 

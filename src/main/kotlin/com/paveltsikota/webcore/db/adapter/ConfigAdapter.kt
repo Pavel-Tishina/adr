@@ -8,6 +8,7 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_TYPE
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_N
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SHOW
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SIZE
@@ -17,8 +18,8 @@ import kotlin.io.path.Path
 
 @Component
 object ConfigAdapter: AbstractEntityDtoAdapter<ConfigEntity, CfgDto>(
-    entityClass = ConfigEntity::class.java,
-    dtoClass = CfgDto::class.java
+    entityClass = ConfigEntity::class,
+    dtoClass = CfgDto::class
 ) {
 
     override fun eqEntity(e1: ConfigEntity, e2: ConfigEntity): Boolean {
@@ -69,10 +70,10 @@ object ConfigAdapter: AbstractEntityDtoAdapter<ConfigEntity, CfgDto>(
         }
     }
 
-    fun dtoToEntity(dto: CfgDto, profileId: Long = 0): ConfigEntity {
+    fun dtoToEntity(dto: CfgDto, profileId: Long = DEFAULT_PROFILE): ConfigEntity {
         return with(dto) {
             ConfigEntity(
-                profile = profileId,
+                profile = profileId.takeIf { profileId > 0 } ?: DEFAULT_PROFILE,
                 hashDir = FileUtils.toUnixPath(Path(hashDir)),
                 hashType = hashType,
                 bufferSize = bufferSize,

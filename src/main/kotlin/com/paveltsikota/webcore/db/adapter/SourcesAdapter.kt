@@ -8,8 +8,8 @@ import kotlin.io.path.Path
 
 @Component
 object SourcesAdapter: AbstractEntityDtoAdapter<SourcesEntity, SourcesDto>(
-    entityClass = SourcesEntity::class.java,
-    dtoClass = SourcesDto::class.java
+    entityClass = SourcesEntity::class,
+    dtoClass = SourcesDto::class
 ) {
 
     override fun eqEntity(e1: SourcesEntity, e2: SourcesEntity): Boolean {

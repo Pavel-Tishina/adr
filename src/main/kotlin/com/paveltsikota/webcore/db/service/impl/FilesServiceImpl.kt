@@ -291,7 +291,8 @@ class FilesServiceImpl(
         var partResult: List<FilesEntity>
         val notDeleted = HashSet<Long>()
         do {
-            partResult = filesDao.getAll(page = ++page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
+            page = page + 1
+            partResult = filesDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
 
             count += partResult.size
 
@@ -342,7 +343,8 @@ class FilesServiceImpl(
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, ++p, ps) ?: emptyList()
+                p = p + 1
+                pageResult = getBySql(sql, params, p, ps) ?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
 

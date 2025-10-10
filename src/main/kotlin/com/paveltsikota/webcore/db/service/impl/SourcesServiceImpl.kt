@@ -47,7 +47,8 @@ class SourcesServiceImpl(
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, ++p, ps)?: emptyList()
+                p = p + 1
+                pageResult = getBySql(sql, params, p, ps)?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
         } else {

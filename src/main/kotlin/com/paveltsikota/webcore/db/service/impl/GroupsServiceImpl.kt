@@ -34,7 +34,6 @@ class GroupsServiceImpl(
         val ps = DbConst.MAX_PAGE_SIZE.takeIf { pageSize == null || pageSize < 1}
             ?: pageSize
 
-
         val result = ArrayList<GroupsEntity>()
 
         if (page == null || page < 1) {
@@ -42,7 +41,8 @@ class GroupsServiceImpl(
 
             var p = 0
             do {
-                pageResult = getBySql(sql, params, ++p, ps)?: emptyList()
+                p = p + 1
+                pageResult = getBySql(sql, params, p, ps)?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
         } else {
@@ -73,7 +73,6 @@ class GroupsServiceImpl(
                 groupsDao.save(group)
                 EntityOperationResult(success = true, obj = group, result = EntityOperationResultType.ENTITY_ADD)
             }
-
         }
     }
 

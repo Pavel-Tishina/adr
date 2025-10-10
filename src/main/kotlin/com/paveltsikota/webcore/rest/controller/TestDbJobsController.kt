@@ -9,6 +9,7 @@ import com.paveltsikota.webcore.rest.model.PostAddManyJobsRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import com.paveltsikota.webcore.db.adapter.JobsAdapter
+import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobStatus.*
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -97,10 +98,10 @@ class TestDbJobsController(private val jobService: JobService) {
     }
 
     @DeleteMapping("/cleanup")
-    fun cleanUpJobs(@RequestParam(required = true) profileId: Long): TypedResponse<List<JobsDto>> {
+    fun cleanUpJobs(@RequestParam(required = true) profileId: Long): TypedResponse<CleanUpDto> {
         val opResult = jobService.cleanUp(profileId)
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<CleanUpDto>(opResult)
     }
 
 
