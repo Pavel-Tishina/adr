@@ -15,6 +15,7 @@ import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultTyp
 import com.paveltsikota.webcore.hash.calculator.HashCalculator
 import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.db.adapter.FilesAdapter
+import com.paveltsikota.webcore.db.utils.FilesUtils.getFilesEntryByPathForDb
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
@@ -68,7 +69,7 @@ class FilesServiceImpl(
     }
 
     override fun addLocalFile(filePath: Path, calc: HashCalculator?, addOnce: Boolean?): EntityOperationResult {
-        val entity = adapter.getFilesEntryByPathForDb(filePath, calc)
+        val entity = getFilesEntryByPathForDb(filePath, calc)
 
         return when {
             entity.state == FileState.NOT_FOUND -> EntityOperationResult(
@@ -131,7 +132,7 @@ class FilesServiceImpl(
 
     override fun updateFile(file: FilesEntity): EntityOperationResult {
         val obj = filesDao.update(file)
-        return if (adapter.eqEntity(file, obj)) {
+        return if (file == obj) {
             EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
         } else {
             EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
@@ -322,9 +323,8 @@ class FilesServiceImpl(
 
     private fun getProfileAndSizeMap(profileId: Long, size: Long?): Map<String, Any> {
         val map = mutableMapOf(Pair("profile", profileId))
-        if (size != null) {
-            map["size"] = size
-        }
+
+        if (size != null) map["size"] = size
 
         return map
     }

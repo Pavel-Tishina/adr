@@ -3,7 +3,7 @@ package com.paveltsikota.webcore.db.dao
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.ValuesUtils.validatePageParams
-import com.paveltsikota.webcore.db.adapter.FilesAdapter.hashNotCalculated
+import com.paveltsikota.webcore.db.utils.FilesUtils.hashNotCalculated
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional

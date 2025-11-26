@@ -1,9 +1,11 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import jakarta.persistence.*
+import kotlin.io.path.Path
 
 @Entity
 @Table(name = "files")
@@ -56,4 +58,28 @@ data class FilesEntity(
 
     @Column(name = "hold", nullable = false)
     var hold: Boolean = false
-)
+
+    //TODO: add fast-hash for first 2-4-8-32-64-128kb and 4-8-16mb for videos and big files
+    //TODO: add for all entities archive/restore as Long
+): CommonEntity {
+
+    override fun equals(o: Any?): Boolean = o is FilesEntity && id == o.id && same(o)
+
+    override fun same(o: Any?): Boolean {
+        return o is FilesEntity
+                && state == o.state
+                && hold == o.hold
+                && isUnique == o.isUnique
+                && profile == o.profile
+                && size == o.size
+                && created == o.created
+                && modified == o.modified
+                && hashId == o.hashId
+                && groupId == o.groupId
+                && hashType == o.hashType
+                && fileName == o.fileName
+                && newFileName == o.newFileName
+                && FileUtils.toUnixPath(Path(path)) == FileUtils.toUnixPath(Path(o.path))
+    }
+
+}

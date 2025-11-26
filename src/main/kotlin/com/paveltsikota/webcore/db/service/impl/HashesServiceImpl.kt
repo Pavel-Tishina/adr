@@ -13,6 +13,7 @@ import com.paveltsikota.webcore.db.entity.HashesEntity
 import com.paveltsikota.webcore.db.service.HashesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
+import com.paveltsikota.webcore.db.utils.HashesUtils.setUpdate
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
 
@@ -96,7 +97,7 @@ class HashesServiceImpl(
 
     override fun update(entity: HashesEntity): EntityOperationResult {
         val obj = hashesDao.update(entity)
-        return if (adapter.eqEntity(entity, obj)) {
+        return if (entity == obj) {
             EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
         } else {
             EntityOperationResult(success = false, obj = obj, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
@@ -109,7 +110,7 @@ class HashesServiceImpl(
         return if (entity == null || entity.profile != profileId) {
             EntityOperationResult(success = false, error = "Entity not found", result = EntityOperationResultType.ENTITY_NOT_FOUND)
         } else {
-            val updatedEntity = adapter.setUpdate(entity, main, dupIds?: emptySet())
+            val updatedEntity = setUpdate(entity, main, dupIds?: emptySet())
             update(updatedEntity)
         }
     }

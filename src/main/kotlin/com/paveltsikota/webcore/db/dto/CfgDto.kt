@@ -17,4 +17,4 @@ data class CfgDto(
     val progressSize: Long = DEFAULT_CFG_PROGRESS_SIZE,
     val progressShow: Boolean = DEFAULT_CFG_PROGRESS_SHOW,
     val flyHashCalculate: Boolean = DEFAULT_CFG_FLY_HASH_CALCULATE,
-)
+): CommonDto

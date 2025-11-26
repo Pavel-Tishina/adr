@@ -122,7 +122,7 @@ class SourcesServiceImpl(
             else -> {
                 val existed = sourcesDao.findById(source.id)
                 when {
-                    adapter.eqEntity(existed!!, source) -> EntityOperationResult(
+                    existed != source -> EntityOperationResult(
                         success = false, error = "Entity not updated", obj = source, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 
                     else -> {

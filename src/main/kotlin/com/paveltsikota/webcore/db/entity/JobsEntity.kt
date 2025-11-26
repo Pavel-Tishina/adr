@@ -42,4 +42,20 @@ data class JobsEntity (
     @Column(nullable = false)
     var status: JobStatus = JobStatus.CREATED
 
-    )
+): CommonEntity {
+
+    override fun same(o: Any?): Boolean {
+        return o is JobsEntity
+                && profile == o.profile
+                && completed == o.completed
+                && disabled == o.disabled
+                && priority == o.priority
+                && start == o.start
+                && finish == o.finish
+                && type == o.type
+                && status == o.status
+                && lastObjectId == o.lastObjectId
+                && lastObject == o.lastObject
+    }
+
+}

@@ -5,4 +5,4 @@ data class SourcesDto(
     val profile: Long,
     val dirorder: Int,
     val path: String,
-)
+): CommonDto

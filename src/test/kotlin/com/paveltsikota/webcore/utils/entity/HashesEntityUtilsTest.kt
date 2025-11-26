@@ -1,7 +1,11 @@
 package com.paveltsikota.webcore.utils.entity
 
-import com.paveltsikota.webcore.db.adapter.HashesAdapter
 import com.paveltsikota.webcore.db.entity.HashesEntity
+import com.paveltsikota.webcore.db.utils.HashesUtils.addDuplicate
+import com.paveltsikota.webcore.db.utils.HashesUtils.addDuplicates
+import com.paveltsikota.webcore.db.utils.HashesUtils.delDuplicate
+import com.paveltsikota.webcore.db.utils.HashesUtils.delDuplicates
+import com.paveltsikota.webcore.db.utils.HashesUtils.setMain
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
@@ -25,7 +29,7 @@ class HashesEntityUtilsTest {
     fun `test set main`() {
         val original = HashesEntity(main = originalMain, duplicates = originalSet)
         val result = HashesEntity(main = afterSetMain, duplicates = afterSetMainSet)
-        assertTrue(HashesAdapter.eq(result, HashesAdapter.setMain(original, afterSetMain)))
+        assertTrue(result == setMain(original, afterSetMain))
     }
 
     @Test
@@ -34,16 +38,11 @@ class HashesEntityUtilsTest {
         val result1 = original.copy(duplicates = afterAddDupSet1)
         val result2 = original.copy(duplicates = afterAddDupSet2)
 
-        assertTrue(HashesAdapter.eq(original, HashesAdapter.addDuplicate(original, originalMain)))
-        assertTrue(HashesAdapter.eq(original, HashesAdapter.addDuplicates(original, setOf(originalMain))))
+        assertTrue(original == addDuplicate(original, originalMain))
+        assertTrue(original == addDuplicates(original, setOf(originalMain)))
 
-        assertTrue(HashesAdapter.eq(result1, HashesAdapter.addDuplicate(original, 5L)))
-        assertTrue(
-            HashesAdapter.eq(
-                result2,
-                HashesAdapter.addDuplicates(original, setOf(originalMain, 5L, 6L, 7L))
-            )
-        )
+        assertTrue(result1 == addDuplicate(original, 5L))
+        assertTrue(result2 == addDuplicates(original, setOf(originalMain, 5L, 6L, 7L)))
     }
 
     @Test
@@ -53,11 +52,11 @@ class HashesEntityUtilsTest {
         val result2 = original.copy(main = afterDel1, duplicates = afterDelDupSet2)
         val result3 = original.copy(main = afterDel2, duplicates = afterDelDupSet3)
 
-        assertTrue(HashesAdapter.eq(result1, HashesAdapter.delDuplicate(original, 1L)))
-        assertTrue(HashesAdapter.eq(result2, HashesAdapter.delDuplicate(original, 4L)))
+        assertTrue(result1 == delDuplicate(original, 1L))
+        assertTrue(result2 == delDuplicate(original, 4L))
 
-        assertTrue(HashesAdapter.eq(result2, HashesAdapter.delDuplicates(original, setOf(1, 4))))
-        assertTrue(HashesAdapter.eq(result3, HashesAdapter.delDuplicates(original, setOf(1, 2, 4))))
+        assertTrue(result2 == delDuplicates(original, setOf(1, 4)))
+        assertTrue(result3 == delDuplicates(original, setOf(1, 2, 4)))
     }
 
 }

@@ -28,4 +28,4 @@ data class FilesDto(
     val hashType: HashType?,
     val state: FileState?,
     val hold: Boolean?
-)
+): CommonDto

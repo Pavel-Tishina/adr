@@ -19,4 +19,13 @@ data class SourcesEntity(
     @Column(nullable = false)
     var path: String = "",
 
-    )
+): CommonEntity {
+
+    override fun same(o: Any?): Boolean {
+        return o is SourcesEntity
+                && profile == o.profile
+                && dirorder == o.dirorder
+                && path == o.path
+    }
+
+}

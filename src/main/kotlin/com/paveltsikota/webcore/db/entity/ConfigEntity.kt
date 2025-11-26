@@ -4,10 +4,10 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_TYPE
-import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_N
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SHOW
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SIZE
+import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.HashType
 import jakarta.persistence.*
 
@@ -40,5 +40,17 @@ data class ConfigEntity(
 
     @Column(nullable = false)
     var flyHashCalculate: Boolean = DEFAULT_CFG_FLY_HASH_CALCULATE,
+): CommonEntity {
 
-    )
+    override fun same(o: Any?): Boolean {
+        return o is ConfigEntity
+                && progressShow == o.progressShow
+                && flyHashCalculate == o.flyHashCalculate
+                && profile == o.profile
+                && progressN == o.progressN
+                && progressSize == o.progressSize
+                && bufferSize == o.bufferSize
+                && hashType == o.hashType
+    }
+
+}

@@ -3,13 +3,13 @@ package com.paveltsikota.webcore.utils
 import com.paveltsikota.webcore.utils.enums.OsType
 
 object OsUtils {
-    val OS_NAME_PROP = "os.name"
-    val WIN = "win"
-    val MAC = "mac"
-    val NIX = "nix"
-    val NUX = "nux"
-    val AIX = "aix"
-    val BSD = "bsd"
+    const val OS_NAME_PROP = "os.name"
+    const val WIN = "win"
+    const val MAC = "mac"
+    const val NIX = "nix"
+    const val NUX = "nux"
+    const val AIX = "aix"
+    const val BSD = "bsd"
 
 
     fun detectOS(): OsType {

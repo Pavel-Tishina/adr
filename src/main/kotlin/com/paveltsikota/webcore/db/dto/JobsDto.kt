@@ -16,4 +16,4 @@ data class JobsDto (
     var lastObject: String? = null,
     var lastObjectId: Long? = null,
     var status: JobStatus = JobStatus.CREATED
-)
+): CommonDto

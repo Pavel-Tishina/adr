@@ -9,4 +9,4 @@ class DuplicateFileDto(
     val path: String,
     val state: FileState,
     val hold: Boolean
-)
+): CommonDto

@@ -29,4 +29,16 @@ data class HashesEntity(
     @Column(nullable = false)
     var duplicates: MutableSet<Long> = hashSetOf(),
 
-    )
+): CommonEntity {
+
+    override fun same(o: Any?): Boolean {
+        return o is HashesEntity
+                && profile == o.profile
+                && size == o.size
+                && main == o.main
+                && hashType == o.hashType
+                && hash == o.hash
+                && duplicates == o.duplicates
+    }
+
+}

@@ -10,4 +10,4 @@ data class HashesDto(
     val hashType: HashType,
     val main: Long,
     val duplicates: Set<Long>?,
-)
+): CommonDto

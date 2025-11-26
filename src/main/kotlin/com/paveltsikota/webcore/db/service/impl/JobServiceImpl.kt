@@ -137,7 +137,7 @@ class JobServiceImpl(
             obj == null -> EntityOperationResult(
                 success = false, error = "Jobs entity not found", obj = job, result = EntityOperationResultType.ENTITY_NOT_FOUND)
 
-            !adapter.eqEntity(job, obj) -> EntityOperationResult(
+            job != obj -> EntityOperationResult(
                 success = false, error = "Entity not updated", obj = job, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 
             else -> EntityOperationResult(

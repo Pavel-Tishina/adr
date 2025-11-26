@@ -77,5 +77,6 @@ abstract class AbstractDao<T: Any>(
         return query.resultList
     }
 
+    //TODO: sql
 
 }

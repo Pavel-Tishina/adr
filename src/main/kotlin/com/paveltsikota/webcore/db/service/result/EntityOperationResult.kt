@@ -5,6 +5,6 @@ import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultTyp
 data class EntityOperationResult(
     val success: Boolean = false,
     val obj: Any? = null,
-    val result: EntityOperationResultType = EntityOperationResultType.ERROR,
+    val result: EntityOperationResultType = EntityOperationResultType.ERROR, // TODO: result as sealed class?
     val error: String? = null
 )

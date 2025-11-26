@@ -61,8 +61,6 @@ object EntityMapper {
         } else {
             anyToTypedDtoInternal<T, T>(e)
         }
-
-
     }
 
     inline fun <reified T> isCollection(): Boolean = Collection::class.java.isAssignableFrom(T::class.java)

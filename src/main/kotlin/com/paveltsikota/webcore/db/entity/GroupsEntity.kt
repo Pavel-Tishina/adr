@@ -19,4 +19,12 @@ data class GroupsEntity(
     @Column(nullable = true)
     var fileIds: Set<Long> = hashSetOf(),
 
-    )
+): CommonEntity {
+
+    override fun same(o: Any?): Boolean {
+        return o is GroupsEntity
+                && profile == o.profile
+                && size == o.size
+                && fileIds == o.fileIds
+    }
+}

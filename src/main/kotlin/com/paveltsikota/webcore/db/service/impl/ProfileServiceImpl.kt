@@ -5,8 +5,8 @@ import com.paveltsikota.webcore.db.entity.ProfileEntity
 import com.paveltsikota.webcore.db.service.ProfileService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.db.adapter.ConfigAdapter.getDefaultConfigMap
 import com.paveltsikota.webcore.db.adapter.ProfileAdapter
+import com.paveltsikota.webcore.db.utils.ConfigUtils.getDefaultConfigMap
 import org.springframework.stereotype.Service
 
 @Service
@@ -46,7 +46,7 @@ class ProfileServiceImpl(
 
             else -> {
                 val obj = profileDao.update(profile)
-                if (adapter.eqEntity(profile, obj)) {
+                if (profile == obj) {
                     EntityOperationResult(success = true, obj = obj, result = EntityOperationResultType.ENTITY_UPDATED)
                 } else {
                     EntityOperationResult(success = false, error = "Entity not updated", result = EntityOperationResultType.ENTITY_NOT_UPDATED)

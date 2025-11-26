@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.utils
 
 import com.paveltsikota.webcore.db.entity.FilesEntity
+import com.paveltsikota.webcore.db.utils.FilesUtils.getFilesEntryForFilesOperationResult
 import com.paveltsikota.webcore.service.operation.CommonOperationResult
 import com.paveltsikota.webcore.service.operation.DirOperationResult
 import com.paveltsikota.webcore.service.operation.FileOperationResult
@@ -8,7 +9,6 @@ import com.paveltsikota.webcore.service.operation.OperationResult
 import com.paveltsikota.webcore.service.operation.enums.CommonOpResultState
 import com.paveltsikota.webcore.service.operation.enums.DirOpResultState
 import com.paveltsikota.webcore.service.operation.enums.FileOpResultState
-import com.paveltsikota.webcore.db.adapter.FilesAdapter.getFilesEntryForFilesOperationResult
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.errors.FileOperationErrors.ERROR_IO

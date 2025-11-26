@@ -9,4 +9,4 @@ data class DuplicateDto(
     val dupN: Int,
     var main: DuplicateFileDto,
     var dups: Set<DuplicateFileDto>
-)
+): CommonDto

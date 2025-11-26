@@ -79,7 +79,7 @@ class GroupsServiceImpl(
     override fun updateGroup(group: GroupsEntity): EntityOperationResult {
         val result = groupsDao.update(group)
 
-        return when (adapter.eqEntity(result, group)) {
+        return when (group == result) {
             false -> EntityOperationResult(
                 success = false, error = "Entity not updated", obj = group, result = EntityOperationResultType.ENTITY_NOT_UPDATED)
 

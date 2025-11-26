@@ -3,6 +3,8 @@ package com.paveltsikota.webcore.db.adapter
 import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
+// TODO: think do you need it???! Ahh?
+
 @Component
 class CommonEntityDtoAdapter(
     adapters: List<AbstractEntityDtoAdapter<*, *>>
@@ -19,17 +21,17 @@ class CommonEntityDtoAdapter(
     private val dtoToAdapter: Map<KClass<*>, AbstractEntityDtoAdapter<*, *>> =
         adapters.associateBy { it.dtoClass }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <E : Any, D : Any> eqEntity(e1: E, e2: E): Boolean? {
-        val adapter = entityToAdapter[e1::class] as? AbstractEntityDtoAdapter<E, D> ?: return null
-        return adapter.eqEntity(e1, e2)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <E : Any, D : Any> eqDto(dto1: D, dto2: D): Boolean? {
-        val adapter = dtoToAdapter[dto1::class] as? AbstractEntityDtoAdapter<E, D> ?: return null
-        return adapter.eqDto(dto1, dto2)
-    }
+//    @Suppress("UNCHECKED_CAST")
+//    fun <E : Any, D : Any> eqEntity(e1: E, e2: E): Boolean? {
+//        val adapter = entityToAdapter[e1::class] as? AbstractEntityDtoAdapter<E, D> ?: return null
+//        return adapter.eqEntity(e1, e2)
+//    }
+//
+//    @Suppress("UNCHECKED_CAST")
+//    fun <E : Any, D : Any> eqDto(dto1: D, dto2: D): Boolean? {
+//        val adapter = dtoToAdapter[dto1::class] as? AbstractEntityDtoAdapter<E, D> ?: return null
+//        return adapter.eqDto(dto1, dto2)
+//    }
 
     @Suppress("UNCHECKED_CAST")
     fun <E : Any, D : Any> dtoToEntity(dto: D): E? {

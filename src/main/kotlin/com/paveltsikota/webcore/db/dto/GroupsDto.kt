@@ -5,4 +5,4 @@ data class GroupsDto(
     val profile: Long,
     val size: Long,
     val fileIds: Set<Long>?,
-)
+): CommonDto

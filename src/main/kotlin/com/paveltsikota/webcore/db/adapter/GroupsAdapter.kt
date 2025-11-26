@@ -10,25 +10,12 @@ object GroupsAdapter: AbstractEntityDtoAdapter<GroupsEntity, GroupsDto>(
     dtoClass = GroupsDto::class
 ) {
 
-    override fun eqEntity(e1: GroupsEntity, e2: GroupsEntity): Boolean {
-        return e1.id == e2.id
-                && e1.size == e2.size
-                && e1.profile == e2.profile
-                && e1.fileIds == e2.fileIds
-    }
-
-    override fun eqDto(dto1: GroupsDto, dto2: GroupsDto): Boolean {
-        return dto1 == dto2
-    }
-
     override fun entityToDto(e: GroupsEntity): GroupsDto {
-        return GroupsDto(id = e.id, profile = e.profile, size = e.size, fileIds = e.fileIds)
+        return with(e) { GroupsDto(id, profile, size, fileIds) }
     }
 
     override fun dtoToEntity(dto: GroupsDto): GroupsEntity {
-        return with(dto) {
-            GroupsEntity(id = dto.id ?: 0, profile = dto.profile, size = dto.size, fileIds = dto.fileIds ?: emptySet())
-        }
+        return with(dto) { GroupsEntity(id ?: 0, profile, size, fileIds ?: emptySet()) }
     }
 
 }

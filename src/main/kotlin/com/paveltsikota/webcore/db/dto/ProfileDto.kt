@@ -5,4 +5,4 @@ data class ProfileDto(
     val title: String,
     val description: String?,
     val cfg: CfgDto
-)
+): CommonDto

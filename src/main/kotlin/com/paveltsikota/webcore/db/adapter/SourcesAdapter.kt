@@ -12,25 +12,12 @@ object SourcesAdapter: AbstractEntityDtoAdapter<SourcesEntity, SourcesDto>(
     dtoClass = SourcesDto::class
 ) {
 
-    override fun eqEntity(e1: SourcesEntity, e2: SourcesEntity): Boolean {
-        return e1.id == e2.id
-                && e1.profile == e2.profile
-                && e1.dirorder == e2.dirorder
-                && e1.path == e2.path
-    }
-
-    override fun eqDto(dto1: SourcesDto, dto2: SourcesDto): Boolean {
-        return dto1 == dto2
-    }
-
     override fun entityToDto(e: SourcesEntity): SourcesDto {
-        return SourcesDto(id = e.id, profile = e.profile, dirorder = e.dirorder, path = e.path)
+        return with(e) { SourcesDto(id, profile, dirorder, path) }
     }
 
     override fun dtoToEntity(dto: SourcesDto): SourcesEntity {
-        return with(dto) {
-            SourcesEntity(id = id?: 0, profile = profile, dirorder = dirorder, path = FileUtils.toUnixPath(Path(path)))
-        }
+        return with(dto) { SourcesEntity(id?: 0, profile, dirorder, FileUtils.toUnixPath(Path(path))) }
     }
 
 }
