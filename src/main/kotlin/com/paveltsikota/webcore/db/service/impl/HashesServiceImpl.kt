@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.service.impl
 
-import com.paveltsikota.webcore.db.adapter.HashesAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_HASHES
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_HASHES_BY_N
@@ -19,8 +18,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class HashesServiceImpl(
-    private val hashesDao: HashesDao,
-    private val adapter: HashesAdapter
+    private val hashesDao: HashesDao
 ): HashesService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = hashesDao.findById(id)) {
@@ -123,7 +121,10 @@ class HashesServiceImpl(
     }
 
     override fun remove(entity: HashesEntity): EntityOperationResult {
-        return remove(entity.id)
+        return when (hashesDao.removeByIdAndProfile(entity.id, entity.profile)) {
+            false -> EntityOperationResult(success = false, error = "Entity not removed", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
+            true -> EntityOperationResult(success = true, result = EntityOperationResultType.ENTITY_REMOVED)
+        }
     }
 
     override fun findByHash(hash: String, hashType: HashType, profileId: Long): EntityOperationResult {

@@ -24,6 +24,9 @@ import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.Path
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.pathString
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -328,5 +331,17 @@ class FileUtilsTest {
         return kotlin.math.abs(d1 - d2) < 3000000 // 3ms I guess it's pretty enough
     }
 
+    @Test
+    @Ignore
+    fun `filesWalk - just for understand how it's work`() {
+        val dir = "e:/CocosDashboard"
+        //File(dir).walkTopDown().forEach { println(it.absolutePath) } // it's slow bro cuz first get all files from dir
+
+//        File(dir).walkTopDown().filter { it.isFile }
+//            .chunked(1)
+//            .forEach { println(it.last().absolutePath).let { println() } } // looks much better
+
+        Files.walk(Path(dir)).filter { it.isRegularFile() }.forEach { println(it.pathString) } // super
+    }
 
 }

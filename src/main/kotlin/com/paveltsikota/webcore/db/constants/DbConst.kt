@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.constants
 
+//TODO: what gonna happen here?
 object DbConst {
     val MAX_PAGE_SIZE = 25
 
@@ -14,6 +15,7 @@ object DbConst {
     val SQL_GET_GROUPS_BY_PROFILE = "FROM GroupsEntity p WHERE p.profile = :profile ORDER BY p.id"
 
     val SQL_GET_SOURCES = "FROM SourcesEntity p ORDER BY p.id"
+    val SQL_GET_SOURCES_BY_IDS = "FROM SourcesEntity p WHERE p.id IN ORDER BY p.id"
     val SQL_GET_SOURCES_BY_PROFILE = "FROM SourcesEntity p WHERE p.profile = :profile ORDER BY p.id"
     val SQL_GET_BY_PROFILE_AND_PATH = "FROM SourcesEntity p WHERE p.profile = :profile AND p.path = :path ORDER BY p.id"
 

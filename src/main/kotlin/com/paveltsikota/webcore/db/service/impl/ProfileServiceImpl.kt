@@ -5,14 +5,12 @@ import com.paveltsikota.webcore.db.entity.ProfileEntity
 import com.paveltsikota.webcore.db.service.ProfileService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
-import com.paveltsikota.webcore.db.adapter.ProfileAdapter
 import com.paveltsikota.webcore.db.utils.ConfigUtils.getDefaultConfigMap
 import org.springframework.stereotype.Service
 
 @Service
 class ProfileServiceImpl(
-    private val profileDao: ProfileDao,
-    private val adapter: ProfileAdapter
+    private val profileDao: ProfileDao
 ): ProfileService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = profileDao.findById(id)) {

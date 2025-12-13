@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.db.init
 
-import com.paveltsikota.webcore.db.adapter.ProfileAdapter
 import com.paveltsikota.webcore.db.service.ProfileService
+import com.paveltsikota.webcore.db.utils.ProfileUtils.makeDefaultProfileEntity
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -12,7 +12,7 @@ class DefaultProfileInitializer(
 ): ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
-        val defaultProfile = ProfileAdapter.makeDefaultProfileEntity()
+        val defaultProfile = makeDefaultProfileEntity()
 
         if (!profileService.isAlreadyExist(defaultProfile)) {
             val result = with(defaultProfile) {

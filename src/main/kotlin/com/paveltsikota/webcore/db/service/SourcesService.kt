@@ -8,6 +8,7 @@ import java.nio.file.Path
 interface SourcesService {
     fun getSource(id: Long): EntityOperationResult
     fun getSources(page: Int?, pageSize: Int?, profileId: Long?): EntityOperationResult
+    fun getSources(ids: Collection<Long>): EntityOperationResult
 
     fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult
     fun addSourcesDto(sources: Collection<SourcesDto>, addOnce: Boolean?): EntityOperationResult

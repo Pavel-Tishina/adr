@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.service.impl
 
-import com.paveltsikota.webcore.db.adapter.GroupsAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_GROUPS
 import com.paveltsikota.webcore.db.constants.DbConst.SQL_GET_GROUPS_BY_PROFILE
@@ -13,8 +12,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class GroupsServiceImpl(
-    private val groupsDao: GroupsDao,
-    private val adapter: GroupsAdapter
+    private val groupsDao: GroupsDao
 ): GroupsService {
     override fun getGroup(id: Long): EntityOperationResult {
         return when (val entity = groupsDao.findById(id)) {
@@ -89,7 +87,13 @@ class GroupsServiceImpl(
     }
 
     override fun removeGroup(group: GroupsEntity): EntityOperationResult {
-        return removeGroup(group.id)
+        return when (groupsDao.removeByIdAndProfile(group.id, group.profile)) {
+            false -> EntityOperationResult(
+                success = false, error = "Group entity ${group.id} not removed", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
+
+            true -> EntityOperationResult(
+                success = true, result = EntityOperationResultType.ENTITY_REMOVED)
+        }
     }
 
     override fun removeGroup(id: Long): EntityOperationResult {

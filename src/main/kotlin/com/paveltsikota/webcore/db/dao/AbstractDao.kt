@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.abs
+import kotlin.math.max
 
 @Transactional
 abstract class AbstractDao<T: Any>(
@@ -43,6 +44,17 @@ abstract class AbstractDao<T: Any>(
         if (entity != null) entityManager.remove(entity)
 
         return entity != null
+    }
+
+    @Transactional
+    fun removeByIdAndProfile(id: Long, profileId: Long): Boolean {
+        val query = entityManager
+            .createQuery("FROM ${entityClass.name} p WHERE p.id = :id AND p.profile = :profile", entityClass)
+            .setParameter("profile", profileId)
+
+        val result = query.singleResultOrNull?.let { entityManager.remove(id) }
+
+        return result != null
     }
 
     @Transactional(readOnly = true)

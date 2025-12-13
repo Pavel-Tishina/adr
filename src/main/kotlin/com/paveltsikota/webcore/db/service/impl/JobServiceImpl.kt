@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.service.impl
 
-import com.paveltsikota.webcore.db.adapter.JobsAdapter
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
 import com.paveltsikota.webcore.db.dto.JobsDto
@@ -17,8 +16,7 @@ import java.sql.Timestamp
 
 @Service
 class JobServiceImpl(
-    private val jobsDao: JobsDao,
-    private val adapter: JobsAdapter
+    private val jobsDao: JobsDao
 ): JobService {
     override fun getById(id: Long): EntityOperationResult {
         return when (val entity = jobsDao.findById(id)) {
@@ -154,7 +152,10 @@ class JobServiceImpl(
     }
 
     override fun remove(job: JobsEntity): EntityOperationResult {
-        return remove(job.id)
+        return when (jobsDao.removeByIdAndProfile(job.id, job.profile)) {
+            false -> EntityOperationResult(success = false, error = "Entity not removed", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
+            true -> EntityOperationResult(success = true, result = EntityOperationResultType.ENTITY_REMOVED)
+        }
     }
 
     override fun cleanUp(profileId: Long): EntityOperationResult {

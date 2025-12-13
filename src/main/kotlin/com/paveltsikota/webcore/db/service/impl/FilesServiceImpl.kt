@@ -163,9 +163,35 @@ class FilesServiceImpl(
         }
     }
 
+    override fun removeFile(id: Long, profileId: Long): EntityOperationResult =
+        when (filesDao.removeByIdAndProfile(id, profileId)) {
+            false -> EntityOperationResult(
+                success = false, error = "Entity '$id' not found in profile '$profileId'", obj = id, result = EntityOperationResultType.ENTITY_NOT_REMOVED)
+
+            true -> EntityOperationResult(
+                success = true, result = EntityOperationResultType.ENTITY_REMOVED)
+        }
+
     override fun removeFiles(ids: Collection<Long>): EntityOperationResult {
         val idsSet = ids.toSet()
         val results = idsSet.map { removeFile(it) }
+        val notRemoved = results.filter { !it.success }.map { it.obj as Long }
+
+        return when {
+            notRemoved.size == idsSet.size -> EntityOperationResult(
+                success = false, error = "Entities ${notRemoved.joinToString(prefix = "'", postfix = "'", separator = ", ")} not removed", result = EntityOperationResultType.ENTITIES_NOT_REMOVED)
+
+            notRemoved.isNotEmpty() -> EntityOperationResult(
+                success = true, error = "Entities ${notRemoved.joinToString(prefix = "'", postfix = "'", separator = ", ")} not removed", result = EntityOperationResultType.ENTITIES_REMOVED_PARTLY)
+
+            else -> EntityOperationResult(
+                success = true, result = EntityOperationResultType.ENTITIES_REMOVED)
+        }
+    }
+
+    override fun removeFiles(ids: Collection<Long>, profileId: Long): EntityOperationResult {
+        val idsSet = ids.toSet()
+        val results = idsSet.map { removeFile(it, profileId) }
         val notRemoved = results.filter { !it.success }.map { it.obj as Long }
 
         return when {

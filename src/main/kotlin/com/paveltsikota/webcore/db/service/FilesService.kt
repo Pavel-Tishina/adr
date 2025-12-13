@@ -22,7 +22,9 @@ interface FilesService {
     fun removeFile(file: FilesEntity): EntityOperationResult
     fun removeFile(fileDto: FilesDto): EntityOperationResult
     fun removeFile(id: Long): EntityOperationResult
+    fun removeFile(id: Long, profileId: Long): EntityOperationResult
     fun removeFiles(ids: Collection<Long>): EntityOperationResult
+    fun removeFiles(ids: Collection<Long>, profileId: Long): EntityOperationResult
 
     fun findByGroupId(groupId: Long, profileId: Long): EntityOperationResult
     fun findByHashId(hashId: Long, profileId: Long): EntityOperationResult

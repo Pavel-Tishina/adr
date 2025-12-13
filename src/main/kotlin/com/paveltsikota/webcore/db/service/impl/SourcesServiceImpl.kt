@@ -18,8 +18,7 @@ import java.nio.file.Path
 
 @Service
 class SourcesServiceImpl(
-    private val sourcesDao: SourcesDao,
-    private val adapter: SourcesAdapter
+    private val sourcesDao: SourcesDao
 ): SourcesService {
 
     override fun getSource(id: Long): EntityOperationResult {
@@ -62,6 +61,27 @@ class SourcesServiceImpl(
             else -> EntityOperationResult(
                 success = true, obj = result, result = EntityOperationResultType.ENTITIES_FOUNDED)
         }
+    }
+
+    override fun getSources(ids: Collection<Long>): EntityOperationResult {
+        val listIds = ids.filter{ it > 0 }.distinct().toList()
+        if (listIds.isNullOrEmpty())
+            return EntityOperationResult(
+                success = false, obj = null, error = "Bad ids in input", result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
+
+        val entities = listIds.map { sourcesDao.getByIds(listIds) }
+
+        return when {
+            entities.isNullOrEmpty() -> EntityOperationResult(
+                success = false, obj = null, result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
+
+            entities.size < listIds.size -> EntityOperationResult(
+                success = true, obj = entities, result = EntityOperationResultType.ENTITIES_FOUNDED_PARTLY)
+
+            else -> EntityOperationResult(
+                success = true, obj = entities, result = EntityOperationResultType.ENTITIES_FOUNDED)
+        }
+
     }
 
     override fun addSource(path: Path, profileId: Long, dirorder: Int, addOnce: Boolean?): EntityOperationResult {
@@ -184,7 +204,7 @@ class SourcesServiceImpl(
     }
 
     override fun removeSource(source: SourcesEntity): EntityOperationResult {
-        return when (sourcesDao.removeById(source.id)) {
+        return when (sourcesDao.removeByIdAndProfile(source.id, source.profile)) {
             false -> EntityOperationResult(
                 success = false, error = "Entity not removed", obj = source, result = EntityOperationResultType.ENTITY_NOT_REMOVED)
 
@@ -195,7 +215,7 @@ class SourcesServiceImpl(
 
     override fun removeSources(sources: Collection<SourcesEntity>): EntityOperationResult {
         val sourcesSet = sources.toSet()
-        val results = sourcesSet.map { removeSource(it.id) }
+        val results = sourcesSet.map { removeSource(it) }
         val removed = HashSet<Long>()
         val notRemoved = HashSet<Long>()
 

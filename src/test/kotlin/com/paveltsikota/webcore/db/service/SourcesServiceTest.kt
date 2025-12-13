@@ -28,7 +28,7 @@ class SourcesServiceImplTest {
     @BeforeEach
     fun setup() {
         sourcesDao = mock()
-        service = SourcesServiceImpl(sourcesDao, SourcesAdapter)
+        service = SourcesServiceImpl(sourcesDao)
     }
 
 
