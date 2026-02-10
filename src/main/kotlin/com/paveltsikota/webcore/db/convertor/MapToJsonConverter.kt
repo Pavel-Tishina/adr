@@ -1,7 +1,8 @@
 package com.paveltsikota.webcore.db.convertor
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
+import tools.jackson.core.type.TypeReference
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 

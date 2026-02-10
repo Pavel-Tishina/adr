@@ -23,15 +23,15 @@ class ResponseMapperUtilsTest {
             fileIds = setOf(11,22,33)
         )
 
-        val input = listOf<Any>(
-            mapOf<Any, Any>(
+        val input = listOf(
+            mapOf(
                 JobsEntity() to "ololo",
                 "trololo" to HashesEntity(),
                 HashType.XXHASH64 to mapOf<Any, Any>(
                     123 to listOf(false, true, false)
                 )
             ),
-            setOf<Any>(
+            setOf(
                 123,
                 false,
                 FilesEntity()
@@ -41,15 +41,15 @@ class ResponseMapperUtilsTest {
             dto
         )
 
-        val expectedResult = listOf<Any>(
-            mapOf<Any, Any>(
+        val expectedResult = listOf(
+            mapOf(
                 JobsAdapter.entityToDto(JobsEntity()) to "ololo",
                 "trololo" to HashesAdapter.entityToDto(HashesEntity()),
                 HashType.XXHASH64 to mapOf<Any, Any>(
                     123 to listOf(false, true, false)
                 )
             ),
-            setOf<Any>(
+            setOf(
                 123,
                 false,
                 FilesAdapter.entityToDto(FilesEntity())
@@ -61,4 +61,12 @@ class ResponseMapperUtilsTest {
 
         assertEquals(expectedResult, ResponseMapperUtils.anyToDto(input))
     }
+
+//    private fun formalEq(e1: List<Any>, e2: List<Any>): Boolean {
+//        return if (e1.size != e2.size) {
+//            false
+//        } else {
+//            for (item in e1)
+//        }
+//    }
 }
