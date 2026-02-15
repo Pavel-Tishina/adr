@@ -23,7 +23,7 @@ object ResponseUtils {
             else -> null
         }
 
-        return TypedResponse<T>(
+        return TypedResponse(
             success = opResult.success,
             obj = if (Objects.isNull(resultObj)) { null } else { resultObj as T },
             error = opResult.error ?: ""

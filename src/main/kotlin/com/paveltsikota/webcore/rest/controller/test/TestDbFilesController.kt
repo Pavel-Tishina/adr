@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.controller
+package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.db.dto.FilesDto
@@ -11,10 +11,11 @@ import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
-
+@Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/files")
 class TestDbFilesController(private val fileService: FilesService) {
+
 
     @GetMapping("/get/{id}")
     fun getFileById(@PathVariable id: Long): TypedResponse<List<FilesDto>> {

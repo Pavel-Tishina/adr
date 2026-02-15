@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.service
 
+import com.paveltsikota.webcore.db.dto.HistoryElementDto
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.dto.JobsDto
@@ -20,12 +21,13 @@ interface JobService {
         priority: Int?,
         start: Timestamp?,
         finish: Timestamp?,
-        completed: Boolean?,
         disabled: Boolean?,
         type: JobsType,
         lastObject: String?,
         lastObjectId: Long?,
         status: JobStatus,
+        objects: MutableList<Long>?,
+        history: MutableList<HistoryElementDto>?,
         addOnce: Boolean?
     ): EntityOperationResult
 

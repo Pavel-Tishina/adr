@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.controller
+package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.SourcesDto
 import com.paveltsikota.webcore.db.service.SourcesService
@@ -10,7 +10,7 @@ import com.paveltsikota.webcore.db.dto.CleanUpDto
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
-
+@Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/sources")
 class TestDbSourcesController(private val sourcesService: SourcesService) {
@@ -50,9 +50,7 @@ class TestDbSourcesController(private val sourcesService: SourcesService) {
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: ManySourcesRequest
     ): TypedResponse<List<SourcesDto>> {
-        val opResult = with(model) {
-            sourcesService.addSourcesDto(model.sources, addOnce)
-        }
+        val opResult = sourcesService.addSourcesDto(model.sources, addOnce)
 
         return getTypedResponse<List<SourcesDto>>(opResult)
     }

@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.convertor
 
-
 import tools.jackson.core.type.TypeReference
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.persistence.AttributeConverter

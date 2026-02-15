@@ -8,10 +8,9 @@ import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import org.springframework.web.bind.annotation.*
 
-
 @RestController
-@RequestMapping("/rest/v1/test/db/profile")
-class TestDbProfileController(private val profileService: ProfileService) {
+@RequestMapping("/rest/v1/profile")
+class ProfileController(private val profileService: ProfileService) {
 
     @GetMapping("/{id}")
     fun getProfileById(@PathVariable id: Long): TypedResponse<List<ProfileDto>> {

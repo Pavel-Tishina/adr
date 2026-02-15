@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
+@Deprecated(message = "Only 4 testing")
 @Component
 class TimeWebSocketHandler : TextWebSocketHandler() {
 

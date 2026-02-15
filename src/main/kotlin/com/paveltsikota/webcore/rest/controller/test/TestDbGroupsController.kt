@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.controller
+package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.GroupsDto
 import com.paveltsikota.webcore.db.service.GroupsService
@@ -8,7 +8,7 @@ import com.paveltsikota.webcore.db.adapter.GroupsAdapter
 import com.paveltsikota.webcore.db.dto.CleanUpDto
 import org.springframework.web.bind.annotation.*
 
-
+@Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/groups")
 class TestDbGroupsController(private val groupsService: GroupsService) {

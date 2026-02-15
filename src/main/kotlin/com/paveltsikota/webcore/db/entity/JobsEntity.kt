@@ -1,5 +1,8 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
+import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
+import com.paveltsikota.webcore.db.dto.HistoryElementDto
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -24,9 +27,6 @@ data class JobsEntity (
     @Column(nullable = true)
     var finish: Long? = null,
 
-    @Column(nullable = true)
-    var completed: Boolean? = null,
-
     @Column(nullable = false)
     var disabled: Boolean = false,
 
@@ -39,6 +39,14 @@ data class JobsEntity (
     @Column(name = "lastObjectId", nullable = true)
     var lastObjectId: Long? = null,
 
+    @Convert(converter = MutableListToJsonConverter::class)
+    @Column(nullable = true)
+    var objects: MutableList<Long>? = null,
+
+    @Convert(converter = JobHistoryToJsonConverter::class)
+    @Column(nullable = true)
+    var history: MutableList<HistoryElementDto>? = null,
+
     @Column(nullable = false)
     var status: JobStatus = JobStatus.CREATED
 
@@ -47,7 +55,6 @@ data class JobsEntity (
     override fun same(o: Any?): Boolean {
         return o is JobsEntity
                 && profile == o.profile
-                && completed == o.completed
                 && disabled == o.disabled
                 && priority == o.priority
                 && start == o.start
@@ -56,6 +63,8 @@ data class JobsEntity (
                 && status == o.status
                 && lastObjectId == o.lastObjectId
                 && lastObject == o.lastObject
+                && objects?.equals(o.objects) == true // CHK
+                && history?.equals(o.history) == true // CHK
     }
 
 }

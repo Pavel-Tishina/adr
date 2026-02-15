@@ -2,6 +2,7 @@ package com.paveltsikota.webcore.db.service.impl
 
 import com.paveltsikota.webcore.db.constants.DbConst
 import com.paveltsikota.webcore.db.dao.JobsDao
+import com.paveltsikota.webcore.db.dto.HistoryElementDto
 import com.paveltsikota.webcore.db.dto.JobsDto
 import com.paveltsikota.webcore.db.entity.JobsEntity
 import com.paveltsikota.webcore.db.service.JobService
@@ -11,8 +12,10 @@ import com.paveltsikota.webcore.utils.ValuesUtils.priorityChk
 import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
+import liquibase.logging.mdc.customobjects.History
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
+import java.util.Objects
 
 @Service
 class JobServiceImpl(
@@ -69,12 +72,13 @@ class JobServiceImpl(
         priority: Int?,
         start: Timestamp?,
         finish: Timestamp?,
-        completed: Boolean?,
         disabled: Boolean?,
         type: JobsType,
         lastObject: String?,
         lastObjectId: Long?,
         status: JobStatus,
+        objects: MutableList<Long>?,
+        history: MutableList<HistoryElementDto>?,
         addOnce: Boolean?
     ): EntityOperationResult {
         val newJob = JobsEntity(
@@ -82,12 +86,13 @@ class JobServiceImpl(
             priority = priority.takeIf { priority != null }?: jobsDao.findLastPriority(profile),
             start = start?.time,
             finish = finish?.time,
-            completed = completed,
             disabled = disabled == true,
             type = type,
             lastObject = lastObject,
             lastObjectId = lastObjectId,
             status = status,
+            objects = objects,
+            history = history,
         )
 
         return if (!profileIdChk(profile)) {
@@ -108,7 +113,7 @@ class JobServiceImpl(
 
         filteredJobDtos.forEach { dto ->
             val result = with(dto) {
-                add(profile, priority, start, finish, completed, disabled, type, lastObject, lastObjectId, status, addOnce)
+                add(profile, priority, start, finish, disabled, type, lastObject, lastObjectId, status, objects, history, addOnce)
             }
             if (result.success) {
                 added.add(result.obj as JobsEntity)

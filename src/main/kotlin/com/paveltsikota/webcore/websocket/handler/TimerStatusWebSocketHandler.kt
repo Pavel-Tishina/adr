@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.socket.*
 import org.springframework.web.socket.handler.TextWebSocketHandler
 
+@Deprecated(message = "Only 4 testing")
 @Component
 class TimerStatusWebSocketHandler(
     private val timerService: TimerCoroutineService

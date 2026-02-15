@@ -169,8 +169,6 @@
             <column name="start" type="BIGINT"/>
             <column name="finish" type="BIGINT"/>
 
-            <column name="completed" type="INTEGER"/> <!-- 0/1 -->
-
             <column name="disabled" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
@@ -179,6 +177,9 @@
 
             <column name="lastObject" type="TEXT"/>
             <column name="lastObjectId" type="INTEGER"/>
+
+            <column name="objects" type="TEXT"/>
+            <column name="history" type="TEXT"/>
 
             <column name="status" type="TEXT">
                 <constraints nullable="false"/>

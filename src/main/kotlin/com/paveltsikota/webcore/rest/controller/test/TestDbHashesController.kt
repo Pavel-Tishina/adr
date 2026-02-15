@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.controller
+package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.db.dto.HashesDto
@@ -10,7 +10,7 @@ import com.paveltsikota.webcore.utils.ValuesUtils.validateFindByHash
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.web.bind.annotation.*
 
-
+@Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/hashes")
 class TestDbHashesController(private val hashesService: HashesService) {

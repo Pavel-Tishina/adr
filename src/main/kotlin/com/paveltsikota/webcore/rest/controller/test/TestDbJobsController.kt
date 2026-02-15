@@ -1,4 +1,4 @@
-package com.paveltsikota.webcore.rest.controller
+package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.GroupsDto
 import com.paveltsikota.webcore.db.dto.JobsDto
@@ -15,7 +15,7 @@ import com.paveltsikota.webcore.utils.enums.JobStatus.*
 import com.paveltsikota.webcore.utils.enums.JobsType
 import org.springframework.web.bind.annotation.*
 
-
+@Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/jobs")
 class TestDbJobsController(private val jobService: JobService) {
@@ -64,7 +64,7 @@ class TestDbJobsController(private val jobService: JobService) {
         @RequestBody model: JobsDto
     ): TypedResponse<List<JobsDto>> {
         val opResult = with(model) {
-            jobService.add(profile, priority, start, finish, completed, disabled, type, lastObject, lastObjectId, status, addOnce)
+            jobService.add(profile, priority, start, finish, disabled, type, lastObject, lastObjectId, status, objects, history, addOnce)
         }
 
         return getTypedResponse<List<JobsDto>>(opResult)
