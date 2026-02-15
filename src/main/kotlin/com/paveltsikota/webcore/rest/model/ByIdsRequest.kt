@@ -1,5 +1,5 @@
 package com.paveltsikota.webcore.rest.model
 
-data class GetFilesByIdsRequest(
+data class ByIdsRequest(
     val ids: List<Long>
 )

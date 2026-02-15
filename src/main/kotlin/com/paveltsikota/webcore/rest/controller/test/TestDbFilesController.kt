@@ -4,8 +4,7 @@ import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.db.service.FilesService
 import com.paveltsikota.webcore.hash.calculator.impl.XXHash64
-import com.paveltsikota.webcore.rest.model.DeleteFilesByIdsRequest
-import com.paveltsikota.webcore.rest.model.GetFilesByIdsRequest
+import com.paveltsikota.webcore.rest.model.ByIdsRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
 import org.springframework.web.bind.annotation.*
@@ -25,8 +24,8 @@ class TestDbFilesController(private val fileService: FilesService) {
     }
 
     @GetMapping("/get")
-    fun getFileByIds(@RequestBody ids: GetFilesByIdsRequest): TypedResponse<List<FilesDto>> {
-        val opResult = fileService.getFiles(ids.ids)
+    fun getFileByIds(@RequestBody req: ByIdsRequest): TypedResponse<List<FilesDto>> {
+        val opResult = fileService.getFiles(req.ids)
 
         return getTypedResponse<List<FilesDto>>(opResult)
     }
@@ -75,7 +74,7 @@ class TestDbFilesController(private val fileService: FilesService) {
     }
 
     @DeleteMapping("/remove-by-ids")
-    fun delFile(@RequestBody model: DeleteFilesByIdsRequest): TypedResponse<CleanUpDto> {
+    fun delFile(@RequestBody model: ByIdsRequest): TypedResponse<CleanUpDto> {
         val opResult = fileService.removeFiles(model.ids)
 
         return getTypedResponse<CleanUpDto>(opResult)

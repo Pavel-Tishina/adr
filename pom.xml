@@ -5,7 +5,6 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-<!--		<version>3.5.4</version>-->
 		<version>3.5.10</version>
 <!--		<version>4.0.2</version>--> <!-- jump into up version carefully! -->
 		<relativePath/> <!-- lookup parent from repository -->
@@ -14,8 +13,8 @@
 	<artifactId>platform</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>platform</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
+	<description>Advanced Duplicate Remover</description>
+	<url>https://github.com/Pavel-Tishina/adr</url>
 	<licenses>
 		<license/>
 	</licenses>
@@ -30,19 +29,13 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-<!--		<kotlin.version>1.9.25</kotlin.version> -->
-		<kotlin.version>2.3.0</kotlin.version>
+		<kotlin.version>2.3.10</kotlin.version>
 		<kotlin.corutines.version>1.10.2</kotlin.corutines.version>
 		<kotlin.serialization.json.version>1.9.0</kotlin.serialization.json.version>
-<!--		<kotlin.serialization.version>2.2.10</kotlin.serialization.version>-->
-<!--		<liquibase.version>4.33.0</liquibase.version>-->
 		<liquibase.version>5.0.1</liquibase.version>
 		<jakarta.version>3.2.0</jakarta.version>
-<!--		<hibernate.version>7.1.0.Final</hibernate.version>-->
-		<hibernate.version>7.2.2.Final</hibernate.version>
-	<!--	<sqlite.version>3.50.3.0</sqlite.version> -->
-		<sqlite.version>3.51.1.0</sqlite.version>
-
+		<hibernate.version>7.2.4.Final</hibernate.version>
+		<sqlite.version>3.51.2.0</sqlite.version>
 	</properties>
 
 	<dependencies>
@@ -101,13 +94,6 @@
 <!--		</dependency>-->
 
 		<!-- Units -->
-
-<!--		<dependency>-->
-<!--			<groupId>org.lz4</groupId>-->
-<!--			<artifactId>lz4-java</artifactId>-->
-<!--			<version>1.8.0</version>-->
-<!--		</dependency>-->
-<!--		-->
 
 		<dependency>
 			<groupId>at.yawk.lz4</groupId>
@@ -186,7 +172,6 @@
 		<dependency>
 			<groupId>org.mockito.kotlin</groupId>
 			<artifactId>mockito-kotlin</artifactId>
-<!--			<version>5.4.0</version>-->
 			<version>6.2.3</version>
 			<scope>test</scope>
 		</dependency>
