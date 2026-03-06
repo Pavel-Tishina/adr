@@ -39,6 +39,7 @@ data class HashesEntity(
         return o is HashesEntity
                 && profile == o.profile
                 && size == o.size
+                && jobId == o.jobId
                 && main == o.main
                 && hashType == o.hashType
                 && hash == o.hash
