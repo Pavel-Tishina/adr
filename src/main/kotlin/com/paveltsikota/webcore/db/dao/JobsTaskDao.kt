@@ -1,14 +1,14 @@
 package com.paveltsikota.webcore.db.dao
 
-import com.paveltsikota.webcore.db.entity.JobsEntity
+import com.paveltsikota.webcore.db.entity.JobsTaskEntity
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Repository
-class JobsDao: AbstractDao<JobsEntity>(JobsEntity::class.java) {
+class JobsTaskDao: AbstractDao<JobsTaskEntity>(JobsTaskEntity::class.java) {
 
     @Transactional(readOnly = true)
-    fun findByIdAndProfileId(profileId: Long): JobsEntity? {
+    fun findByIdAndProfileId(profileId: Long): JobsTaskEntity? {
         val query = entityManager.createQuery(
             "FROM ${entityClass.name} p WHERE p.profile = :profile", entityClass)
 
@@ -17,7 +17,7 @@ class JobsDao: AbstractDao<JobsEntity>(JobsEntity::class.java) {
     }
 
     @Transactional(readOnly = true)
-    fun findByProfileIdAndPriority(profileId: Long, priority: Int): JobsEntity? {
+    fun findByProfileIdAndPriority(profileId: Long, priority: Int): JobsTaskEntity? {
         val query = entityManager.createQuery(
             "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.priority = :priority", entityClass)
 
@@ -27,7 +27,7 @@ class JobsDao: AbstractDao<JobsEntity>(JobsEntity::class.java) {
     }
 
     @Transactional(readOnly = true)
-    fun findByProfileId(profileId: Long): List<JobsEntity>? {
+    fun findByProfileId(profileId: Long): List<JobsTaskEntity>? {
         val query = entityManager.createQuery(
             "FROM ${entityClass.name} p WHERE p.profile = :profile ORDER BY p.priority", entityClass)
 

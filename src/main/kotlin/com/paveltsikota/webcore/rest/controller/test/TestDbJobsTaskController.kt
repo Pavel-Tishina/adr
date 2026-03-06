@@ -1,14 +1,14 @@
 package com.paveltsikota.webcore.rest.controller.test
 
 import com.paveltsikota.webcore.db.dto.GroupsDto
-import com.paveltsikota.webcore.db.dto.JobsDto
-import com.paveltsikota.webcore.db.service.JobService
+import com.paveltsikota.webcore.db.dto.JobsTaskDto
+import com.paveltsikota.webcore.db.service.JobTaskService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.rest.model.PostAddManyJobsRequest
 import com.paveltsikota.webcore.rest.model.TypedResponse
 import com.paveltsikota.webcore.rest.utils.ResponseUtils.getTypedResponse
-import com.paveltsikota.webcore.db.adapter.JobsAdapter
+import com.paveltsikota.webcore.db.adapter.JobsTaskAdapter
 import com.paveltsikota.webcore.db.dto.CleanUpDto
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobStatus.*
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*
 @Deprecated(message = "Only 4 testing")
 @RestController
 @RequestMapping("/rest/v1/test/db/jobs")
-class TestDbJobsController(private val jobService: JobService) {
+class TestDbJobsTaskController(private val jobService: JobTaskService) {
 
     @GetMapping("/get/{id}")
-    fun getJobById(@PathVariable id: Long): TypedResponse<List<JobsDto>> {
+    fun getJobById(@PathVariable id: Long): TypedResponse<List<JobsTaskDto>> {
         val opResult = jobService.getById(id)
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @GetMapping("/get")
@@ -33,17 +33,17 @@ class TestDbJobsController(private val jobService: JobService) {
         @RequestParam(required = false) priority: Int?,
         @RequestParam(required = false) type: JobsType?,
         @RequestParam(required = false) status: JobStatus?
-    ): TypedResponse<List<JobsDto>> {
+    ): TypedResponse<List<JobsTaskDto>> {
         val opResult = jobService.get(profileId, priority, type, status)
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @GetMapping("/get-by-status")
     fun getJobByStatus(
         @RequestParam(required = false) profileId: Long,
         @RequestParam(required = false) status: JobStatus
-    ): TypedResponse<List<JobsDto>> {
+    ): TypedResponse<List<JobsTaskDto>> {
         val opResult = when (status) {
             CREATED -> jobService.getAllNotStarted(profileId)
             RUNNING -> jobService.getAllRun(profileId)
@@ -55,46 +55,46 @@ class TestDbJobsController(private val jobService: JobService) {
             .takeIf { opResult != null }
             ?: EntityOperationResult(success = false, error = "Wrong status set", result = EntityOperationResultType.ERROR)
 
-        return getTypedResponse<List<JobsDto>>(finalResult)
+        return getTypedResponse<List<JobsTaskDto>>(finalResult)
     }
 
     @PostMapping("/")
     fun addJob(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
-        @RequestBody model: JobsDto
-    ): TypedResponse<List<JobsDto>> {
+        @RequestBody model: JobsTaskDto
+    ): TypedResponse<List<JobsTaskDto>> {
         val opResult = with(model) {
-            jobService.add(profile, priority, start, finish, disabled, type, lastObject, lastObjectId, status, objects, history, addOnce)
+            jobService.add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, history, addOnce)
         }
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @PostMapping("/many")
     fun addManyJobs(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: PostAddManyJobsRequest
-    ): TypedResponse<List<JobsDto>> {
+    ): TypedResponse<List<JobsTaskDto>> {
         val opResult = jobService.addDto(model.jobs, addOnce)
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @PutMapping("/")
     fun updJob(
         @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
-        @RequestBody model: JobsDto
-    ): TypedResponse<List<JobsDto>> {
-        val opResult = jobService.update(JobsAdapter.dtoToEntity(model))
+        @RequestBody model: JobsTaskDto
+    ): TypedResponse<List<JobsTaskDto>> {
+        val opResult = jobService.update(JobsTaskAdapter.dtoToEntity(model))
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @DeleteMapping("/")
-    fun delJob(@RequestBody model: GroupsDto): TypedResponse<List<JobsDto>> {
+    fun delJob(@RequestBody model: GroupsDto): TypedResponse<List<JobsTaskDto>> {
         val opResult = jobService.remove(model.id ?: 0)
 
-        return getTypedResponse<List<JobsDto>>(opResult)
+        return getTypedResponse<List<JobsTaskDto>>(opResult)
     }
 
     @DeleteMapping("/cleanup")

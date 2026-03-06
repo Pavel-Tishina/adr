@@ -4,7 +4,7 @@ import com.paveltsikota.webcore.db.adapter.FilesAdapter
 import com.paveltsikota.webcore.db.adapter.ConfigAdapter
 import com.paveltsikota.webcore.db.adapter.GroupsAdapter
 import com.paveltsikota.webcore.db.adapter.HashesAdapter
-import com.paveltsikota.webcore.db.adapter.JobsAdapter
+import com.paveltsikota.webcore.db.adapter.JobsTaskAdapter
 import com.paveltsikota.webcore.db.adapter.ProfileAdapter
 import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import com.paveltsikota.webcore.db.dto.CommonDto
@@ -24,7 +24,7 @@ object ResponseMapperUtils {
             ?: dtoMapper(e)
 
     fun entityToDto(e: Any?): Any? = when (e) {
-        is JobsEntity -> JobsAdapter.entityToDto(e)
+        is JobsTaskEntity -> JobsTaskAdapter.entityToDto(e)
         is FilesEntity -> FilesAdapter.entityToDto(e)
         is GroupsEntity -> GroupsAdapter.entityToDto(e)
         is HashesEntity -> HashesAdapter.entityToDto(e)

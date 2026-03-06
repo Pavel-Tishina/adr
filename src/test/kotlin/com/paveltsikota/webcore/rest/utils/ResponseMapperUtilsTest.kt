@@ -3,11 +3,11 @@ package com.paveltsikota.webcore.rest.utils
 import com.paveltsikota.webcore.db.dto.GroupsDto
 import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.entity.HashesEntity
-import com.paveltsikota.webcore.db.entity.JobsEntity
+import com.paveltsikota.webcore.db.entity.JobsTaskEntity
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.db.adapter.FilesAdapter
 import com.paveltsikota.webcore.db.adapter.HashesAdapter
-import com.paveltsikota.webcore.db.adapter.JobsAdapter
+import com.paveltsikota.webcore.db.adapter.JobsTaskAdapter
 import com.paveltsikota.webcore.db.adapter.SourcesAdapter
 import com.paveltsikota.webcore.utils.enums.HashType
 import kotlin.test.Test
@@ -20,12 +20,13 @@ class ResponseMapperUtilsTest {
             id = 666,
             profile = 999,
             size = 777,
-            fileIds = setOf(11,22,33)
+            fileIds = setOf(11,22,33),
+            jobId = null
         )
 
         val input = listOf(
             mapOf(
-                JobsEntity() to "ololo",
+                JobsTaskEntity() to "ololo",
                 "trololo" to HashesEntity(),
                 HashType.XXHASH64 to mapOf<Any, Any>(
                     123 to listOf(false, true, false)
@@ -43,7 +44,7 @@ class ResponseMapperUtilsTest {
 
         val expectedResult = listOf(
             mapOf(
-                JobsAdapter.entityToDto(JobsEntity()) to "ololo",
+                JobsTaskAdapter.entityToDto(JobsTaskEntity()) to "ololo",
                 "trololo" to HashesAdapter.entityToDto(HashesEntity()),
                 HashType.XXHASH64 to mapOf<Any, Any>(
                     123 to listOf(false, true, false)

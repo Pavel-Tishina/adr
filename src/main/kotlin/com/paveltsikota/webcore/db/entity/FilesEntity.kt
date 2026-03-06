@@ -57,7 +57,10 @@ data class FilesEntity(
     var state: FileState? = null,
 
     @Column(name = "hold", nullable = false)
-    var hold: Boolean = false
+    var hold: HoldType = false,
+
+    @Column(name = "jobId", nullable = true)
+    val jobId: JobIdType? = null,
 
     //TODO: add fast-hash for first 2-4-8-32-64-128kb and 4-8-16mb for videos and big files
     //TODO: add for all entities archive/restore as Long

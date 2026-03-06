@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.db.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 
@@ -18,7 +19,9 @@ data class FilesDto(
     @JsonProperty("new_file_name")
     val newFileName: String?,
     @JsonProperty("is_unique")
-    val isUnique: Boolean?,
+    val isUnique: IsUniqueType?,
+    @JsonProperty("job_id")
+    val jobId: JobIdType?,
     @JsonProperty("group_id")
     val groupId: Long?,
     @JsonProperty("hash_id")

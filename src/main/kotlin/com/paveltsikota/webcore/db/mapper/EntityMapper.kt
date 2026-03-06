@@ -20,7 +20,7 @@ object EntityMapper {
     }
 
     inline fun <reified T: Any> mapSingleToDto(e: Any?): T? = when (T::class) {
-        JobsDto::class -> filterAnyToDto<JobsEntity>(e)
+        JobsTaskDto::class -> filterAnyToDto<JobsTaskEntity>(e)
         FilesDto::class -> filterAnyToDto<FilesEntity>(e)
         GroupsDto::class -> filterAnyToDto<GroupsEntity>(e)
         HashesDto::class -> filterAnyToDto<HashesEntity>(e)
@@ -49,7 +49,7 @@ object EntityMapper {
 
         return if (isCollection<T>()) {
            when (innerClass) {
-               JobsDto::class -> anyToTypedDtoInternal<T, JobsDto>(e, true)
+               JobsTaskDto::class -> anyToTypedDtoInternal<T, JobsTaskDto>(e, true)
                FilesDto::class -> anyToTypedDtoInternal<T, FilesDto>(e, true)
                GroupsDto::class -> anyToTypedDtoInternal<T, GroupsDto>(e, true)
                HashesDto::class -> anyToTypedDtoInternal<T, HashesDto>(e, true)
@@ -73,7 +73,7 @@ object EntityMapper {
 
     inline fun <reified T> checkObjWithIteratorCompatibility(e: Any?): Boolean {
         val clazz = when (T::class) {
-            JobsDto::class -> JobsEntity::class
+            JobsTaskDto::class -> JobsTaskEntity::class
             FilesDto::class -> FilesEntity::class
             GroupsDto::class -> GroupsEntity::class
             HashesDto::class -> HashesEntity::class

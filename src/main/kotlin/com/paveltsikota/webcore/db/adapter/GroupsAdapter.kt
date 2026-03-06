@@ -11,11 +11,11 @@ object GroupsAdapter: AbstractEntityDtoAdapter<GroupsEntity, GroupsDto>(
 ) {
 
     override fun entityToDto(e: GroupsEntity): GroupsDto {
-        return with(e) { GroupsDto(id, profile, size, fileIds) }
+        return with(e) { GroupsDto(id, profile, size, fileIds, jobId) }
     }
 
     override fun dtoToEntity(dto: GroupsDto): GroupsEntity {
-        return with(dto) { GroupsEntity(id ?: 0, profile, size, fileIds ?: emptySet()) }
+        return with(dto) { GroupsEntity(id ?: 0, profile, size, fileIds ?: emptySet(), jobId) }
     }
 
 }

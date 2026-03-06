@@ -19,7 +19,7 @@ object FilesAdapter: AbstractEntityDtoAdapter<FilesEntity, FilesDto>(
         return with (e) {
             FilesDto(
                 id, profile, size, created, modified, path, hashPath, fileName, newFileName, isUnique,
-                groupId, hashId, hash, hashType, state, hold)
+                jobId, groupId, hashId, hash, hashType, state, hold)
         }
     }
 
@@ -36,6 +36,7 @@ object FilesAdapter: AbstractEntityDtoAdapter<FilesEntity, FilesDto>(
                 id = dto.id ?: 0,
                 profile = dto.profile ?: 0,
                 size = dto.size ?: Long.MIN_VALUE,
+                jobId = dto.jobId,
                 created = dto.created ?: Long.MIN_VALUE,
                 modified = dto.modified ?: Long.MIN_VALUE,
                 path = FileUtils.toUnixPath(path),

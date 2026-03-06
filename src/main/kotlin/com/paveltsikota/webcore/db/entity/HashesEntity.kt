@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.HashType
 import jakarta.persistence.*
@@ -29,7 +30,10 @@ data class HashesEntity(
     @Column(nullable = false)
     var duplicates: MutableSet<Long> = hashSetOf(),
 
-): CommonEntity {
+    @Column(name = "job_id", nullable = true)
+    val jobId: JobIdType? = null,
+
+    ): CommonEntity {
 
     override fun same(o: Any?): Boolean {
         return o is HashesEntity

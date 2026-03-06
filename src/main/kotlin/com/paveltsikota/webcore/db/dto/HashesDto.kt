@@ -1,5 +1,7 @@
 package com.paveltsikota.webcore.db.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.enums.HashType
 
 data class HashesDto(
@@ -10,4 +12,6 @@ data class HashesDto(
     val hashType: HashType,
     val main: Long,
     val duplicates: Set<Long>?,
+    @JsonProperty("job_id")
+    val jobId: JobIdType?,
 ): CommonDto

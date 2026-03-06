@@ -173,25 +173,14 @@ class FilesServiceImpl(
         }
 
     override fun removeFiles(ids: Collection<Long>): EntityOperationResult {
-        val idsSet = ids.toSet()
-        val results = idsSet.map { removeFile(it) }
-        val notRemoved = results.filter { !it.success }.map { it.obj as Long }
-
-        return when {
-            notRemoved.size == idsSet.size -> EntityOperationResult(
-                success = false, error = "Entities ${notRemoved.joinToString(prefix = "'", postfix = "'", separator = ", ")} not removed", result = EntityOperationResultType.ENTITIES_NOT_REMOVED)
-
-            notRemoved.isNotEmpty() -> EntityOperationResult(
-                success = true, error = "Entities ${notRemoved.joinToString(prefix = "'", postfix = "'", separator = ", ")} not removed", result = EntityOperationResultType.ENTITIES_REMOVED_PARTLY)
-
-            else -> EntityOperationResult(
-                success = true, result = EntityOperationResultType.ENTITIES_REMOVED)
-        }
+        return removeFiles(ids, 0)
     }
 
     override fun removeFiles(ids: Collection<Long>, profileId: Long): EntityOperationResult {
         val idsSet = ids.toSet()
-        val results = idsSet.map { removeFile(it, profileId) }
+        val results = if (profileId > 0)
+            idsSet.map { removeFile(it, profileId) } else idsSet.map { removeFile(it) }
+
         val notRemoved = results.filter { !it.success }.map { it.obj as Long }
 
         return when {
@@ -318,7 +307,7 @@ class FilesServiceImpl(
         var partResult: List<FilesEntity>
         val notDeleted = HashSet<Long>()
         do {
-            page = page + 1
+            page += 1
             partResult = filesDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
 
             count += partResult.size
@@ -369,7 +358,7 @@ class FilesServiceImpl(
 
             var p = 0
             do {
-                p = p + 1
+                p += 1
                 pageResult = getBySql(sql, params, p, ps) ?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
