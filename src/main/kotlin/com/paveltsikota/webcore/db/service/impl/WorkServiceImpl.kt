@@ -1,25 +1,20 @@
 package com.paveltsikota.webcore.db.service.impl
 
-import com.paveltsikota.webcore.db.entity.FilesEntity
 import com.paveltsikota.webcore.db.entity.ProfileEntity
 import com.paveltsikota.webcore.db.entity.SourcesEntity
 import com.paveltsikota.webcore.db.service.FilesService
 import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.db.service.HashesService
-import com.paveltsikota.webcore.db.service.JobService
+import com.paveltsikota.webcore.db.service.JobTaskService
 import com.paveltsikota.webcore.db.service.ProfileService
 import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.db.service.WorkService
 import com.paveltsikota.webcore.hash.calculator.HashCalculatorBuilder
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
-import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.fileSize
 import kotlin.io.path.isRegularFile
-import kotlin.io.path.pathString
 
 @Service
 class WorkServiceImpl(
@@ -28,7 +23,7 @@ class WorkServiceImpl(
     private val hashesService: HashesService,
     private val profileService: ProfileService,
     private val sourcesService: SourcesService,
-    private val jobService: JobService,
+    private val jobTaskService: JobTaskService,
 ): WorkService {
 
     override fun addFilesFromDirectory(profileId: Long, sourcesId: List<Long>) {

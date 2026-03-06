@@ -1,7 +1,9 @@
 package com.paveltsikota.webcore.db.service
 
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
+
 interface WorkService {
-    fun addFilesFromDirectory(profileId: Long, sourcesId: List<Long>)
-    fun makeGroups(profileId: Long)
-    fun calculateHashes(profileId: Long)
+    fun addFilesFromDirectory(profileId: ProfileType, sourcesId: List<IdType>)
+    fun makeGroups(profileId: ProfileType)
+    fun calculateHashes(profileId: ProfileType)
 }

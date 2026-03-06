@@ -3,45 +3,40 @@ package com.paveltsikota.webcore.db.entity
 import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
 import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
 import com.paveltsikota.webcore.db.dto.HistoryElementDto
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
-import com.paveltsikota.webcore.utils.enums.JobsType
 import jakarta.persistence.*
 
+// re-implement as JobsEntity
 @Entity
 @Table(name = "jobs")
 data class JobsEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: IdType = 0,
 
     @Column(nullable = false)
-    val profile: Long = DEFAULT_PROFILE,
-
-    @Column(nullable = false)
-    val priority: Int = 0,
+    val profile: ProfileType = DEFAULT_PROFILE,
 
     @Column(nullable = true)
-    var start: Long? = null,
+    val uuid: UuidType? = null,
+
+    @Column(nullable = false)
+    val global: GlobalType = false,
 
     @Column(nullable = true)
-    var finish: Long? = null,
+    var start: StartDateType? = null,
+
+    @Column(nullable = true)
+    var finish: FinishDateType? = null,
 
     @Column(nullable = false)
-    var disabled: Boolean = false,
-
-    @Column(nullable = false)
-    val type: JobsType = JobsType.FILE_SCAN,
-
-    @Column(name = "lastObject", nullable = true)
-    var lastObject: String? = null,
-
-    @Column(name = "lastObjectId", nullable = true)
-    var lastObjectId: Long? = null,
+    var disabled: DisabledType = false,
 
     @Convert(converter = MutableListToJsonConverter::class)
-    @Column(nullable = true)
-    var objects: MutableList<Long>? = null,
+    @Column(nullable = false)
+    var taskList: MutableList<Long> = mutableListOf(),
 
     @Convert(converter = JobHistoryToJsonConverter::class)
     @Column(nullable = true)
@@ -56,14 +51,11 @@ data class JobsEntity (
         return o is JobsEntity
                 && profile == o.profile
                 && disabled == o.disabled
-                && priority == o.priority
                 && start == o.start
                 && finish == o.finish
-                && type == o.type
                 && status == o.status
-                && lastObjectId == o.lastObjectId
-                && lastObject == o.lastObject
-                && objects?.equals(o.objects) == true // CHK
+                && uuid == o.uuid
+                && taskList == o.taskList // CHK
                 && history?.equals(o.history) == true // CHK
     }
 

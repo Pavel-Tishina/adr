@@ -10,22 +10,22 @@ import jakarta.persistence.*
 data class HashesEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: IdType = 0,
 
     @Column(nullable = false)
-    val profile: Long = DEFAULT_PROFILE,
+    val profile: ProfileType = DEFAULT_PROFILE,
 
     @Column(nullable = false)
-    val size: Long = 0,
+    val size: SizeType = 0,
 
     @Column(nullable = false)
-    val hash: String = "",
+    val hash: HashValueType = "",
 
     @Column(nullable = false)
     val hashType: HashType = HashType.UNKNOWN,
 
     @Column(nullable = false)
-    var main: Long = 0,
+    var main: MainType = 0,
 
     @Column(nullable = false)
     var duplicates: MutableSet<Long> = hashSetOf(),

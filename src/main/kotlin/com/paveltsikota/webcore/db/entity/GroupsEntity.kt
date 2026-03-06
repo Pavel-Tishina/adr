@@ -9,13 +9,13 @@ import jakarta.persistence.*
 data class GroupsEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: IdType = 0,
 
     @Column(nullable = false)
-    val profile: Long = DEFAULT_PROFILE,
+    val profile: ProfileType = DEFAULT_PROFILE,
 
     @Column(nullable = false)
-    val size: Long = 0,
+    val size: SizeType = 0,
 
     @Column(nullable = true)
     var fileIds: Set<Long> = hashSetOf(),
@@ -29,6 +29,7 @@ data class GroupsEntity(
         return o is GroupsEntity
                 && profile == o.profile
                 && size == o.size
+                && jobId == o.jobId
                 && fileIds == o.fileIds
     }
 }

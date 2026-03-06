@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
@@ -15,31 +16,31 @@ import jakarta.persistence.*
 data class ConfigEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: IdType = 0,
 
     @Column(nullable = false)
-    val profile: Long = DEFAULT_PROFILE,
+    val profile: ProfileType = DEFAULT_PROFILE,
 
     @Column(nullable = false)
-    var hashDir: String = DEFAULT_CFG_HASH_DIR,
+    var hashDir: HashPathType = DEFAULT_CFG_HASH_DIR,
 
     @Column(nullable = false)
     var hashType: HashType = DEFAULT_CFG_HASH_TYPE,
 
     @Column(nullable = false)
-    var bufferSize: Long = DEFAULT_CFG_BUFFER_SIZE,
+    var bufferSize: BufferSizeType = DEFAULT_CFG_BUFFER_SIZE,
 
     @Column(nullable = false)
-    var progressN: Int = DEFAULT_CFG_PROGRESS_N,
+    var progressN: ProgressNType = DEFAULT_CFG_PROGRESS_N,
 
     @Column(nullable = false)
-    var progressSize: Long = DEFAULT_CFG_PROGRESS_SIZE,
+    var progressSize: ProgressSizeType = DEFAULT_CFG_PROGRESS_SIZE,
 
     @Column(nullable = false)
-    var progressShow: Boolean = DEFAULT_CFG_PROGRESS_SHOW,
+    var progressShow: ProgressShowType = DEFAULT_CFG_PROGRESS_SHOW,
 
     @Column(nullable = false)
-    var flyHashCalculate: Boolean = DEFAULT_CFG_FLY_HASH_CALCULATE,
+    var flyHashCalculate: FlyHashCalculateType = DEFAULT_CFG_FLY_HASH_CALCULATE,
 ): CommonEntity {
 
     override fun same(o: Any?): Boolean {

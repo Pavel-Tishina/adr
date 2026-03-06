@@ -1,5 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
+import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
@@ -12,43 +13,43 @@ import kotlin.io.path.Path
 data class FilesEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: IdType = 0,
 
     @Column(name = "profile", nullable = false)
-    val profile: Long = DEFAULT_PROFILE,
+    val profile: ProfileType = DEFAULT_PROFILE,
 
     @Column(name = "size", nullable = false)
-    val size: Long = 0,
+    val size: SizeType = 0,
 
     @Column(name = "created", nullable = false)
-    val created: Long = 0,
+    val created: CreatedDateType = 0,
 
     @Column(name = "modified", nullable = false)
-    val modified: Long = 0,
+    val modified: ModifiedDateType = 0,
 
     @Column(name = "path", nullable = false)
-    val path: String = "",
+    val path: PathType = "",
 
     @Column(name = "hashPath", nullable = true)
-    var hashPath: String? = null,
+    var hashPath: HashPathType? = null,
 
     @Column(name = "fileName", nullable = false)
-    val fileName: String = "",
+    val fileName: FileNameType = "",
 
     @Column(name = "newFileName", nullable = true)
-    var newFileName: String? = null,
+    var newFileName: NewFileNameType? = null,
 
     @Column(name = "isUnique", nullable = true)
-    var isUnique: Boolean? = null,
+    var isUnique: IsUniqueType? = null,
 
     @Column(name = "groupId", nullable = true)
-    var groupId: Long? = null,
+    var groupId: GroupIdType? = null,
 
     @Column(name = "hashId", nullable = true)
-    var hashId: Long? = null,
+    var hashId: HashIdType? = null,
 
     @Column(name = "hash", nullable = true)
-    var hash: String? = null,
+    var hash: HashValueType? = null,
 
     @Column(name = "hashType", nullable = true)
     var hashType: HashType? = null,
@@ -75,6 +76,7 @@ data class FilesEntity(
                 && isUnique == o.isUnique
                 && profile == o.profile
                 && size == o.size
+                && jobId == o.jobId
                 && created == o.created
                 && modified == o.modified
                 && hashId == o.hashId
