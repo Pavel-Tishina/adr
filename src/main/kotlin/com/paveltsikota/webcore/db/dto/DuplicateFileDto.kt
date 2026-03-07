@@ -1,13 +1,12 @@
 package com.paveltsikota.webcore.db.dto
 
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.enums.FileState
 
 class DuplicateFileDto(
-    val id: IdType,
-    val created: CreatedDateType,
-    val modified: ModifiedDateType,
-    val path: PathType,
+    val id: Long,
+    val created: Long,
+    val modified: Long,
+    val path: String,
     val state: FileState,
-    val hold: HoldType
+    val hold: Boolean
 ): CommonDto

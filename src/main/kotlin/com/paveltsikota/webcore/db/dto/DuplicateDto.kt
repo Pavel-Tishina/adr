@@ -1,16 +1,15 @@
 package com.paveltsikota.webcore.db.dto
 
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.enums.HashType
 
 data class DuplicateDto(
-    val id: IdType,
-    val size: SizeType,
-    val profile: ProfileType,
-    val hash: HashValueType,
+    val id: Long,
+    val size: Long,
+    val profile: Long,
+    val hash: String,
     val hashType: HashType,
-    val n: NType,
-    val dupN: DupNType,
+    val n: Int,
+    val dupN: Int,
     var main: DuplicateFileDto? = null,
     var dups: Set<DuplicateFileDto>? = null,
 ): CommonDto

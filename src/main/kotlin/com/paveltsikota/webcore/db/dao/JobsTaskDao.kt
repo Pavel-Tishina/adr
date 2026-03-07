@@ -13,7 +13,7 @@ class JobsTaskDao: AbstractDao<JobsTaskEntity>(JobsTaskEntity::class.java) {
             "FROM ${entityClass.name} p WHERE p.profile = :profile", entityClass)
 
         query.setParameter("profile", profileId)
-        return query.singleResultOrNull
+        return query.singleResult
     }
 
     @Transactional(readOnly = true)
@@ -23,7 +23,7 @@ class JobsTaskDao: AbstractDao<JobsTaskEntity>(JobsTaskEntity::class.java) {
 
         query.setParameter("priority", priority)
         query.setParameter("profile", profileId)
-        return query.singleResultOrNull
+        return query.singleResult
     }
 
     @Transactional(readOnly = true)

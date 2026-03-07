@@ -23,7 +23,7 @@ class ProfileDao: AbstractDao<ProfileEntity>(ProfileEntity::class.java) {
             "FROM ${entityClass.name} p WHERE p.title = :title", entityClass)
 
         query.setParameter("title", title)
-        return query.singleResultOrNull
+        return query.singleResult
     }
 
 }

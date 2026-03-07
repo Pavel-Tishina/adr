@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.dto
 
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_BUFFER_SIZE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_FLY_HASH_CALCULATE
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_HASH_DIR
@@ -11,11 +10,11 @@ import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_CFG_PROGRESS_SI
 import com.paveltsikota.webcore.utils.enums.HashType
 
 data class CfgDto(
-    val hashDir: HashPathType = DEFAULT_CFG_HASH_DIR,
+    val hashDir: String = DEFAULT_CFG_HASH_DIR,
     val hashType: HashType = DEFAULT_CFG_HASH_TYPE,
-    val bufferSize: BufferSizeType = DEFAULT_CFG_BUFFER_SIZE,
-    val progressN: ProgressNType = DEFAULT_CFG_PROGRESS_N,
-    val progressSize: ProgressSizeType = DEFAULT_CFG_PROGRESS_SIZE,
-    val progressShow: ProgressShowType = DEFAULT_CFG_PROGRESS_SHOW,
-    val flyHashCalculate: FlyHashCalculateType = DEFAULT_CFG_FLY_HASH_CALCULATE,
+    val bufferSize: Long = DEFAULT_CFG_BUFFER_SIZE,
+    val progressN: Int = DEFAULT_CFG_PROGRESS_N,
+    val progressSize: Long = DEFAULT_CFG_PROGRESS_SIZE,
+    val progressShow: Boolean = DEFAULT_CFG_PROGRESS_SHOW,
+    val flyHashCalculate: Boolean = DEFAULT_CFG_FLY_HASH_CALCULATE,
 ): CommonDto

@@ -3,7 +3,6 @@ package com.paveltsikota.webcore.db.entity
 import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
 import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
 import com.paveltsikota.webcore.db.dto.HistoryElementDto
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
@@ -14,28 +13,28 @@ import jakarta.persistence.*
 data class JobsTaskEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: IdType = 0,
+    val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: ProfileType = DEFAULT_PROFILE,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
-    val priority: PriorityType = 0,
+    val priority: Int = 0,
 
     @Column(nullable = true)
-    var start: StartDateType? = null,
+    var start: Long? = null,
 
     @Column(nullable = true)
-    var finish: FinishDateType? = null,
+    var finish: Long? = null,
 
     @Column(nullable = false)
-    var disabled: DisabledType = false,
+    var disabled: Boolean = false,
 
     @Column(nullable = false)
     val type: JobsType = JobsType.FILE_SCAN,
 
     @Column(name = "lastObjectId", nullable = true)
-    var lastObjectId: LastObjectIdType? = null,
+    var lastObjectId: Long? = null,
 
     @Convert(converter = MutableListToJsonConverter::class)
     @Column(nullable = true)
@@ -49,7 +48,7 @@ data class JobsTaskEntity (
     var status: JobStatus = JobStatus.CREATED,
 
     @Column(name = "jobId", nullable = false)
-    var jobId: JobIdType? = null,
+    var jobId: Long? = null,
 
 ): CommonEntity {
 

@@ -16,7 +16,7 @@ class HashesDao: AbstractDao<HashesEntity>(HashesEntity::class.java) {
         query.setParameter("hash", hash)
         query.setParameter("profile", profileId)
         query.setParameter("hashType", hashType)
-        return query.singleResultOrNull
+        return query.singleResult
     }
 
     @Transactional(readOnly = true)

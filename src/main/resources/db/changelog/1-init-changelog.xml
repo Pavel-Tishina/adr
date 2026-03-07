@@ -22,10 +22,10 @@
             <column name="size" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="file_ids" type="TEXT">
+            <column name="fileIds" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="job_id" type="INTEGER"/>
+            <column name="jobId" type="INTEGER"/>
         </createTable>
     </changeSet>
 
@@ -69,7 +69,7 @@
             <column name="hold" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="job_id" type="INTEGER"/>
+            <column name="jobId" type="INTEGER"/>
         </createTable>
     </changeSet>
 
@@ -102,7 +102,7 @@
             <column name="duplicates" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="job_id" type="INTEGER"/>
+            <column name="jobId" type="INTEGER"/>
         </createTable>
     </changeSet>
 
@@ -156,6 +156,44 @@
                 <tableExists tableName="jobs"/>
             </not>
         </preConditions>
+        <createTable tableName="jobs">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="profile" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="priority" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="uuid" type="TEXT"/>
+            <column name="global" type="BOOLEAN"/>
+
+            <column name="start" type="BIGINT"/>
+            <column name="finish" type="BIGINT"/>
+
+            <column name="disabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="taskList" type="TEXT"/>
+            <column name="history" type="TEXT"/>
+
+            <column name="status" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="jobstask"/>
+            </not>
+        </preConditions>
         <createTable tableName="jobstask">
             <column name="id" type="INTEGER">
                 <constraints primaryKey="true" nullable="false"/>
@@ -186,6 +224,8 @@
             <column name="status" type="TEXT">
                 <constraints nullable="false"/>
             </column>
+
+            <column name="jobId" type="INTEGER"/>
         </createTable>
     </changeSet>
 

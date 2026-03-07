@@ -1,7 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
 import com.paveltsikota.webcore.db.convertor.MapToJsonConverter
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.db.utils.ConfigUtils.getDefaultConfigMap
 import jakarta.persistence.*
 
@@ -10,13 +9,13 @@ import jakarta.persistence.*
 data class ProfileEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: IdType = 0,
+    val id: Long = 0,
 
     @Column(nullable = false, length = 64)
-    var title: TitleType = "",
+    var title: String = "",
 
     @Column(nullable = true, length = 256)
-    var description: DescriptionType = "",
+    var description: String = "",
 
     @Convert(converter = MapToJsonConverter::class)
     @Column(nullable = false, columnDefinition = "TEXT") // в Liquibase заменить на jsonb в PostgreSQL

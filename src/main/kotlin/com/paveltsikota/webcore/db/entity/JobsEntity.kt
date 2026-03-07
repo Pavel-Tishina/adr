@@ -3,43 +3,41 @@ package com.paveltsikota.webcore.db.entity
 import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
 import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
 import com.paveltsikota.webcore.db.dto.HistoryElementDto
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
 import jakarta.persistence.*
 
-// re-implement as JobsEntity
 @Entity
 @Table(name = "jobs")
 data class JobsEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: IdType = 0,
+    val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: ProfileType = DEFAULT_PROFILE,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = true)
-    val uuid: UuidType? = null,
+    val uuid: String? = null,
 
     @Column(nullable = false)
-    val global: GlobalType = false,
+    val global: Boolean = false,
 
     @Column(nullable = true)
-    var start: StartDateType? = null,
+    var start: Long? = null,
 
     @Column(nullable = true)
-    var finish: FinishDateType? = null,
+    var finish: Long? = null,
 
     @Column(nullable = false)
-    var disabled: DisabledType = false,
+    var disabled: Boolean = false,
 
     @Convert(converter = MutableListToJsonConverter::class)
-    @Column(nullable = false)
+    @Column(name = "taskList", nullable = false, columnDefinition = "TEXT")
     var taskList: MutableList<Long> = mutableListOf(),
 
     @Convert(converter = JobHistoryToJsonConverter::class)
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     var history: MutableList<HistoryElementDto>? = null,
 
     @Column(nullable = false)

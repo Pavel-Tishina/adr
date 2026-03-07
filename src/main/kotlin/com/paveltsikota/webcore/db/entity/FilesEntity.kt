@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.entity
 
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.FileState
@@ -13,43 +12,43 @@ import kotlin.io.path.Path
 data class FilesEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: IdType = 0,
+    val id: Long = 0,
 
     @Column(name = "profile", nullable = false)
-    val profile: ProfileType = DEFAULT_PROFILE,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(name = "size", nullable = false)
-    val size: SizeType = 0,
+    val size: Long = 0,
 
     @Column(name = "created", nullable = false)
-    val created: CreatedDateType = 0,
+    val created: Long = 0,
 
     @Column(name = "modified", nullable = false)
-    val modified: ModifiedDateType = 0,
+    val modified: Long = 0,
 
     @Column(name = "path", nullable = false)
-    val path: PathType = "",
+    val path: String = "",
 
     @Column(name = "hashPath", nullable = true)
-    var hashPath: HashPathType? = null,
+    var hashPath: String? = null,
 
     @Column(name = "fileName", nullable = false)
-    val fileName: FileNameType = "",
+    val fileName: String = "",
 
     @Column(name = "newFileName", nullable = true)
-    var newFileName: NewFileNameType? = null,
+    var newFileName: String? = null,
 
     @Column(name = "isUnique", nullable = true)
-    var isUnique: IsUniqueType? = null,
+    var isUnique: Boolean? = null,
 
     @Column(name = "groupId", nullable = true)
-    var groupId: GroupIdType? = null,
+    var groupId: Long? = null,
 
     @Column(name = "hashId", nullable = true)
-    var hashId: HashIdType? = null,
+    var hashId: Long? = null,
 
     @Column(name = "hash", nullable = true)
-    var hash: HashValueType? = null,
+    var hash: String? = null,
 
     @Column(name = "hashType", nullable = true)
     var hashType: HashType? = null,
@@ -58,10 +57,10 @@ data class FilesEntity(
     var state: FileState? = null,
 
     @Column(name = "hold", nullable = false)
-    var hold: HoldType = false,
+    var hold: Boolean = false,
 
     @Column(name = "jobId", nullable = true)
-    val jobId: JobIdType? = null,
+    val jobId: Long? = null,
 
     //TODO: add fast-hash for first 2-4-8-32-64-128kb and 4-8-16mb for videos and big files
     //TODO: add for all entities archive/restore as Long

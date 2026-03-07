@@ -1,7 +1,6 @@
 package com.paveltsikota.webcore.db.entity
 
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
-import com.paveltsikota.webcore.db.types.DataTypeAlias.*
 import jakarta.persistence.*
 
 @Entity
@@ -9,19 +8,19 @@ import jakarta.persistence.*
 data class GroupsEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: IdType = 0,
+    val id: Long = 0,
 
     @Column(nullable = false)
-    val profile: ProfileType = DEFAULT_PROFILE,
+    val profile: Long = DEFAULT_PROFILE,
 
     @Column(nullable = false)
-    val size: SizeType = 0,
+    val size: Long = 0,
 
     @Column(nullable = true)
     var fileIds: Set<Long> = hashSetOf(),
 
-    @Column(name = "job_id", nullable = true)
-    val jobId: JobIdType? = null,
+    @Column(name = "jobId", nullable = true)
+    val jobId: Long? = null,
 
 ): CommonEntity {
 

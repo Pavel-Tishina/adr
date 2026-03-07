@@ -14,7 +14,7 @@ class SourcesDao: AbstractDao<SourcesEntity>(SourcesEntity::class.java) {
 
         query.setParameter("id", id)
         query.setParameter("profile", profileId)
-        return query.singleResultOrNull
+        return query.singleResult
     }
 
     @Transactional(readOnly = true)
