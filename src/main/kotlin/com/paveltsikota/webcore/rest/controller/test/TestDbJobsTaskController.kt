@@ -65,6 +65,7 @@ class TestDbJobsTaskController(private val jobService: JobTaskService) {
     ): TypedResponse<List<JobsTaskDto>> {
         val opResult = with(model) {
             jobService.add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, history, addOnce)
+//            jobService.add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects,  addOnce)
         }
 
         return getTypedResponse<List<JobsTaskDto>>(opResult)
@@ -82,7 +83,6 @@ class TestDbJobsTaskController(private val jobService: JobTaskService) {
 
     @PutMapping("/")
     fun updJob(
-        @RequestHeader("Add-Once", defaultValue = "true") addOnce: Boolean,
         @RequestBody model: JobsTaskDto
     ): TypedResponse<List<JobsTaskDto>> {
         val opResult = jobService.update(JobsTaskAdapter.dtoToEntity(model))

@@ -5,7 +5,6 @@ import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.abs
-import kotlin.math.max
 
 @Transactional
 abstract class AbstractDao<T: Any>(
@@ -52,7 +51,7 @@ abstract class AbstractDao<T: Any>(
             .createQuery("FROM ${entityClass.name} p WHERE p.id = :id AND p.profile = :profile", entityClass)
             .setParameter("profile", profileId)
 
-        val result = query.singleResult?.let { entityManager.remove(id) }
+        val result = query.singleResultOrNull?.let { entityManager.remove(id) }
 
         return result != null
     }

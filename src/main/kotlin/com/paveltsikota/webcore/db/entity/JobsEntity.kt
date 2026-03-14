@@ -1,7 +1,5 @@
 package com.paveltsikota.webcore.db.entity
 
-import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
-import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
 import com.paveltsikota.webcore.db.dto.HistoryElementDto
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
@@ -32,12 +30,11 @@ data class JobsEntity (
     @Column(nullable = false)
     var disabled: Boolean = false,
 
-    @Convert(converter = MutableListToJsonConverter::class)
     @Column(name = "taskList", nullable = false, columnDefinition = "TEXT")
     var taskList: MutableList<Long> = mutableListOf(),
 
-    @Convert(converter = JobHistoryToJsonConverter::class)
     @Column(nullable = true, columnDefinition = "TEXT")
+    @ElementCollection
     var history: MutableList<HistoryElementDto>? = null,
 
     @Column(nullable = false)

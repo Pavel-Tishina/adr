@@ -14,7 +14,6 @@ import com.paveltsikota.webcore.utils.enums.JobStatus
 import com.paveltsikota.webcore.utils.enums.JobsType
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
-import kotlin.uuid.Uuid
 
 @Service
 class JobTaskServiceImpl(
@@ -90,6 +89,7 @@ class JobTaskServiceImpl(
             lastObjectId = lastObjectId,
             status = status,
             objects = objects,
+//            history = history?.map(historyElementAdapter::dtoToEntity) as MutableList<HistoryElementEntity>?,
             history = history,
         )
 
@@ -112,6 +112,7 @@ class JobTaskServiceImpl(
         filteredJobDtos.forEach { dto ->
             val result = with(dto) {
                 add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, history, addOnce)
+//                add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, addOnce)
             }
             if (result.success) {
                 added.add(result.obj as JobsTaskEntity)

@@ -1,7 +1,5 @@
 package com.paveltsikota.webcore.db.entity
 
-import com.paveltsikota.webcore.db.convertor.JobHistoryToJsonConverter
-import com.paveltsikota.webcore.db.convertor.MutableListToJsonConverter
 import com.paveltsikota.webcore.db.dto.HistoryElementDto
 import com.paveltsikota.webcore.utils.constant.Constants.DEFAULT_PROFILE
 import com.paveltsikota.webcore.utils.enums.JobStatus
@@ -36,12 +34,12 @@ data class JobsTaskEntity (
     @Column(name = "lastObjectId", nullable = true)
     var lastObjectId: Long? = null,
 
-    @Convert(converter = MutableListToJsonConverter::class)
     @Column(nullable = true)
     var objects: MutableList<Long>? = null,
 
-    @Convert(converter = JobHistoryToJsonConverter::class)
+    //@Convert(converter = JobHistoryToStringConverter::class)
     @Column(nullable = true)
+    @ElementCollection
     var history: MutableList<HistoryElementDto>? = null,
 
     @Column(nullable = false)
@@ -50,7 +48,7 @@ data class JobsTaskEntity (
     @Column(name = "jobId", nullable = false)
     var jobId: Long? = null,
 
-): CommonEntity {
+    ): CommonEntity {
 
     override fun same(o: Any?): Boolean {
         return o is JobsTaskEntity
@@ -66,5 +64,7 @@ data class JobsTaskEntity (
                 && objects?.equals(o.objects) == true // CHK
                 && history?.equals(o.history) == true // CHK
     }
+
+
 
 }

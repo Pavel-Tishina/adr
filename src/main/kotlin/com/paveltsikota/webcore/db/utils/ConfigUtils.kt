@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.utils
 
-import com.paveltsikota.webcore.db.adapter.ConfigAdapter
 import com.paveltsikota.webcore.db.dto.CfgDto
 import com.paveltsikota.webcore.utils.FileUtils
 import com.paveltsikota.webcore.utils.ValuesUtils.anyTo
