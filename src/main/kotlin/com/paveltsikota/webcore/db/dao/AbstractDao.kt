@@ -1,5 +1,9 @@
 package com.paveltsikota.webcore.db.dao
 
+import com.paveltsikota.webcore.db.type.EntityOrder
+import com.paveltsikota.webcore.db.type.QueryOrderMap
+import com.paveltsikota.webcore.db.type.QueryParamMap
+import com.paveltsikota.webcore.db.type.toSqlQuery
 import com.paveltsikota.webcore.utils.ValuesUtils.validatePageParams
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -78,7 +82,7 @@ abstract class AbstractDao<T: Any>(
 
         val query = entityManager.createQuery(sql, entityClass)
 
-        params.forEach{ query.setParameter(it.key, it.value) }
+        params.forEach{ (p, v) -> query.setParameter(p, v) }
 
         if (pageValsOk) {
             query.firstResult = offset!!
@@ -88,6 +92,11 @@ abstract class AbstractDao<T: Any>(
         return query.resultList
     }
 
-    //TODO: sql
+    @Transactional
+    fun getByParams(params: QueryParamMap, orderBy: QueryOrderMap? = null, page: Int? = null, pageSize: Int? = null): List<T>? {
+        val sql = "SELECT f FROM ${entityClass.name} f${params.toSqlQuery("f")}${orderBy?.toSqlQuery()}"
+        return getBySql(sql, params, page, pageSize)
+    }
+
 
 }

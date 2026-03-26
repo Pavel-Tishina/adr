@@ -1,6 +1,7 @@
 package com.paveltsikota.webcore.utils.enums
 
 enum class JobsType {
+    DRAFT, // default value. Task type not set
     FILE_SCAN,
     MAKE_GROUPS,
     MAKE_HASHES,

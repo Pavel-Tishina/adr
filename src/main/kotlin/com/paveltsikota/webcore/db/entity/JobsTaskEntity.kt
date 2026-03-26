@@ -29,7 +29,7 @@ data class JobsTaskEntity (
     var disabled: Boolean = false,
 
     @Column(nullable = false)
-    val type: JobsType = JobsType.FILE_SCAN,
+    val type: JobsType = JobsType.DRAFT,
 
     @Column(name = "lastObjectId", nullable = true)
     var lastObjectId: Long? = null,
@@ -37,7 +37,6 @@ data class JobsTaskEntity (
     @Column(nullable = true)
     var objects: MutableList<Long>? = null,
 
-    //@Convert(converter = JobHistoryToStringConverter::class)
     @Column(nullable = true)
     @ElementCollection
     var history: MutableList<HistoryElementDto>? = null,
