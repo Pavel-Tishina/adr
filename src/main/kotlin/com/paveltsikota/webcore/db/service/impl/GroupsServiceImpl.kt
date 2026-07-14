@@ -8,6 +8,7 @@ import com.paveltsikota.webcore.db.entity.GroupsEntity
 import com.paveltsikota.webcore.db.service.GroupsService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
+import com.paveltsikota.webcore.utils.ValuesUtils.isMoreThanZero
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,26 +22,22 @@ class GroupsServiceImpl(
         }
     }
 
-    // TODO: bloody hell!!!
+    // TODO: bloody hell!!! UPD: a little bit better, but bloody hell!!!
     override fun getGroups(page: Int?, pageSize: Int?, profileId: Long?): EntityOperationResult {
-        val sql = SQL_GET_GROUPS.takeIf { profileId == null }
-            ?: SQL_GET_GROUPS_BY_PROFILE
-
-        val params = emptyMap<String, Any>().takeIf { profileId == null }
-            ?: mapOf(Pair("profile", profileId!!))
+        val sql = profileId?.let { SQL_GET_GROUPS_BY_PROFILE } ?: SQL_GET_GROUPS
+        val params = profileId?.let { mapOf("profile" to it) } ?: emptyMap()
 
         val ps = DbConst.MAX_PAGE_SIZE.takeIf { pageSize == null || pageSize < 1}
             ?: pageSize
 
         val result = ArrayList<GroupsEntity>()
 
-        if (page == null || page < 1) {
+        if (!isMoreThanZero(page)) {
             var pageResult: List<GroupsEntity>
 
             var p = 0
             do {
-                p = p + 1
-                pageResult = getBySql(sql, params, p, ps)?: emptyList()
+                pageResult = getBySql(sql, params, ++p, ps) ?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
         } else {
@@ -56,9 +53,7 @@ class GroupsServiceImpl(
         }
     }
 
-    override fun getAllGroups(profileId: Long?): EntityOperationResult {
-        return getGroups(page = null, pageSize = null, profileId = profileId)
-    }
+    override fun getAllGroups(profileId: Long?): EntityOperationResult = getGroups(page = null, pageSize = null, profileId = profileId)
 
     override fun addGroup(size: Long, profileId: Long?, fileIds: Collection<Long>, addOnce: Boolean?): EntityOperationResult {
         val group = GroupsEntity(size = size, profile = profileId?: 0, fileIds = fileIds.toSet())
@@ -154,9 +149,7 @@ class GroupsServiceImpl(
         }
     }
 
-    override fun isAlreadyExist(group: GroupsEntity): Boolean {
-        return groupsDao.findBySizeAndProfileId(group.size, group.profile) != null
-    }
+    override fun isAlreadyExist(group: GroupsEntity): Boolean = groupsDao.findBySizeAndProfileId(group.size, group.profile) != null
 
     private fun getBySql(sql: String, params: Map<String, Any>, page: Int?, pageSize: Int?): List<GroupsEntity>? {
         return groupsDao.getBySql(sql, params, page, pageSize)

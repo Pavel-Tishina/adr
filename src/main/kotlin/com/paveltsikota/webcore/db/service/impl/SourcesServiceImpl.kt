@@ -12,6 +12,7 @@ import com.paveltsikota.webcore.db.service.SourcesService
 import com.paveltsikota.webcore.db.service.result.EntityOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import com.paveltsikota.webcore.utils.FileUtils
+import com.paveltsikota.webcore.utils.ValuesUtils.isMoreThanZero
 import com.paveltsikota.webcore.utils.ValuesUtils.profileIdChk
 import org.springframework.stereotype.Service
 import java.nio.file.Path
@@ -29,29 +30,28 @@ class SourcesServiceImpl(
     }
 
     override fun getSources(page: Int?, pageSize: Int?, profileId: Long?): EntityOperationResult {
-        val sql = SQL_GET_SOURCES.takeIf { profileId == null }
+        val sql = SQL_GET_SOURCES.takeIf { !profileIdChk(profileId) }
             ?: SQL_GET_SOURCES_BY_PROFILE
 
-        val params = emptyMap<String, Any>().takeIf { profileId == null }
+        val params = emptyMap<String, Any>().takeIf { !profileIdChk(profileId) }
             ?: mapOf(Pair("profile", profileId!!))
 
-        val ps = DbConst.MAX_PAGE_SIZE.takeIf { pageSize == null || pageSize < 1}
+        val ps = DbConst.MAX_PAGE_SIZE.takeIf { !isMoreThanZero(pageSize) }
             ?: pageSize
 
 
         val result = ArrayList<SourcesEntity>()
 
-        if (page == null || page < 1) {
+        if (!isMoreThanZero(page)) {
             var pageResult: List<SourcesEntity>
 
             var p = 0
             do {
-                p = p + 1
-                pageResult = getBySql(sql, params, p, ps)?: emptyList()
+                pageResult = getBySql(sql, params, page = ++p, pageSize = ps)?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
         } else {
-            result.addAll(getBySql(sql, params, page, ps)?: emptyList())
+            result.addAll(getBySql(sql, params, page, pageSize = ps)?: emptyList())
         }
 
         return when {

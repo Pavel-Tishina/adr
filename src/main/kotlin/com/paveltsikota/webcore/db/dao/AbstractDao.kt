@@ -1,6 +1,5 @@
 package com.paveltsikota.webcore.db.dao
 
-import com.paveltsikota.webcore.db.type.EntityOrder
 import com.paveltsikota.webcore.db.type.QueryOrderMap
 import com.paveltsikota.webcore.db.type.QueryParamMap
 import com.paveltsikota.webcore.db.type.toSqlQuery

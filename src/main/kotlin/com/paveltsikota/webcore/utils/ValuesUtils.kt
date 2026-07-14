@@ -1,18 +1,18 @@
 package com.paveltsikota.webcore.utils
 
 import com.paveltsikota.webcore.utils.enums.HashType
+import com.paveltsikota.webcore.utils.enums.JobStatus
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 object ValuesUtils {
+    private val finalJobStatus = setOf(JobStatus.COMPLETED, JobStatus.FAILED)
 
-    fun validatePageParams(page: Int?, pageSize: Int?): Boolean {
-        return page != null && pageSize != null && page > 0 && pageSize > 0
-    }
+    fun validatePageParams(page: Int?, pageSize: Int?): Boolean = page != null && pageSize != null && page > 0 && pageSize > 0
+    fun isMoreThanZero(i: Number?): Boolean = i != null && i.toLong() > 0
 
     fun validateFindByHash(hash: String?, hashType: HashType?, profileId: Long?): Boolean {
-        return hash != null
-                && hash.isNotBlank()
+        return !hash.isNullOrBlank()
                 && hashType != null
                 && hashType != HashType.UNKNOWN
                 && profileId != null
@@ -78,5 +78,7 @@ object ValuesUtils {
 
     fun profileIdChk(profileId: Long?): Boolean = profileId != null && profileId > 0
     fun priorityChk(priority: Int?): Boolean = priority != null && priority >= 0
+
+    fun isFinalJobState(status: JobStatus): Boolean = finalJobStatus.contains(status)
 
 }

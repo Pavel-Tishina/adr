@@ -30,12 +30,12 @@ class JobTaskServiceImpl(
         val params = getMapForGet(profile, priority, type, status)
         val and = "AND".takeIf { params.size > 1 }?: ""
 
-        val sql = ("FROM JobsEntity p " +
+        val sql = ("FROM JobsTaskEntity p " +
                 (if (params.isNotEmpty()) {"WHERE "} else {""}) +
                 (if (profileIdChk(profile)) {"$and p.profile = :profile "} else {""}) +
                 (if (priorityChk(priority)) {"$and p.priority = :priority "} else {""}) +
-                (if (type != null) {"$and p.type = :type "} else {""}) +
-                (if (status != null) {"$and p.status = :status "} else {""}) +
+                (type.let{"$and p.type = :type "}) +
+                (status.let{"$and p.status = :status "}) +
                 "ORDER BY p.priority")
             .replaceFirst("WHERE AND", "WHERE")
 
@@ -89,7 +89,6 @@ class JobTaskServiceImpl(
             lastObjectId = lastObjectId,
             status = status,
             objects = objects,
-//            history = history?.map(historyElementAdapter::dtoToEntity) as MutableList<HistoryElementEntity>?,
             history = history,
         )
 
@@ -112,7 +111,6 @@ class JobTaskServiceImpl(
         filteredJobDtos.forEach { dto ->
             val result = with(dto) {
                 add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, history, addOnce)
-//                add(profile, priority, jobId, start, finish, disabled, type, lastObjectId, status, objects, addOnce)
             }
             if (result.success) {
                 added.add(result.obj as JobsTaskEntity)
@@ -167,8 +165,7 @@ class JobTaskServiceImpl(
         var page = 0
         val notDeleted = HashSet<Long>()
         do {
-            page = page + 1
-            val partResult = jobsTaskDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?:emptyList()
+            val partResult = jobsTaskDao.getAll(page = ++page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?:emptyList()
 
             if (partResult.isNotEmpty()) {
                 partResult.forEach { if (!jobsTaskDao.removeById((it).id)) notDeleted.add(it.id) }

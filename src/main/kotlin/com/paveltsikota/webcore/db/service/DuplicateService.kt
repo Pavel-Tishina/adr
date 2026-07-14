@@ -2,9 +2,7 @@ package com.paveltsikota.webcore.db.service
 
 import com.paveltsikota.webcore.db.dto.DuplicateDto
 import com.paveltsikota.webcore.db.service.result.DuplicateServiceOperationResult
-import org.springframework.stereotype.Service
 
-@Service
 interface DuplicateService {
 
     fun getDuplicates(count: Int, page: Int, profileId: Long, dupN: Int): DuplicateServiceOperationResult

@@ -16,6 +16,7 @@ import com.paveltsikota.webcore.hash.calculator.HashCalculator
 import com.paveltsikota.webcore.db.dto.FilesDto
 import com.paveltsikota.webcore.db.adapter.FilesAdapter
 import com.paveltsikota.webcore.db.utils.FilesUtils.getFilesEntryByPathForDb
+import com.paveltsikota.webcore.utils.ValuesUtils.isMoreThanZero
 import com.paveltsikota.webcore.utils.enums.FileState
 import com.paveltsikota.webcore.utils.enums.HashType
 import org.springframework.stereotype.Service
@@ -43,7 +44,7 @@ class FilesServiceImpl(
             .flatten()
 
         return when {
-            entities.isNullOrEmpty() -> EntityOperationResult(
+            entities.isEmpty() -> EntityOperationResult(
                 success = false, error = "Entities not found", result = EntityOperationResultType.ENTITIES_NOT_FOUNDED)
 
             entities.size < idsList.size -> {
@@ -148,10 +149,10 @@ class FilesServiceImpl(
     }
 
     override fun removeFile(fileDto: FilesDto): EntityOperationResult {
-        return if (fileDto.id == null || fileDto.id <= 0) {
-            EntityOperationResult(success = false, error = "id is null or has false value", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
+        return if (isMoreThanZero(fileDto.id)) {
+            removeFile(fileDto.id!!)
         } else {
-            removeFile(fileDto.id)
+            EntityOperationResult(success = false, error = "id is null or has false value", result = EntityOperationResultType.ENTITY_NOT_REMOVED)
         }
     }
 
@@ -178,7 +179,7 @@ class FilesServiceImpl(
 
     override fun removeFiles(ids: Collection<Long>, profileId: Long): EntityOperationResult {
         val idsSet = ids.toSet()
-        val results = if (profileId > 0)
+        val results = if (isMoreThanZero(profileId))
             idsSet.map { removeFile(it, profileId) } else idsSet.map { removeFile(it) }
 
         val notRemoved = results.filter { !it.success }.map { it.obj as Long }
@@ -303,12 +304,11 @@ class FilesServiceImpl(
 
     override fun cleanUp(profileId: Long): EntityOperationResult {
         var count = 0
-        var page = 0
+        var page = 1
         var partResult: List<FilesEntity>
         val notDeleted = HashSet<Long>()
         do {
-            page += 1
-            partResult = filesDao.getAll(page = page, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
+            partResult = filesDao.getAll(page = page++, pageSize = DbConst.MAX_PAGE_SIZE, profileId = profileId)?: emptyList()
 
             count += partResult.size
 
@@ -332,8 +332,8 @@ class FilesServiceImpl(
         }
     }
 
-    override fun isAlreadyExist(entity: FilesEntity): Boolean {
-        return filesDao.checkAlreadyExistEntity(Path.of(entity.path), entity.size, entity.hash, entity.hashType, entity.profile)
+    override fun isAlreadyExist(entity: FilesEntity): Boolean = with (entity) {
+        filesDao.checkAlreadyExistEntity(Path.of(path), size, hash, hashType, profile)
     }
 
     private fun getProfileAndSizeMap(profileId: Long, size: Long?): Map<String, Any> {
@@ -350,16 +350,15 @@ class FilesServiceImpl(
         }
 
         val params = getProfileAndSizeMap(profileId, size)
-        val ps = DbConst.MAX_PAGE_SIZE.takeIf { pageSize == null || pageSize < 1} ?: pageSize
+        val ps = DbConst.MAX_PAGE_SIZE.takeIf { !isMoreThanZero(pageSize) } ?: pageSize
 
-        return if (page == null || page < 1) {
+        return if (!isMoreThanZero(page)) {
             val result = ArrayList<FilesEntity>()
             var pageResult: List<FilesEntity>
 
-            var p = 0
+            var p = 1
             do {
-                p += 1
-                pageResult = getBySql(sql, params, p, ps) ?: emptyList()
+                pageResult = getBySql(sql, params, page = p++, pageSize = ps) ?: emptyList()
                 result.addAll(pageResult)
             } while (pageResult.isNotEmpty())
 

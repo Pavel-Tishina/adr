@@ -1,7 +1,7 @@
 package com.paveltsikota.webcore.db.type
 
 typealias QueryOrderMap = LinkedHashMap<String, EntityOrder?>
-typealias QueryParamMap = Map<String, Any>
+typealias QueryParamMap = LinkedHashMap<String, Any>
 
 fun QueryOrderMap.toSqlQuery(): String =
     if (entries.isEmpty()) "" else " ORDER BY " + entries.joinToString{ (k, v) -> v?.let{"$k $it"}?: k }

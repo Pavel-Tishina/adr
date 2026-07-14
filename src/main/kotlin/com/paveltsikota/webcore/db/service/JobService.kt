@@ -14,7 +14,7 @@ interface JobService {
     fun getById(id: Long): EntityOperationResult
     fun get(profile: Long?, uuid: String?, status: JobStatus?): EntityOperationResult
 
-    fun getBy(profile: Long?, global: Boolean?, disabled: Boolean?, status: JobStatus?): List<JobsEntity>
+    fun getBy(profile: Long, global: Boolean?, disabled: Boolean?, status: JobStatus?): List<JobsEntity>
 
     fun add(
         profile: Long,
@@ -33,7 +33,7 @@ interface JobService {
 
     fun update(job: JobsEntity): EntityOperationResult
 
-    fun remove(id: Long): EntityOperationResult
+    fun remove(id: Long, profile: Long): EntityOperationResult
     fun remove(job: JobsEntity): EntityOperationResult
 
     fun cleanUp(profileId: Long): EntityOperationResult

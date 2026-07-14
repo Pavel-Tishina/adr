@@ -1,9 +1,7 @@
 package com.paveltsikota.webcore.db.service.impl
 
-import aj.org.objectweb.asm.commons.AdviceAdapter
 import com.paveltsikota.webcore.db.adapter.DuplicateFileAdapter
 import com.paveltsikota.webcore.db.adapter.DuplicateHashAdapter
-import com.paveltsikota.webcore.db.adapter.HashesAdapter
 import com.paveltsikota.webcore.db.dto.DuplicateDto
 import com.paveltsikota.webcore.db.dto.DuplicateFileDto
 import com.paveltsikota.webcore.db.entity.FilesEntity
@@ -13,17 +11,20 @@ import com.paveltsikota.webcore.db.service.FilesService
 import com.paveltsikota.webcore.db.service.HashesService
 import com.paveltsikota.webcore.db.service.result.DuplicateServiceOperationResult
 import com.paveltsikota.webcore.db.service.result.enums.DuplicatesOperationResultType
+import com.paveltsikota.webcore.db.service.result.enums.EntityOperationResultType
 import org.springframework.stereotype.Service
-import kotlin.Long
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.collections.mutableSetOf
 
 @Service
 class DuplicateServiceImpl(
     private val filesService: FilesService,
     private val hashesService: HashesService,
     private val dupFilesAdapter: DuplicateFileAdapter,
-    private val dupHashesAdapter: DuplicateHashAdapter,
-    private val hashesAdapter: HashesAdapter,
+    private val dupHashesAdapter: DuplicateHashAdapter
 ): DuplicateService {
+
+    private val LOG = KotlinLogging.logger {}
 
     override fun getDuplicates(count: Int, page: Int, profileId: Long, dupN: Int): DuplicateServiceOperationResult {
         val hashesResult = hashesService.getAllByN(count, page , profileId, dupN)
@@ -64,32 +65,72 @@ class DuplicateServiceImpl(
             result = DuplicatesOperationResultType.OBJECTS_FOUNDED)
     }
 
-
     override fun updateDuplicates(duplicates: List<DuplicateDto>, profileId: Long): DuplicateServiceOperationResult {
+        val notUpdated = mutableSetOf<DuplicateDto>()
+        val updated = mutableListOf<DuplicateDto>()
+
         duplicates.distinct().forEach { d ->
+            val updatedHashEntity = dupHashesAdapter.dtoToEntity(d)
             val hashEntityResult = hashesService.getById(d.id)
+            val isCanUpdate = hashEntityResult.success && updatedHashEntity != (hashEntityResult.obj as HashesEntity)
+            var logMsg: String? = null
 
-            if (hashEntityResult.success) {
-                val updatedHashEntity = dupHashesAdapter.dtoToEntity(d)
-                val existedHashEntity = hashEntityResult.obj as HashesEntity
+            if (hashEntityResult.success && isCanUpdate) {
+                val notFoundedFiles = getNotFoundedFiles(updatedHashEntity.duplicates)
+                if (notFoundedFiles.isEmpty()) {
+                    d.dups?.forEach { dupFile ->
+                        val file = (filesService.getFile(dupFile.id).obj as FilesEntity)
+                        filesService.updateFile(file.copy(state = dupFile.state))
+                    }
 
-                if (existedHashEntity != updatedHashEntity) {
-                    hashesService.update(updatedHashEntity)
-                    //!!
+                    val updHashEntityResult = hashesService.update(updatedHashEntity)
+                    if (updHashEntityResult.success) {
+                        updated.add(d)
+                    } else {
+                        logMsg = "${getHashDetails(d)} not updated!"
+                    }
+                } else {
+                    logMsg = "${getHashDetails(d)} not updated, cuz next files ${notFoundedFiles.joinToString()} not founded!"
                 }
+            } else {
+                logMsg = "${getHashDetails(d)} not ${"updated".takeIf { hashEntityResult.success } ?: "founded"}!"
             }
 
+            logMsg?.let {
+                LOG.warn { logMsg }
+                notUpdated.add(d)
+            }
         }
-        return DuplicateServiceOperationResult(success = true, obj = duplicates,)
+
+        return when {
+            updated.isEmpty() -> DuplicateServiceOperationResult(
+                success = false, error = "No duplicates updated", result = DuplicatesOperationResultType.OBJECTS_NOT_UPDATED)
+
+            notUpdated.isNotEmpty() -> DuplicateServiceOperationResult(
+                success = true, obj = updated, error = getErrorMsg(notUpdated), result = DuplicatesOperationResultType.OBJECTS_UPDATED_PARTLY)
+
+            else -> DuplicateServiceOperationResult(
+                success = true, obj = updated, result = DuplicatesOperationResultType.OBJECTS_UPDATED)
+        }
     }
 
-    private fun isUpdate(existed: HashesEntity, updated: HashesEntity): Boolean {
-//        return with(existed) {
-//            id == updated.id,
-//
-//        }
-        return false
+    private fun getNotFoundedFiles(ids: Set<Long>): Set<Long> {
+        val foundedFiles = filesService.getFiles(ids)
+
+        return when (filesService.getFiles(ids).result) {
+            EntityOperationResultType.ENTITIES_FOUNDED_PARTLY ->
+                ids - (foundedFiles.obj as List<FilesEntity>).map { it.id }.toSet()
+
+            EntityOperationResultType.ENTITIES_FOUNDED ->
+                emptySet()
+
+            else -> ids
+        }
     }
 
+    private fun getHashDetails(dto: DuplicateDto): String = "HashesEntity (id:${dto.id} hash:${dto.hash} type:${dto.hashType})"
+
+    private fun getErrorMsg(notUpdated: Set<DuplicateDto>): String =
+        if (notUpdated.isEmpty()) "" else "Not updated hashes: " + notUpdated.map { it.id }.joinToString(", ")
 
 }
