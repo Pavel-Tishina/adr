@@ -51,6 +51,7 @@ data class ConfigEntity(
                 && progressSize == o.progressSize
                 && bufferSize == o.bufferSize
                 && hashType == o.hashType
+                && hashDir == o.hashDir
     }
 
 }

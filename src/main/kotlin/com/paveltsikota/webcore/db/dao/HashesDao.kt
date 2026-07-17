@@ -11,7 +11,7 @@ class HashesDao: AbstractDao<HashesEntity>(HashesEntity::class.java) {
     @Transactional(readOnly = true)
     fun findByHashAndProfileId(hash: String, hashType: HashType, profileId: Long): HashesEntity? {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.hashType = hashType AND p.hash = :hash", entityClass)
+            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.hashType = :hashType AND p.hash = :hash", entityClass)
 
         query.setParameter("hash", hash)
         query.setParameter("profile", profileId)

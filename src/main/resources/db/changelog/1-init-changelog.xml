@@ -22,10 +22,46 @@
             <column name="size" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="fileIds" type="TEXT">
+            <column name="fileIds" type="TEXT"/>
+            <column name="jobId" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ConfigEntity -->
+    <changeSet id="8" author="admin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="config"/>
+            </not>
+        </preConditions>
+        <createTable tableName="config">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="profile" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="jobId" type="INTEGER"/>
+            <column name="hashDir" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hashType" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bufferSize" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressN" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressSize" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="progressShow" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="flyHashCalculate" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -157,15 +193,11 @@
             </not>
         </preConditions>
         <createTable tableName="jobs">
-            <column name="id" type="INTEGER">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
             <column name="profile" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="priority" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
 
@@ -195,11 +227,11 @@
             </not>
         </preConditions>
         <createTable tableName="jobstask">
-            <column name="id" type="INTEGER">
+            <column name="id" type="INTEGER" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
-            <column name="profile" type="INTEGER">
+            <column name="profile" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
 
@@ -210,7 +242,7 @@
             <column name="start" type="BIGINT"/>
             <column name="finish" type="BIGINT"/>
 
-            <column name="disabled" type="INTEGER">
+            <column name="disabled" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
 

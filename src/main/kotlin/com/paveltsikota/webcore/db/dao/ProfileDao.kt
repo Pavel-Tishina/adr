@@ -10,7 +10,7 @@ class ProfileDao: AbstractDao<ProfileEntity>(ProfileEntity::class.java) {
     @Transactional(readOnly = true)
     fun findByTitleAndProfile(title: String, profileId: Long): List<ProfileEntity> {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.profile =: profile AND p.title = :title", entityClass)
+            "FROM ${entityClass.name} p WHERE p.profile = :profile AND p.title = :title", entityClass)
 
         query.setParameter("title", title)
         query.setParameter("profile", profileId)

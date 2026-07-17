@@ -11,7 +11,7 @@ class JobsTaskDao: AbstractDao<JobsTaskEntity>(JobsTaskEntity::class.java) {
     @Transactional(readOnly = true)
     fun findByProfileId(profileId: Long): List<JobsTaskEntity> {
         val query = entityManager.createQuery(
-            "FROM ${entityClass.name} p WHERE p.profile = :profile ORDER BY p.piority", entityClass)
+            "FROM ${entityClass.name} p WHERE p.profile = :profile ORDER BY p.priority", entityClass)
 
         query.setParameter("profile", profileId)
         return query.resultList
